@@ -26,14 +26,21 @@ body{
   line-height:1.72;
 }
 header{
-  background:radial-gradient(circle at 85% 10%,rgba(255,255,255,.18),transparent 24%),linear-gradient(135deg,#102a43 0%,#174a7c 100%);
+  width:min(calc(100% - 52px),1180px);
+  margin:28px auto 0;
+  background:
+    radial-gradient(circle at 92% 10%,rgba(255,255,255,.18),transparent 28%),
+    linear-gradient(90deg,#1f2b49 0%,#28365f 48%,#7983c6 100%);
   color:#fff;
-  padding:42px 20px 34px;
+  padding:46px 54px 40px;
+  border-radius:34px;
+  border:1px solid rgba(148,163,210,.70);
+  box-shadow:0 18px 42px rgba(18,43,73,.16), inset 0 1px 0 rgba(255,255,255,.18);
 }
-.header-inner{max-width:1180px;margin:0 auto;padding:0 18px}
-h1{font-size:clamp(27px,4vw,44px);line-height:1.16;margin:0 0 10px;font-weight:900;letter-spacing:-.045em}
-.lead{margin:0;max-width:880px;color:#dcecff;font-size:16px}
-main{max-width:1180px;margin:-20px auto 54px;padding:0 18px;position:relative;z-index:2}
+.header-inner{max-width:none;margin:0;padding:0}
+h1{font-size:clamp(31px,4.4vw,48px);line-height:1.14;margin:0 0 14px;font-weight:900;letter-spacing:-.055em;text-shadow:0 2px 8px rgba(0,0,0,.14)}
+.lead{margin:0;max-width:100%;color:#edf4ff;font-size:clamp(16px,2.05vw,21px);line-height:1.55;font-weight:800;letter-spacing:-.035em}
+main{max-width:1180px;margin:20px auto 54px;padding:0 18px;position:relative;z-index:2}
 .tab-wrap{
   background:rgba(255,255,255,.96);
   border:1px solid var(--line);
@@ -173,9 +180,15 @@ footer{
   .cards{grid-template-columns:1fr}
 }
 @media (max-width:560px){
-  header{padding:34px 18px 28px}
-  .header-inner{padding:0 12px}
-  main{padding:0 12px}
+  header{
+    width:calc(100% - 24px);
+    margin:12px auto 0;
+    padding:28px 22px 24px;
+    border-radius:28px;
+  }
+  h1{font-size:clamp(27px,8.2vw,36px);line-height:1.18;margin-bottom:10px}
+  .lead{font-size:15px;line-height:1.55;font-weight:800}
+  main{padding:0 12px;margin-top:14px}
   .tab-wrap{position:relative;top:auto}
   .guide-hero{padding:0}
   .guide-block{padding:16px}
@@ -183,17 +196,165 @@ footer{
   .block-heading h3{font-size:19px}
   .title-count-circle{width:44px;height:44px;font-size:14px;margin:0 4px}
   .table-align-heading{padding-left:12px}
-  .keyword-grid{grid-template-columns:1fr}
+  .keyword-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(104px,1fr));
+    align-items:stretch;
+    gap:5px;
+    margin-left:0;
+    margin-right:0;
+  }
+  .keyword-chip{
+    width:100%;
+    max-width:none;
+    min-width:0;
+    justify-content:flex-start;
+    gap:3px;
+    padding:4px 5px;
+    min-height:28px;
+    border-radius:999px;
+    font-size:11px;
+    line-height:1.18;
+  }
+  .keyword-chip b{flex:0 0 18px;height:18px;font-size:9.5px}
+  .keyword-chip span{min-width:0;white-space:nowrap;word-break:keep-all;overflow-wrap:normal;letter-spacing:-.04em}
+  .selfeval-table{font-size:12.5px;table-layout:auto}
+  .selfeval-table th,.selfeval-table td{padding:8px 6px}
+  .selfeval-table th:first-child,.selfeval-table .num{width:32px;min-width:32px;padding-left:3px;padding-right:3px}
+  .selfeval-table .fill{width:82px;padding-left:5px;padding-right:5px}
+  .selfeval-table .template{padding-left:7px;padding-right:7px;line-height:1.55;word-break:keep-all;overflow-wrap:break-word}
+  .selfeval-table .blank{min-width:50px;margin:0 3px}
   .card-head{padding:15px 15px 10px}
   .card-body{padding:14px 15px 16px;font-size:14px}
+
+
+  /* 모바일: 유형 진단은 표보다 카드형이 더 읽기 쉬움. 유형 번호+제목을 한 줄 상단에 두고, 설명과 점검 포인트를 아래로 분리 */
+  .type-check-table{
+    display:block;
+    width:100%;
+    border:0;
+    border-radius:0;
+    overflow:visible;
+    background:transparent;
+    font-size:14px;
+  }
+  .type-check-table thead{display:none}
+  .type-check-table tbody{display:grid;gap:10px}
+  .type-check-table tr{
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:6px 9px;
+    padding:12px;
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:#fff;
+    overflow:hidden;
+    box-shadow:0 8px 18px rgba(18,43,73,.06);
+  }
+  .type-check-table th,
+  .type-check-table td{
+    display:block;
+    width:auto !important;
+    padding:0;
+    border:0;
+    line-height:1.55;
+    white-space:normal;
+    word-break:keep-all;
+    overflow-wrap:break-word;
+    vertical-align:top;
+  }
+  .type-check-table td::before{
+    display:inline-block;
+    margin:0 6px 0 0;
+    color:#65758d;
+    font-size:11.5px;
+    line-height:1.35;
+    font-weight:900;
+  }
+  .type-check-table .type-no{
+    grid-column:1;
+    align-self:start;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:5px 9px;
+    border-radius:999px;
+    background:#102a43;
+    color:#fff;
+    text-align:center;
+    font-size:12px;
+    line-height:1.15;
+    font-weight:900;
+    white-space:nowrap;
+  }
+  .type-check-table .type-no::before{display:none}
+  .type-check-table .type-title{
+    grid-column:2;
+    align-self:center;
+    background:transparent;
+    color:#102a43;
+    font-size:15px;
+    line-height:1.35;
+    font-weight:900;
+  }
+  .type-check-table .type-title::before{display:none}
+  .type-check-table td:nth-child(3){
+    grid-column:1 / -1;
+    padding-top:8px;
+    border-top:1px solid #eef2f7;
+    color:#34445b;
+    font-size:13px;
+  }
+  .type-check-table td:nth-child(3)::before{content:"설명"}
+  .type-check-table .type-note-cell{
+    grid-column:1 / -1;
+    margin-top:2px;
+    padding:8px 10px;
+    border:1px solid #d7e5f7;
+    border-radius:12px;
+    background:#f4f8fd;
+    color:#26364d;
+    font-size:13px;
+    line-height:1.45;
+    font-weight:900;
+  }
+  .type-check-table .type-note-cell::before{content:"점검"}
+  .type-check-table tr:nth-child(1) .type-note-cell,
+  .type-check-table tr:nth-child(2) .type-note-cell{
+    background:#f0f6ff;
+    border-color:#cfe0f7;
+    color:#173b68;
+  }
+  .type-check-table tr:nth-child(3) .type-note-cell,
+  .type-check-table tr:nth-child(4) .type-note-cell{
+    background:#fff7ed;
+    border-color:#fed7aa;
+    color:#7c2d12;
+  }
+  .type-summary{
+    padding:12px 13px;
+    font-size:13px;
+    line-height:1.55;
+  }
+  .type-summary span{
+    display:block;
+    margin:0 0 5px;
+  }
+  .type-summary span:last-child{margin-bottom:0}
 }
+@media (max-width:380px){
+  .keyword-grid{grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:4px}
+  .keyword-chip{padding:4px;font-size:10.4px;gap:2px}
+  .keyword-chip b{flex:0 0 17px;height:17px;font-size:9px}
+}
+
 </style>
 </head>
 <body>
 <header>
   <div class="header-inner">
     <h1>탐구활동 가이드 및 세특 모범사례</h1>
-    <p class="lead">상단 탭에서 과목을 선택하면 해당 과목의 세특 예시가 아래에 표시됩니다. 현재 총 90개의 사례를 정리했습니다.</p>
+    <p class="lead">상단 탭에서 과목을 선택하면 해당 과목의 세특 예시가 아래에 표시됩니다. 현재 총 107개의 사례를 정리했습니다.</p>
   </div>
 </header>
 <main>
@@ -278,7 +439,7 @@ const DATA = [
     "source": ""
   },
   {
-    "category": "과학",
+    "category": "정보",
     "title": "AI 기술의 양면성과 지속 가능성",
     "text": "[수업] '미세 플라스틱' 문제에 대한 독서 후 [호기심] 과학 기술의 발전 이면에 숨겨진 위험성 사례에 호기심을 느껴, [탐구] 인공지능(AI)에 대한 긍정적, 부정적 관점의 매체 자료를 찾아 필자의 의도, 표현 방법을 평가하며 비교 분석함. [호기심] 이어 각 관점의 주장이 타당한지 비판적 검증을 위해 [탐구] 'AI 강의 2025(박태웅)'을 참고하여 AI가 인간의 삶에 영향을 미치는 긍정적, 부정적 사례를 분야별로 심층 탐구함. [호기심] 이후 AI가 환경에 긍정적, 부정적 영향을 모두 미친다는 것에 흥미를 느껴, [탐구] 기후 테크와 관련된 국가 기관의 자료들을 살펴보며, 기후 테크에 AI가 활용되고 있는 양상과 그 원리를 탐구하는 한편, [탐구] AI의 전력 소모로 인한 탄소 배출량 증가에 초점을 맞춰 AI의 발전이 기후 위기를 심화시킬 수 있다는 주장의 근거를 분석함. [호기심] 더 나아가 기업의 관련 사회적 책임 이행 여부를 확인하기 위해 [탐구] 빅테크 기업의 친환경 데이터 센터 운영을 위한 대응책과 적용 원리를 탐구함. [호기심] 끝으로 AI 기술에 대한 대중의 균형 잡힌 이해를 증진하고, 사회적 논의를 촉진하기 위해 [탐구] 탐구 결과물을 종합하여 'AI 기술의 양면성'을 주제로 공동 보고서를 작성함. [평가] 탐구 과정에서 과학 기술의 양면성을 균형 있게 탐구하며, 사회적 책임과 지속 가능성에 대한 문제의식을 심화시킨 점이 돋보임.",
     "source": ""
@@ -604,7 +765,7 @@ const DATA = [
     "sourceType": "가이드북"
   },
   {
-    "category": "동아리",
+    "category": "정보",
     "title": "진로활동 — 화학 공식 저장 알고리즘과 AI 활용",
     "source": "경희대 가이드북",
     "text": "[호기심] 화학 분야의 직업에 소프트웨어 적용에 대한 호기심을 해결하고자 프로그래밍 문제해결 과정에 참여함. [탐구] 배열을 배운 후 이 구조에 화학 공식을 저장, 포인터와 주소 접근 방법을 적용해 원하는 공식을 추출할 수 있을 것이라는 가설을 설정하고 이를 알고리즘으로 수립함. [심화탐구] AI와 함께하는 체험학습에 참여해 인공지능의 회귀, 클러스터링 기법을 이용해 박테리아의 플라스틱 분해 속도를 측정하는 방법을 제안함.",
@@ -646,7 +807,7 @@ const DATA = [
     "sourceType": "가이드북"
   },
   {
-    "category": "과학",
+    "category": "정보",
     "title": "인공지능의 기초 — 화학물질 위해성 머신러닝 모델",
     "source": "경희대 가이드북",
     "text": "[탐구] 코로나19 이후 운동 활동이 중요하다고 생각하여 ‘요가 초보자들을 위한 자세 검증 프로그램’을 주제로 선정하고 프로그램을 제작함. [심화탐구] 머신러닝과 딥러닝에 대한 이해를 바탕으로 일상생활에서 자주 볼 수 있는 화학물질의 위험성을 군집하여, 사용자가 해당하는 화학물질의 위해성을 확인하고 안전하게 사용할 수 있도록 하는 머신러닝 모델을 제작하여 발표함. [탐구] 자세의 관절이 정확하게 인식되는 것이 중요함을 잘 파악하여 학습 데이터를 수정하고 다양한 배경에서 학습 데이터를 추가하는 등 완성도 높은 자세 검증 프로그램을 완성함.",
@@ -793,7 +954,7 @@ const DATA = [
     "sourceType": "가이드북"
   },
   {
-    "category": "동아리",
+    "category": "정보",
     "title": "동아리 — 아두이노 녹조 제거 시스템 제작",
     "source": "한양대 ERICA 가이드북",
     "text": "[호기심] 물리와 코딩 관련 동아리가 없어 직접 동아리를 개설하고 부원들을 모집함. [탐구] 근교 하천에서 녹조 현상을 발견하고 아두이노로 녹조 제거 시스템을 구상하여 제작함. [탐구] 배송 문제로 처음 구상했던 탁도 센서 사용에 차질이 생기자, 탁도 센서의 구조를 분석해보며 가지고 있던 LED와 조도센서를 활용해 녹조 감지 시스템을 개발함.",
@@ -812,9 +973,128 @@ const DATA = [
     "source": "한양대 ERICA 가이드북",
     "text": "[평가] 신체 표현 능력, 공동체역량이 돋보임. [탐구] 1학기 말에는 다리부상에도 불구하고 동아리 발표 안무 연습 시 매 시간 참관하며 부원들의 공연 준비를 지지해주고, 연습 장면을 촬영 후 피드백 해주어 공연의 완성도를 높이는 데 기여함. [평가] 책임감이 강한 학생으로 거의 모든 공연에 참여하였으며, 정규 동아리 시간뿐만 아니라 방과후 연습 시간에도 꾸준히 참여하는 모습을 보임. [평가] 완성도 높은 안무를 선보임.",
     "sourceType": "가이드북"
+  },
+  {
+    "category": "사회",
+    "title": "경제 — 엔저 현상과 관세 정책의 경제 효과 분석",
+    "source": "인하대 2027 학종가이드북 p.22",
+    "text": "[호기심] 경제 수업에서 엔저 현상에 관심을 갖고 낮은 금리 정책, 높은 부채비율, 기업 자본의 해외 유보 증가를 원인으로 분석함. [탐구] 엔저가 수출, 소비, 투자에 미치는 영향을 다각도로 검토하고 금리 인상과 엔화 매입의 딜레마를 짚으며 해결 방안을 모색함. [심화탐구] 국제경제 공동교육과정에서는 미국의 관세 정책 변화가 세계 경제와 한국 경제에 미칠 파급 효과를 주제로 보편 관세와 상호무역법을 조사하고, 정책 변화에 따른 수출입 데이터를 국제 통계 보고서로 보완하여 통계적으로 분석함. [평가] 경제 현상을 국내외 정책, 통계 자료, 시장 반응과 연결해 해석하는 능력이 돋보임.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "과학",
+    "title": "생명과학 — 당뇨병·혈당 조절과 교과 간 융합 탐구",
+    "source": "인하대 2027 학종가이드북 p.24",
+    "text": "[수업] 영어 지문에서 접한 유전병 관련 질문을 바탕으로 대사증후군과 당뇨병 정보를 체계적으로 정리하고 인포그래픽을 제작함. [호기심] 당의 종류에 따른 혈당 조절과 정제당·천연식품의 당 흡수 차이에 관심을 갖고 도서와 학술 정보를 찾아 탐구함. [탐구] 미적분에서는 혈당 변화 그래프를 함수로 표현하고 도함수와 적분을 적용해 인슐린 투여 시점을 분석함. [심화탐구] 생명과학Ⅱ 개념을 토대로 녹차 카테킨의 항산화 효과를 DPPH 라디칼 소거율과 흡광도 자료로 분석하여 교과 지식을 실험과 연결함. [평가] 생명과학, 수학, 가정과학, 동아리 실험을 하나의 문제의식으로 통합한 자기주도적 탐구역량이 우수함.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "사회",
+    "title": "사회복지 — 지역사회 문제와 복지 사각지대 탐구",
+    "source": "인하대 2027 학종가이드북 p.25",
+    "text": "[호기심] 거주 지역에 노인 인구 비율이 높다는 점에 주목하여 노인층의 문화 향유 기회 부족 문제를 탐구 주제로 설정함. [탐구] 비교문화 수업에서 노인층과 그 자녀 세대를 주요 소비자층으로 설정해 문화 상품 아이디어와 판매 전략, 홍보 방안을 기획함. [탐구] 사회문화에서는 느린 학습자의 특성과 지원 체계의 한계를 조사하고 지역별 조례와 국내 지원 단체의 역할을 분석함. [심화탐구] 확률과 통계에서는 비대면 진료 서비스 만족 여부에 따른 재이용률을 조건부확률로 계산하고 표와 그래프로 시각화함. [평가] 일상 속 문제를 사회복지, 통계, 정책 분석으로 확장하는 탐구 흐름이 뚜렷함.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "정보",
+    "title": "인공지능수학·정보 — 합성곱 오류와 대피경로 알고리즘 탐구",
+    "source": "인하대 2027 학종가이드북 p.26",
+    "text": "[호기심] 기하 교과 탐구 후 합성곱 연산에서 유사도 측정 오류가 발생할 수 있다는 의문을 갖고 이미지와 필터의 유사도 측정을 주제로 탐구함. [탐구] 정보과제연구에서는 실내 화재 시 대피경로 안내 시스템 구현과 최적 알고리즘 분석을 주제로 경로 탐색 알고리즘의 성능, 탐색 범위 최적화, 휴리스틱 설계를 비교함. [심화탐구] 물리학Ⅱ에서는 초전도 현상과 마이스너 효과 탐구에서 출발해 임계온도 이하에서 전기 저항이 사라지는 이유와 BCS 이론의 한계를 후속 탐구함. [탐구] 아두이노를 활용해 급식실 좌석 확인 시스템을 설계하고 if, else문과 digitalWrite 함수의 원리를 적용함. [평가] 학습의 이유와 방법을 스스로 설계하며 문제 해결 과정을 확장한 점이 돋보임.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "정보",
+    "title": "인공지능공학 — 2048 게임과 하드디스크 원리 탐구",
+    "source": "인하대 2027 학종가이드북 p.30",
+    "text": "[수업] 미적분에서 프로그래밍, 수학·물리 모델을 융합해 개념을 사례와 연결하는 탐구 역량을 보임. [호기심] 물리학Ⅰ에서 물질과 전자기장을 학습한 뒤 하드디스크의 과학적 원리와 특징을 탐구하여 보고서를 작성함. [탐구] 정보 수업의 자율 코딩 프로젝트에서 인공지능을 활용한 2048 게임을 완성하고 발표를 통해 작동 과정을 시연함. [심화탐구] 생성형 인공지능 도구와 탐지 프로그램의 한계를 분석하는 연구를 진행하며 다수의 활동을 컴퓨터공학적 사고와 연결함. [평가] 수학, 물리, 정보 교과를 연결해 진로 방향을 구체화하는 능력이 우수함.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "사회",
+    "title": "파이낸스경영 — 감가상각·지출 분석과 회계 기준 비교",
+    "source": "인하대 2027 학종가이드북 p.32",
+    "text": "[호기심] 수학Ⅱ에서 함수의 극한 단원과 감가상각 개념을 연결하여 시간에 따른 자산 가치 변화를 적분으로 분석함. [탐구] 확률과 통계에서는 학급 친구들의 한 달 지출액을 주제로 통계 진로 보고서를 작성함. [심화탐구] 경제 기사 읽기를 지속하며 국내외 경제 상황을 탐구하고, 중소기업과 대기업의 회계 기준을 비교 분석하여 회계 기준의 사회적 역할과 윤리성을 성찰함. [탐구] 학생들의 경제적 판단과 행동 양상을 분석하기 위한 사회 실험을 수행하고 경제적 요소가 도덕적 판단에 미치는 상관관계를 논리적으로 해석함. [평가] 경영·회계 분야의 문제를 수학적 분석과 사회적 해석으로 확장한 점이 돋보임.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "정보",
+    "title": "전기전자공학 — 트랜지스터 증폭 원리와 논리 회로 탐구",
+    "source": "인하대 2027 학종가이드북 p.38",
+    "text": "[수업] 물리학Ⅱ에서 트랜지스터의 장벽 전위차와 바이어스 전압을 학습하며 장벽 전위가 상황과 요인에 따라 달라질 수 있는지 의문을 가짐. [탐구] 과거에 진행했던 트랜지스터 증폭 작용 실험을 돌아보고 부족한 개념을 보완하기 위해 증폭 작용을 자기주도적으로 심화 학습함. [심화탐구] 동아리에서는 논리 회로 실험을 바탕으로 트랜지스터의 스위칭 작용과 OR 게이트 작동 방식을 분석하고 회로 구성 과정의 문제를 해결함. [탐구] 진로활동에서는 바이어스 전압, 전류 증폭률, 회로 설계 자료를 참고해 전자회로 내 증폭 원리를 조건별로 비교 분석함. [평가] 교과 개념, 실험, 동아리 활동, 개별 연구과제가 자연스럽게 연결된 사례임.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "사회",
+    "title": "미디어커뮤니케이션 — 숏폼 콘텐츠와 전자 판옵티콘 분석",
+    "source": "인하대 2027 학종가이드북 p.39",
+    "text": "[수업] 생활과 윤리에서 숏폼 콘텐츠의 무한 스크롤 기능을 전자 판옵티콘과 연관지어 심화탐구함. [호기심] 개인의 사용 습관만이 아니라 무한 스크롤이라는 기술 구조 자체에 문제가 있을 수 있다고 보고, 기술의 가치중립성과 윤리적 성찰의 필요성을 연결함. [탐구] 동아리활동에서는 짧고 자극적인 숏폼 콘텐츠가 인간 네트워크와 사회적 상호작용 구조에 미치는 영향을 분석함. [심화탐구] 콘멜레온 현상, 동종 선호, 정보 외부효과 개념을 활용하여 변화하는 미디어 환경을 해석함. [평가] 미디어 현상을 윤리, 기술 구조, 사회 네트워크 관점에서 통합적으로 분석한 점이 우수함.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "과학",
+    "title": "화학Ⅰ — 실험 수업 총괄과 협력적 실험 운영",
+    "source": "인하대 2027 학종가이드북 p.41",
+    "text": "[수업] 화학Ⅰ 실험 수업에서 총괄 진행 역할을 맡아 수업을 함께 진행하는 친구들 사이의 역할을 적절하게 조율함. [탐구] 실험 절차가 원활히 이루어지도록 친구들의 참여 상태를 살피고, 모두가 적극적인 태도로 실험에 참여할 수 있도록 유도함. [평가] 실험 과정에서 꼼꼼하게 순회 지도하며 도움을 제공한 점에서 과학적 사고력, 의사소통 능력, 협력적 태도가 돋보임. [성장] 교과 활동 안에서 협업의 기준과 역할 조정의 중요성을 경험한 사례임.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "과학",
+    "title": "신소재공학 — 보온병 내부 커버 소재 탐구",
+    "source": "숭실대 2027 학종가이드북 p.23",
+    "text": "[호기심] 보온병 내부를 씻어도 잔여물이 남고 건조가 잘 되지 않아 미생물이 번식하기 쉬운 문제를 발견함. [탐구] 보온병의 특성을 고려해 열에 강하고 유연하며 인체에 무해한 소재를 탐색하고, 팀원들과 사용 방법을 논의하며 시뮬레이션을 진행함. [심화탐구] 통합과학에서 TPE 소재를 활용한 아이디어를 TPU와 TPEE로 확장하여 실험 대상을 넓히고, 화학Ⅰ에서 학습한 완충용액의 성질을 활용해 표준 용액을 만들어 보완 실험을 진행함. [평가] TPEE가 위생성과 안정성 측면에서 더 적합하다는 결론에 도달하며 학습한 이론과 실험을 유기적으로 연결한 점이 우수함.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "정보",
+    "title": "글로벌미디어 — 게임 개발과 알고리즘 탐구",
+    "source": "숭실대 2027 학종가이드북 p.29",
+    "text": "[호기심] 영상, 영화, 음악 등 예술 분야와 게임 개발 분야를 함께 탐색하며 두 영역을 연관지어 진로를 구체화함. [탐구] 메타버스 플랫폼의 맵을 직접 제작하고 스크립트 코딩 과정에서 발생한 어려움을 팀원들과 논의하며 해결함. [심화탐구] OTT 추천 알고리즘인 협업 필터링을 분석하고, 게임 엔진을 활용한 제작 활동 중 게임에 쓰이는 알고리즘의 작동 원리와 적용 방식을 조사함. [탐구] 영화 리뷰 텍스트의 감정을 분석해 장르를 구분하는 프로그램과 코사인 유사도를 이용한 음악 표절 유무 탐색 활동을 수행함. [평가] 교과 이론을 진로인 게임·미디어 개발에 적용하며 탐구 시야를 넓힌 점이 돋보임.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "국어",
+    "title": "국어국문학 — 모더니즘 문학 비교와 동화 콘텐츠 제작",
+    "source": "숭실대 2027 학종가이드북 p.30",
+    "text": "[수업] 독서, 문학, 한문, 문학과 매체, 언어와 매체 등 전공 관련 과목을 적극적으로 이수하며 국어국문학 분야에 대한 학업 기반을 다짐. [탐구] 교내 도서관의 경쟁력 확보와 독서 관심 유도를 위해 북크닉과 세계 책의 날 행사를 주도적으로 기획·운영함. [심화탐구] 한국 모더니즘 문학을 중국과 일본의 동시기 모더니즘 문학과 비교·분석하고 결과물을 책자로 제작함. [탐구] 문학과 매체에서는 동화 창작 활동에 참여하여 주제 선정부터 서사 구성까지 전 과정을 주도적으로 기획하고 영상 콘텐츠로 제작해 학우들과 공유함. [평가] 문학 연구, 창작, 매체 생산을 연결한 자기주도적 기획 역량이 탁월함.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "정보",
+    "title": "벤처중소기업 — 크라우드 펀딩과 감성 분석 모델 탐구",
+    "source": "숭실대 2027 학종가이드북 p.31",
+    "text": "[호기심] 스타트업 기업에 대한 개인 투자자의 투자 방법으로 크라우드 펀딩 방식에 관심을 갖고 조사하여 발표함. [탐구] 벤처기업 가치평가에서 발생하는 불확실성과 정형·비정형 정보의 통합 가능성에 주목하여 감성 분석을 연계한 통합 분석 모델을 탐구함. [심화탐구] 교내 모의 창업 프로젝트에서 증권형 크라우드 펀딩을 통한 투자 중개 플랫폼을 창업하고, 이를 미디어 펀딩 모델로 발전시켜 MVP로 구현함. [평가] 전년도 활동 성과를 일회성으로 끝내지 않고 창업 모델과 데이터 분석으로 심화·발전시킨 점이 우수함.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "사회",
+    "title": "사회학 — 사회 이슈 동아리 기획과 공동체 리더십",
+    "source": "국민대 2027 학생부위주전형 가이드북 p.13",
+    "text": "[수업] 전공 성적은 다소 부족한 부분이 있었으나 바른 태도와 열정적인 참여로 교사들에게 긍정적인 평가를 받음. [호기심] 사회학에 대한 관심을 바탕으로 사회 이슈 동아리를 기획하고 홍보하여 부원을 모집하는 등 진로 탐색에 적극적으로 참여함. [탐구] 학업 성취와 수업 태도가 우수하고, 과제 수행에 성실히 임하며 높은 지적 탐구심을 바탕으로 주저 없이 질문하는 태도를 보임. [평가] 학급자치부회장으로서 학급 질서를 유지하고 단체 활동을 효율적으로 이끌며 다양한 의견을 조율해 모두가 만족할 수 있는 결과를 도출함. [성장] 탐구심, 협업, 리더십, 봉사정신이 고르게 드러나는 사회계열 사례임.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "과학",
+    "title": "융합바이오공학 — 바이오계열 주제의 장기적 탐구",
+    "source": "국민대 2027 학생부위주전형 가이드북 p.15",
+    "text": "[수업] 전공 관련 과목을 다수 이수하고 성취도 또한 준수하며 진로 확장을 위한 노력이 관찰됨. [호기심] 1학년부터 바이오생명, 에너지, 바이오기술 등 바이오계열 주제에 관심을 갖고 꾸준히 탐구함. [탐구] 과학 과목뿐 아니라 수학 과목에서도 진로와 연계하여 역량을 키우려는 모습을 보였으며, 학습한 내용을 발표하고 원리를 이해하려는 태도가 두드러짐. [심화탐구] 질환, 치료제, 생명·화학 분야에 대한 관심을 바탕으로 다양한 교과와 활동을 연결함. [평가] 학업 성취도가 아주 높은 사례만이 아니더라도 진로에 대한 계획과 실천을 꾸준히 이어가면 의미 있는 진로역량으로 평가될 수 있음을 보여줌.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "수학",
+    "title": "수학Ⅱ·영어Ⅱ — 수학적 개념과 사회 문제 연결",
+    "source": "한양대 ERICA 2027 학종가이드북 p.23",
+    "text": "[수업] 수학Ⅱ에서 무리함수와 유리함수의 그래프를 논리적으로 이해하고, 주어진 문제의 극한을 다양한 관점에서 해석하려는 노력을 보임. [탐구] 등비수열을 활용해 사회 현상과 조건을 수학적으로 해석하는 문제를 해결하고, 정리와 평균값 정리의 증명 과정을 서술하며 수학적 사고력을 확장함. [호기심] 영어Ⅱ에서는 바이러스성 전염과 행동성 전염 사이의 유사성과 차이점을 이해하고, 사회 문제 해결에 필요한 의문과 보완점을 제시함. [평가] 수학 개념을 형식적 풀이에 머무르게 하지 않고 사회적 현상과 연결해 설명하려는 태도가 돋보임.",
+    "sourceType": "가이드북"
+  },
+  {
+    "category": "정보",
+    "title": "컴퓨터학부 — 서버 안정성과 빅데이터·AI 윤리 탐구",
+    "source": "한양대 ERICA 2027 학종가이드북 p.25",
+    "text": "[호기심] 수학Ⅰ에서 무한수열 단원을 학습한 뒤 코딩과 서버 구조에 관심을 갖고, 웹사이트 접속자 수에 따른 서버 안정도를 수치화하는 주제로 보고서를 작성함. [탐구] 정수와 조건이 주어진 수열의 합을 구하는 문항을 만들어 다양한 해결 전략을 작성하고 이를 발표함. [수업] 통합과학에서는 반도체의 구조와 원리를 학습하고 4차 산업혁명 기술과의 관계를 분석했으며, 인공지능과 인간 지능의 공통점과 차이를 설명함. [심화탐구] 정보 수업에서는 빅데이터가 어떻게 수집·분석·사용되는지 조사하고, 인공지능의 역할과 일자리, 윤리적 영향까지 확장하여 성찰함. [평가] 수학, 과학, 정보 교과를 컴퓨터전공 관심사와 연결해 사고를 확장한 사례임.",
+    "sourceType": "가이드북"
   }
 ];
-const ORDER = ["탐구활동 가이드", "국어", "영어", "수학", "과학", "사회", "동아리"];
+const ORDER = ["탐구활동 가이드", "국어", "영어", "수학", "과학", "사회", "정보", "동아리"];
 let current = '탐구활동 가이드';
 
 const GUIDE_STEPS = [
