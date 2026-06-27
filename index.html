@@ -1001,6 +1001,32 @@ h1{
   .frame-table td:nth-child(3){width:48% !important;}
 }
 
+
+
+/* 모바일 링크 클릭 안정화: 제목/버튼 겹침 방지 + 터치 영역 확보 */
+.mobile-guide-report-btn,
+.heading-report-btn,
+.report-link-btn{
+  position:relative !important;
+  z-index:80 !important;
+  pointer-events:auto !important;
+  cursor:pointer !important;
+  touch-action:manipulation !important;
+  -webkit-tap-highlight-color:rgba(18,43,73,.18);
+}
+.guide-title h2{
+  pointer-events:none !important;
+}
+@media (max-width:560px){
+  .guide-title{
+    position:relative !important;
+    z-index:30 !important;
+  }
+  .mobile-guide-report-btn{
+    min-height:30px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1968,6 +1994,20 @@ function renderContent() {
   const content = document.getElementById('content');
   content.innerHTML = current === '탐구활동 가이드' ? renderGuide() : renderExamples();
 }
+
+
+
+// 모바일 브라우저/인앱 브라우저에서 target="_blank"가 막히는 경우를 대비한 링크 이동 보강
+const REPORT_GUIDE_URL = 'https://chatgpt.com/g/g-69871b7573e88191bf94d307e973a0ac-gonghaggyeyeol-tamgubogoseo-gaideu-songdoisaemrobos';
+document.addEventListener('click', function(event){
+  const link = event.target.closest('.mobile-guide-report-btn, .heading-report-btn, .report-link-btn');
+  if(!link) return;
+  event.preventDefault();
+  const opened = window.open(REPORT_GUIDE_URL, '_blank', 'noopener,noreferrer');
+  if(!opened){
+    window.location.href = REPORT_GUIDE_URL;
+  }
+});
 
 renderTabs();
 renderContent();
