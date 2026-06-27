@@ -88,6 +88,9 @@ main{width:min(calc(100% - var(--page-gap) * 2),var(--page-max));max-width:none;
 }
 .guide-title{display:flex;gap:10px;align-items:center;margin:0 0 14px}
 
+.mobile-guide-report-btn{display:none;align-items:center;justify-content:center;text-decoration:none;background:var(--navy);color:#fff;border:1px solid var(--navy);border-radius:999px;padding:7px 11px;font-size:12px;font-weight:900;line-height:1.12;letter-spacing:-.045em;box-shadow:0 6px 14px rgba(18,43,73,.14);white-space:nowrap;flex:0 0 auto}
+.mobile-guide-report-btn:hover{transform:translateY(-1px)}
+
 .guide-block{border:1px solid var(--line);border-radius:22px;padding:14px;background:linear-gradient(180deg,#fff 0%,#f9fbff 100%)}
 .guide-block + .guide-block{margin-top:12px}
 .block-heading{display:flex;align-items:center;gap:10px;margin:0 0 10px;flex-wrap:wrap;padding:8px 12px;border:1px solid #9fb9de;border-radius:15px;background:linear-gradient(180deg,#d6e6fb 0%,#c3d9f6 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.55)}
@@ -179,7 +182,8 @@ footer{
 }
 @media (max-width:980px){
   :root{--page-gap:18px}
-  .flow-row,.manual-row{grid-template-columns:1fr}
+  .flow-row{grid-template-columns:1fr;gap:8px}
+  .manual-row{grid-template-columns:1fr}
   .flow-card{min-height:auto;height:auto;text-align:left;align-items:flex-start;padding:10px 12px;display:grid;grid-template-columns:30px 1fr;gap:2px 9px}
   .flow-card::after,.manual-card::after{display:none}
     .flow-no{grid-row:1 / span 2;margin:0;width:24px;height:24px;font-size:12px}
@@ -271,6 +275,11 @@ footer{
   .tab-full{display:none}
   .tab-short{display:inline}
   .guide-hero{padding:0}
+  .guide-title{gap:8px;margin:0 0 10px}
+  .guide-title h2{font-size:20px;line-height:1.15;white-space:nowrap}
+  .mobile-guide-report-btn{display:inline-flex;margin-left:auto;font-size:10.5px;padding:6px 8px}
+  .flow-heading .heading-report-btn{display:none}
+  .flow-heading h3{overflow:visible;text-overflow:clip}
   .guide-block{padding:10px}
 
   .report-link-wrap{margin-top:9px}
@@ -384,12 +393,12 @@ footer{
   .type-check-table .type-title::before{display:none}
   .type-check-table td:nth-child(3){
     grid-column:1 / -1;
-    padding-top:8px;
+    padding-top:7px;
     border-top:1px solid #eef2f7;
     color:#34445b;
     font-size:13px;
   }
-  .type-check-table td:nth-child(3)::before{content:"설명"}
+  .type-check-table td:nth-child(3)::before{display:none;content:""}
   .type-check-table .type-note-cell{
     grid-column:1 / -1;
     margin-top:2px;
@@ -402,7 +411,7 @@ footer{
     line-height:1.45;
     font-weight:900;
   }
-  .type-check-table .type-note-cell::before{content:"점검"}
+  .type-check-table .type-note-cell::before{display:none;content:""}
   .type-check-table tr:nth-child(1) .type-note-cell,
   .type-check-table tr:nth-child(2) .type-note-cell{
     background:#f0f6ff;
@@ -434,6 +443,8 @@ footer{
 
 
 @media (max-width:380px){
+  .mobile-guide-report-btn{font-size:9.5px;padding:5px 6px;letter-spacing:-.07em}
+  .guide-title h2{font-size:18px}
   header{padding:0 14px;min-height:72px;border-radius:20px}
   h1{font-size:clamp(17px,5vw,20px);letter-spacing:-.08em}
   .tab-wrap{padding:7px}
@@ -1360,7 +1371,7 @@ function selfEvalTable() {
 function renderGuide() {
   return `
     <section class="guide-hero">
-      <div class="guide-title"><span class="guide-badge">✓</span><h2>탐구활동 가이드</h2></div>
+      <div class="guide-title"><span class="guide-badge">✓</span><h2>탐구활동 가이드</h2><a class="mobile-guide-report-btn" href="https://chatgpt.com/g/g-69871b7573e88191bf94d307e973a0ac-gonghaggyeyeol-tamgubogoseo-gaideu-songdoisaemrobos" target="_blank" rel="noopener noreferrer">탐구보고서 작성하러 가기</a></div>
 
       <div class="guide-block">
         <div class="block-heading flow-heading"><span class="pill">탐구 흐름</span><h3>탐구 주제를 확장하는 5단계 흐름</h3><a class="heading-report-btn" href="https://chatgpt.com/g/g-69871b7573e88191bf94d307e973a0ac-gonghaggyeyeol-tamgubogoseo-gaideu-songdoisaemrobos" target="_blank" rel="noopener noreferrer">탐구보고서 작성하러 가기</a></div>
