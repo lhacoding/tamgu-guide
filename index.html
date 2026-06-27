@@ -384,12 +384,12 @@ footer{
   .type-check-table .type-title::before{display:none}
   .type-check-table td:nth-child(3){
     grid-column:1 / -1;
-    padding-top:8px;
+    padding-top:7px;
     border-top:1px solid #eef2f7;
     color:#34445b;
     font-size:13px;
   }
-  .type-check-table td:nth-child(3)::before{content:"설명"}
+  .type-check-table td:nth-child(3)::before{display:none;content:""}
   .type-check-table .type-note-cell{
     grid-column:1 / -1;
     margin-top:2px;
@@ -402,7 +402,7 @@ footer{
     line-height:1.45;
     font-weight:900;
   }
-  .type-check-table .type-note-cell::before{content:"점검"}
+  .type-check-table .type-note-cell::before{display:none;content:""}
   .type-check-table tr:nth-child(1) .type-note-cell,
   .type-check-table tr:nth-child(2) .type-note-cell{
     background:#f0f6ff;
