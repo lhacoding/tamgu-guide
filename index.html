@@ -1932,10 +1932,10 @@ function selfEvalTable() {
 function renderGuide() {
   return `
     <section class="guide-hero">
-      <div class="guide-title"><span class="guide-badge">✓</span><h2>탐구활동 가이드</h2><a class="mobile-guide-report-btn" href="https://chatgpt.com/g/g-69871b7573e88191bf94d307e973a0ac-gonghaggyeyeol-tamgubogoseo-gaideu-songdoisaemrobos" target="_blank" rel="noopener noreferrer">탐구보고서 작성하러 가기</a></div>
+      <div class="guide-title"><span class="guide-badge">✓</span><h2>탐구활동 가이드</h2><a class="mobile-guide-report-btn" href="https://chatgpt.com/g/g-69871b7573e88191bf94d307e973a0ac-gonghaggyeyeol-tamgubogoseo-gaideu-songdoisaemrobos" target="_blank" rel="noopener">탐구보고서 작성하러 가기</a></div>
 
       <div class="guide-block">
-        <div class="block-heading flow-heading"><span class="pill">탐구흐름</span><h3>탐구 주제를 확장하는 5단계 흐름</h3><a class="heading-report-btn" href="https://chatgpt.com/g/g-69871b7573e88191bf94d307e973a0ac-gonghaggyeyeol-tamgubogoseo-gaideu-songdoisaemrobos" target="_blank" rel="noopener noreferrer">탐구보고서 작성하러 가기</a></div>
+        <div class="block-heading flow-heading"><span class="pill">탐구흐름</span><h3>탐구 주제를 확장하는 5단계 흐름</h3><a class="heading-report-btn" href="https://chatgpt.com/g/g-69871b7573e88191bf94d307e973a0ac-gonghaggyeyeol-tamgubogoseo-gaideu-songdoisaemrobos" target="_blank" rel="noopener">탐구보고서 작성하러 가기</a></div>
         <div class="flow-row">
           ${GUIDE_STEPS.map(step => `
             <article class="flow-card">
@@ -1997,17 +1997,22 @@ function renderContent() {
 
 
 
-// 모바일 브라우저/인앱 브라우저에서 target="_blank"가 막히는 경우를 대비한 링크 이동 보강
+// 탐구보고서 GPT 링크 이동 보강
+// 모바일에서는 새 창 차단/앱 내 브라우저 문제를 줄이기 위해 현재 창으로 이동하고,
+// 컴퓨터 화면에서는 새 창으로 열리도록 target만 조정합니다. 기본 a 링크 이동은 막지 않습니다.
 const REPORT_GUIDE_URL = 'https://chatgpt.com/g/g-69871b7573e88191bf94d307e973a0ac-gonghaggyeyeol-tamgubogoseo-gaideu-songdoisaemrobos';
 document.addEventListener('click', function(event){
   const link = event.target.closest('.mobile-guide-report-btn, .heading-report-btn, .report-link-btn');
   if(!link) return;
-  event.preventDefault();
-  const opened = window.open(REPORT_GUIDE_URL, '_blank', 'noopener,noreferrer');
-  if(!opened){
-    window.location.href = REPORT_GUIDE_URL;
+  link.href = REPORT_GUIDE_URL;
+  if (window.matchMedia('(max-width: 820px)').matches) {
+    link.removeAttribute('target');
+    link.removeAttribute('rel');
+  } else {
+    link.setAttribute('target', '_blank');
+    link.setAttribute('rel', 'noopener');
   }
-});
+}, true);
 
 renderTabs();
 renderContent();
