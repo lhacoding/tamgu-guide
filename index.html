@@ -1186,13 +1186,15 @@ header.site-hero h1 {
 
 
 <style id="vmark-size-only-final-fix">
-/* FINAL FIX: 샘플처럼 제목 글자 높이에 맞게 원형 배지 크기 고정 */
-.guide-title{
+/* FINAL FIX: 가이드/과목 제목 앞 원형 배지 크기를 모두 동일하게 축소 */
+.guide-title,
+.section-title{
   align-items:center !important;
   gap:10px !important;
 }
 
-.guide-title .guide-badge{
+.guide-title .guide-badge,
+.section-title .section-badge{
   width:32px !important;
   height:32px !important;
   flex:0 0 32px !important;
@@ -1209,15 +1211,19 @@ header.site-hero h1 {
   margin-right:0 !important;
 }
 
-.guide-title h2{
+.guide-title h2,
+.section-title h2{
   line-height:1.1 !important;
 }
 
 @media (max-width:560px){
-  .guide-title{
+  .guide-title,
+  .section-title{
     gap:8px !important;
   }
-  .guide-title .guide-badge{
+
+  .guide-title .guide-badge,
+  .section-title .section-badge{
     width:26px !important;
     height:26px !important;
     flex-basis:26px !important;
@@ -1226,10 +1232,13 @@ header.site-hero h1 {
 }
 
 @media (max-width:380px){
-  .guide-title{
+  .guide-title,
+  .section-title{
     gap:7px !important;
   }
-  .guide-title .guide-badge{
+
+  .guide-title .guide-badge,
+  .section-title .section-badge{
     width:24px !important;
     height:24px !important;
     flex-basis:24px !important;
@@ -2301,7 +2310,7 @@ function renderExamples() {
       <div class="card-body">${highlightTags(item.text)}</div>
     </article>
   `).join('');
-  return `<div class="section-head"><div class="section-title"><span class="section-badge">✓</span><h2>${escapeHtml(current)} 세특 사례</h2></div><p class="section-meta">${rows.length}개 사례</p></div><div class="cards">${cards}</div>`;
+  return `<div class="section-head"><div class="section-title"><span class="section-badge">✓</span><h2>${escapeHtml(current)} 세특 사례</h2></div></div><div class="cards">${cards}</div>`;
 }
 
 function renderContent() {
