@@ -1027,10 +1027,275 @@ h1{
   }
 }
 
+
+
+/* =========================================================
+   FINAL FIX 2026-07-05
+   1) index 제목 박스: 기준 파일의 통일 제목 디자인 적용
+   2) 탐구보고서 작성 버튼 링크 갱신
+   3) '탐구활동 가이드' 앞 ✓ 표시는 기존 모양을 유지하고 크기만 축소
+   ========================================================= */
+header.site-hero {
+  position: relative !important;
+  overflow: hidden !important;
+  display: block !important;
+  width: min(1180px, calc(100% - 24px)) !important;
+  margin: 16px auto 12px !important;
+  padding: 24px 28px 29px !important;
+  color: #ffffff !important;
+  border-radius: 22px !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background:
+    radial-gradient(circle at 86% 28%, rgba(80, 205, 196, 0.20) 0%, rgba(80, 205, 196, 0.08) 24%, transparent 46%),
+    linear-gradient(135deg, #161d3d 0%, #24325c 55%, #3d4f74 100%) !important;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.14) !important;
+  isolation: isolate !important;
+  min-height: auto !important;
+  align-items: initial !important;
+}
+
+header.site-hero::before {
+  content: "" !important;
+  position: absolute !important;
+  right: -12% !important;
+  top: -55% !important;
+  width: 48% !important;
+  height: 170% !important;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 62%) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+header.site-hero::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 28px !important;
+  right: 28px !important;
+  bottom: 16px !important;
+  height: 2px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, rgba(80, 205, 196, 0.96) 0%, rgba(80, 205, 196, 0.92) 18%, rgba(80, 205, 196, 0.72) 46%, rgba(80, 205, 196, 0.36) 68%, rgba(80, 205, 196, 0.12) 84%, rgba(80, 205, 196, 0.02) 100%) !important;
+  box-shadow: 0 0 10px rgba(80, 205, 196, 0.18) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+  display: block !important;
+}
+
+header.site-hero .header-inner,
+header.site-hero h1 {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+header.site-hero .header-inner {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+header.site-hero h1 {
+  margin: 0 !important;
+  max-width: 980px !important;
+  color: #ffffff !important;
+  font-size: clamp(28px, 3.6vw, 42px) !important;
+  line-height: 1.08 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.06em !important;
+  text-shadow: none !important;
+  white-space: normal !important;
+  word-break: keep-all !important;
+}
+
+.guide-title .guide-badge {
+  width: auto !important;
+  height: auto !important;
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  color: var(--navy) !important;
+  box-shadow: none !important;
+  font-size: inherit !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  margin-right: 2px !important;
+}
+
+.guide-title h2 {
+  font-size: var(--fs-section-title) !important;
+}
+
+.guide-title .guide-badge {
+  /* ✓ 모양은 그대로 두고, 제목 글자보다 살짝 작게만 조정 */
+  font-size: clamp(15px, 2vw, 20px) !important;
+}
+
+@media (max-width: 900px) {
+  header.site-hero {
+    width: min(100% - 18px, 1180px) !important;
+    margin: 10px auto 10px !important;
+    padding: 22px 20px 27px !important;
+    border-radius: 20px !important;
+  }
+  header.site-hero::before {
+    right: -26% !important;
+    width: 64% !important;
+  }
+  header.site-hero::after {
+    left: 20px !important;
+    right: 20px !important;
+    bottom: 14px !important;
+  }
+  header.site-hero h1 {
+    font-size: clamp(25px, 6vw, 34px) !important;
+    line-height: 1.12 !important;
+  }
+}
+
+@media (max-width: 560px) {
+  header.site-hero {
+    padding: 20px 18px 25px !important;
+    border-radius: 18px !important;
+  }
+  header.site-hero h1 {
+    font-size: clamp(23px, 7.2vw, 31px) !important;
+  }
+  .guide-title h2 {
+    font-size: clamp(16px, 4.4vw, 20px) !important;
+  }
+  .guide-title .guide-badge {
+    font-size: clamp(13px, 3.4vw, 16px) !important;
+  }
+}
+
+@media (max-width: 380px) {
+  header.site-hero h1 {
+    font-size: clamp(21px, 6.5vw, 26px) !important;
+  }
+  .guide-title h2 {
+    font-size: clamp(15px, 4vw, 18px) !important;
+  }
+  .guide-title .guide-badge {
+    font-size: clamp(12px, 3.2vw, 15px) !important;
+  }
+}
+
 </style>
+
+
+<style id="vmark-size-only-final-fix">
+/* FINAL FIX: 샘플처럼 제목 글자 높이에 맞게 원형 배지 크기 고정 */
+.guide-title{
+  align-items:center !important;
+  gap:10px !important;
+}
+
+.guide-title .guide-badge{
+  width:32px !important;
+  height:32px !important;
+  flex:0 0 32px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border-radius:50% !important;
+  background:var(--navy) !important;
+  color:#ffffff !important;
+  box-shadow:none !important;
+  font-size:19px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  margin-right:0 !important;
+}
+
+.guide-title h2{
+  line-height:1.1 !important;
+}
+
+@media (max-width:560px){
+  .guide-title{
+    gap:8px !important;
+  }
+  .guide-title .guide-badge{
+    width:26px !important;
+    height:26px !important;
+    flex-basis:26px !important;
+    font-size:15.5px !important;
+  }
+}
+
+@media (max-width:380px){
+  .guide-title{
+    gap:7px !important;
+  }
+  .guide-title .guide-badge{
+    width:24px !important;
+    height:24px !important;
+    flex-basis:24px !important;
+    font-size:14.5px !important;
+  }
+}
+</style>
+
+
+<style id="title-width-fixed-final">
+/* FINAL FIX: 제목 박스·메뉴·본문·푸터의 좌우 폭 기준을 하나로 고정 */
+:root{
+  --page-max:1440px;
+  --page-gap:68px;
+  --top-box-width:min(calc(100% - var(--page-gap) * 2), var(--page-max));
+}
+
+header.site-hero,
+main,
+footer{
+  width:var(--top-box-width) !important;
+  max-width:none !important;
+}
+
+header.site-hero{
+  margin:18px auto 12px !important;
+  padding:24px 36px 29px !important;
+}
+
+header.site-hero::after{
+  left:36px !important;
+  right:36px !important;
+}
+
+@media (max-width:980px){
+  :root{
+    --page-gap:18px;
+  }
+  header.site-hero{
+    margin:10px auto 10px !important;
+    padding:22px 24px 27px !important;
+  }
+  header.site-hero::after{
+    left:24px !important;
+    right:24px !important;
+  }
+}
+
+@media (max-width:560px){
+  :root{
+    --page-gap:12px;
+  }
+  header.site-hero{
+    margin:10px auto 10px !important;
+    padding:20px 18px 25px !important;
+  }
+  header.site-hero::after{
+    left:18px !important;
+    right:18px !important;
+  }
+}
+</style>
+
 </head>
 <body>
-<header>
+<header class="site-hero" aria-label="페이지 제목">
   <div class="header-inner">
     <h1>탐구활동 가이드 및 세특 모범사례</h1>
   </div>
@@ -1041,7 +1306,7 @@ h1{
   </nav>
   <section class="content" id="content"></section>
 </main>
-<footer>탐구활동 가이드 및 세특 모범사례 정리 · 송도이샘로봇</footer>
+<footer>탐구활동 가이드 및 세특 모범사례 정리 [ 송도이샘로봇 ]</footer>
 <script>
 const DATA = [
   {
@@ -1981,10 +2246,10 @@ function selfEvalTable() {
 function renderGuide() {
   return `
     <section class="guide-hero">
-      <div class="guide-title"><span class="guide-badge">✓</span><h2>탐구활동 가이드</h2><a class="mobile-guide-report-btn" href="https://chatgpt.com/g/g-69871b7573e88191bf94d307e973a0ac-gonghaggyeyeol-tamgubogoseo-gaideu-songdoisaemrobos" target="_blank" rel="noopener">탐구보고서 작성하러 가기</a></div>
+      <div class="guide-title"><span class="guide-badge">✓</span><h2>탐구활동 가이드</h2><a class="mobile-guide-report-btn" href="https://chatgpt.com/g/g-6a420eac577881918e447f9c50fcc5d6-gonghaggyeyeol-tamgubogoseo-gaideu-gpt" target="_blank" rel="noopener">탐구보고서 작성하러 가기</a></div>
 
       <div class="guide-block">
-        <div class="block-heading flow-heading"><span class="pill">탐구흐름</span><h3>탐구 주제를 확장하는 5단계 흐름</h3><a class="heading-report-btn" href="https://chatgpt.com/g/g-69871b7573e88191bf94d307e973a0ac-gonghaggyeyeol-tamgubogoseo-gaideu-songdoisaemrobos" target="_blank" rel="noopener">탐구보고서 작성하러 가기</a></div>
+        <div class="block-heading flow-heading"><span class="pill">탐구흐름</span><h3>탐구 주제를 확장하는 5단계 흐름</h3><a class="heading-report-btn" href="https://chatgpt.com/g/g-6a420eac577881918e447f9c50fcc5d6-gonghaggyeyeol-tamgubogoseo-gaideu-gpt" target="_blank" rel="noopener">탐구보고서 작성하러 가기</a></div>
         <div class="flow-row">
           ${GUIDE_STEPS.map(step => `
             <article class="flow-card">
@@ -2049,7 +2314,7 @@ function renderContent() {
 // 탐구보고서 GPT 링크 이동 보강
 // 모바일에서는 새 창 차단/앱 내 브라우저 문제를 줄이기 위해 현재 창으로 이동하고,
 // 컴퓨터 화면에서는 새 창으로 열리도록 target만 조정합니다. 기본 a 링크 이동은 막지 않습니다.
-const REPORT_GUIDE_URL = 'https://chatgpt.com/g/g-69871b7573e88191bf94d307e973a0ac-gonghaggyeyeol-tamgubogoseo-gaideu-songdoisaemrobos';
+const REPORT_GUIDE_URL = 'https://chatgpt.com/g/g-6a420eac577881918e447f9c50fcc5d6-gonghaggyeyeol-tamgubogoseo-gaideu-gpt';
 document.addEventListener('click', function(event){
   const link = event.target.closest('.mobile-guide-report-btn, .heading-report-btn, .report-link-btn');
   if(!link) return;
