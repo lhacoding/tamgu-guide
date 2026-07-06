@@ -651,6 +651,28 @@ header.hero p{
 }
 </style>
 
+
+
+<style id="restore-wide-title-width-final">
+/* 제목 박스 폭 복구: R&E 매뉴얼 제목 박스가 본문/메뉴 폭과 같게 보이도록 마지막 레이어에서 재정의 */
+:root{
+  --rne-title-width:min(calc(100% - var(--gap) * 2), var(--max));
+}
+header.hero{
+  width:var(--rne-title-width) !important;
+}
+.page-shell{
+  width:var(--rne-title-width) !important;
+}
+@media (max-width:700px){
+  :root{ --gap:12px; }
+  header.hero,
+  .page-shell{
+    width:min(calc(100% - var(--gap) * 2), var(--max)) !important;
+  }
+}
+</style>
+
 </head>
 <body>
 <header class="hero">
