@@ -463,12 +463,199 @@ td:first-child{font-weight:950;color:#102a43}
 @media (max-width:380px){
   .hero h1{font-size:clamp(21px,6.5vw,26px) !important;}
 }
+
+/* FINAL FIX 2026-07-06: 제목 설명문은 작게, 줄바꿈 없이 한 줄로 표시 */
+.hero p{
+  margin:8px 0 16px !important;
+  max-width:none !important;
+  width:100% !important;
+  color:#edf4ff !important;
+  font-size:clamp(12px,.9vw,14px) !important;
+  line-height:1.35 !important;
+  font-weight:800 !important;
+  letter-spacing:-.045em !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:clip !important;
+}
+@media (max-width:980px){
+  .hero p{font-size:clamp(10.5px,1.55vw,12.5px) !important;letter-spacing:-.06em !important;}
+}
+@media (max-width:560px){
+  .hero p{font-size:clamp(8.5px,2.18vw,10.5px) !important;line-height:1.25 !important;letter-spacing:-.08em !important;}
+}
+@media (max-width:380px){
+  .hero p{font-size:8px !important;letter-spacing:-.09em !important;}
+}
+
+
+
+/* FINAL FIX 2026-07-06: 제목 설명문과 가로선 사이 여백 압축 */
+.hero{
+  padding:24px 36px 20px !important;
+}
+.hero h1{
+  margin:0 0 6px !important;
+}
+.hero p{
+  margin:0 0 8px !important;
+  max-width:none !important;
+  width:100% !important;
+  font-size:clamp(10.5px,.78vw,12.5px) !important;
+  line-height:1.15 !important;
+  letter-spacing:-.065em !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:clip !important;
+}
+.hero::after{
+  bottom:9px !important;
+  height:2px !important;
+}
+@media (max-width:980px){
+  .hero{padding:20px 24px 18px !important;}
+  .hero h1{margin-bottom:5px !important;}
+  .hero p{font-size:clamp(9px,1.45vw,11px) !important;margin-bottom:7px !important;}
+  .hero::after{bottom:8px !important;}
+}
+@media (max-width:560px){
+  .hero{padding:18px 18px 17px !important;}
+  .hero p{font-size:clamp(7.5px,2.03vw,9.4px) !important;letter-spacing:-.09em !important;margin-bottom:6px !important;}
+  .hero::after{bottom:7px !important;}
+}
 </style>
+
+
+<style id="match-2028-title-box-final">
+/* =========================================================
+   제목 박스 최종 통일
+   - 업로드한 2028_ad(18).html의 header.site-hero 값과 동일하게 맞춤
+   - 기존 R&E 매뉴얼의 과도한 제목/설명문 축소 규칙을 마지막 레이어에서 덮어씀
+   ========================================================= */
+:root{
+  --rne-title-width:min(1180px, calc(100% - 24px));
+}
+header.hero{
+  position: relative !important;
+  overflow: hidden !important;
+  display: block !important;
+  width: var(--rne-title-width) !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  margin: 16px auto 12px !important;
+  padding: 24px 28px 29px !important;
+  color: #ffffff !important;
+  border-radius: 22px !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background:
+    radial-gradient(circle at 86% 28%, rgba(80, 205, 196, 0.20) 0%, rgba(80, 205, 196, 0.08) 24%, transparent 46%),
+    linear-gradient(135deg, #161d3d 0%, #24325c 55%, #3d4f74 100%) !important;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.14) !important;
+  isolation: isolate !important;
+}
+
+header.hero::before{
+  content: "" !important;
+  position: absolute !important;
+  right: -12% !important;
+  top: -55% !important;
+  width: 48% !important;
+  height: 170% !important;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 62%) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+header.hero::after{
+  content: "" !important;
+  position: absolute !important;
+  left: 28px !important;
+  right: 28px !important;
+  bottom: 16px !important;
+  height: 2px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, rgba(80, 205, 196, 0.96) 0%, rgba(80, 205, 196, 0.92) 18%, rgba(80, 205, 196, 0.72) 46%, rgba(80, 205, 196, 0.36) 68%, rgba(80, 205, 196, 0.12) 84%, rgba(80, 205, 196, 0.02) 100%) !important;
+  box-shadow: 0 0 10px rgba(80, 205, 196, 0.18) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+  display: block !important;
+}
+
+header.hero h1,
+header.hero p{
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+header.hero h1{
+  margin: 0 !important;
+  max-width: 980px !important;
+  color: #ffffff !important;
+  font-size: clamp(28px, 3.6vw, 42px) !important;
+  line-height: 1.08 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.06em !important;
+  text-shadow: none !important;
+  white-space: normal !important;
+  word-break: keep-all !important;
+}
+
+header.hero p{
+  margin: 9px 0 0 !important;
+  max-width: 900px !important;
+  width: auto !important;
+  color: rgba(255, 255, 255, 0.90) !important;
+  font-size: clamp(13px, 1.35vw, 15.5px) !important;
+  line-height: 1.5 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  text-shadow: none !important;
+  white-space: normal !important;
+  word-break: keep-all !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+@media (max-width: 600px){
+  :root{
+    --rne-title-width:min(100% - 18px, 1180px);
+  }
+
+  header.hero{
+    margin: 10px auto 10px !important;
+    padding: 20px 18px 25px !important;
+    border-radius: 18px !important;
+  }
+
+  header.hero::before{
+    right: -30% !important;
+    width: 70% !important;
+  }
+
+  header.hero::after{
+    left: 18px !important;
+    right: 18px !important;
+    bottom: 13px !important;
+  }
+
+  header.hero h1{
+    font-size: clamp(25px, 8vw, 32px) !important;
+    line-height: 1.12 !important;
+  }
+
+  header.hero p{
+    margin-top: 7px !important;
+    font-size: clamp(12.5px, 3.4vw, 14px) !important;
+    line-height: 1.45 !important;
+  }
+}
+</style>
+
 </head>
 <body>
 <header class="hero">
   <h1>과학영재 창의연구 R&amp;E 매뉴얼</h1>
-  <p>연구 문제 발견부터 연구 설계, 실험 수행, 데이터 분석, 결론, 보고서·발표까지 학생이 실제 탐구활동을 진행할 때 바로 확인할 수 있도록 정리한 핵심 가이드입니다.</p>
+  <p>탐구활동 전 과정을 바로 확인하는 R&E 핵심 가이드입니다.</p>
 </header>
 
 <div class="page-shell">
@@ -981,7 +1168,7 @@ td:first-child{font-weight:950;color:#102a43}
   </main>
   <footer class="site-footer">
     <div class="source-line">자료 출처: 과학영재 창의연구 학생 매뉴얼, 부산광역시영재교육진흥원 R&amp;E지원센터 발행</div>
-    <div class="brand-line">R&amp;E 매뉴얼 [ 송도이샘로봇 ]</div>
+    <div class="brand-line">과학영재 창의연구 R&amp;E 매뉴얼 [ 송도이샘로봇 ]</div>
   </footer>
 </div>
 
