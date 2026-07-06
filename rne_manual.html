@@ -1,0 +1,1002 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>과학영재 창의연구 R&E 매뉴얼</title>
+<style>
+:root{
+  --navy:#1f2b49;
+  --navy2:#12203b;
+  --teal:#122b49;
+  --ink:#15233b;
+  --muted:#66758c;
+  --line:#dbe4f0;
+  --soft:#f5f8fd;
+  --card:#ffffff;
+  --shadow:0 18px 45px rgba(18,43,73,.11);
+  --radius:24px;
+  --max:1440px;
+  --gap:40px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:linear-gradient(180deg,#f8fbff 0%,#edf3fb 100%);
+  color:var(--ink);
+  font-family:"Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  line-height:1.7;
+  word-break:keep-all;
+  overflow-wrap:break-word;
+}
+.hero{
+  width:min(calc(100% - var(--gap) * 2),var(--max));
+  margin:20px auto 0;
+  padding:36px 42px 30px;
+  min-height:160px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  flex-direction:column;
+  border-radius:28px;
+  color:#fff;
+  border:1px solid rgba(148,163,210,.65);
+  box-shadow:0 14px 32px rgba(18,43,73,.16), inset 0 1px 0 rgba(255,255,255,.18);
+  background:
+    radial-gradient(circle at 88% 10%,rgba(255,255,255,.16),transparent 32%),
+    linear-gradient(100deg,#1f213f 0%,#232f53 47%,#586983 100%);
+  position:relative;
+  overflow:hidden;
+}
+.hero::after{
+  content:"";
+  position:absolute;
+  left:42px;
+  right:42px;
+  bottom:28px;
+  height:4px;
+  border-radius:999px;
+  background:linear-gradient(90deg,rgba(255,255,255,.68) 0%,rgba(255,255,255,.34) 52%,rgba(255,255,255,.03) 100%);
+}
+.hero h1{
+  margin:0 0 12px;
+  font-size:clamp(36px,4.1vw,62px);
+  line-height:1.05;
+  letter-spacing:-.075em;
+  font-weight:950;
+  text-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.hero p{
+  margin:0 0 22px;
+  max-width:1180px;
+  color:#f2f7ff;
+  font-size:clamp(16px,1.55vw,23px);
+  line-height:1.55;
+  font-weight:850;
+  letter-spacing:-.04em;
+}
+.page-shell{
+  width:min(calc(100% - var(--gap) * 2),var(--max));
+  margin:24px auto 48px;
+}
+.menu-wrap{
+  position:sticky;
+  top:12px;
+  z-index:20;
+  background:rgba(255,255,255,.96);
+  border:1px solid var(--line);
+  border-radius:28px;
+  box-shadow:var(--shadow);
+  padding:18px 20px;
+  backdrop-filter:blur(12px);
+}
+.manual-menu{
+  display:grid;
+  grid-template-columns:repeat(8,minmax(0,1fr));
+  gap:10px;
+}
+.manual-tab{
+  appearance:none;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#f7f9fd;
+  color:#24324a;
+  min-height:58px;
+  padding:10px 8px;
+  font-size:clamp(13px,1vw,17px);
+  font-weight:900;
+  letter-spacing:-.045em;
+  cursor:pointer;
+  transition:.18s;
+  white-space:nowrap;
+}
+.manual-tab:hover{transform:translateY(-1px);border-color:#a9bdd8;background:#fff}
+.manual-tab.active{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 8px 18px rgba(31,43,73,.16)}
+.content-panel{margin-top:18px}
+.manual-section{display:none}
+.manual-section.active{display:block;animation:fadeIn .18s ease-out}
+@keyframes fadeIn{from{opacity:.25;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.section-head{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin:6px 0 16px;
+}
+.section-no{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 48px;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:var(--navy);
+  color:#fff;
+  font-size:18px;
+  font-weight:950;
+  box-shadow:0 10px 22px rgba(18,43,73,.16);
+}
+.section-head h2{margin:0;font-size:clamp(26px,2vw,34px);line-height:1.18;letter-spacing:-.055em;font-weight:950;color:#10233d}
+.section-lead{margin:4px 0 0;color:var(--muted);font-size:15px;font-weight:800;line-height:1.55;letter-spacing:-.025em}
+.summary-strip{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:14px;
+}
+.summary-box{
+  border:1px solid #cfe0f4;
+  background:#fff;
+  border-radius:18px;
+  padding:16px 17px;
+  box-shadow:0 10px 24px rgba(18,43,73,.06);
+}
+.summary-box b{display:block;color:#0f2a49;font-size:16px;line-height:1.3;margin-bottom:6px;font-weight:950;letter-spacing:-.035em}
+.summary-box p{margin:0;color:#334155;font-size:14px;line-height:1.58;font-weight:750}
+.block{
+  background:linear-gradient(180deg,#fff 0%,#fbfdff 100%);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:20px;
+  box-shadow:0 12px 30px rgba(18,43,73,.07);
+  margin-bottom:14px;
+}
+.block-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-height:52px;
+  padding:10px 14px;
+  margin:0 0 14px;
+  border:1px solid #9fb9de;
+  border-radius:17px;
+  background:linear-gradient(180deg,#d9e9fb 0%,#c4dcf7 100%);
+  color:#102a43;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.58);
+}
+.block-title .pill{display:inline-flex;align-items:center;justify-content:center;padding:6px 12px;border-radius:999px;background:#fff;border:1px solid #8eaed8;font-size:13px;font-weight:950;color:#102a43;white-space:nowrap}
+.block-title h3{margin:0;font-size:clamp(19px,1.4vw,23px);line-height:1.2;font-weight:950;letter-spacing:-.045em}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.card{
+  border:1px solid #d9e4f2;
+  border-radius:18px;
+  background:#fff;
+  padding:15px 16px;
+  box-shadow:0 8px 20px rgba(18,43,73,.052);
+}
+.card h4{margin:0 0 8px;color:#102a43;font-size:16.5px;line-height:1.3;font-weight:950;letter-spacing:-.035em}
+.card p{margin:0;color:#334155;font-size:14px;line-height:1.65;font-weight:700}
+.card ul{margin:8px 0 0;padding-left:18px;color:#334155;font-size:14px;line-height:1.62;font-weight:700}
+.card li{margin:4px 0}
+.flow-grid{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:10px}
+.flow-step{
+  position:relative;
+  border:1px solid #d9e4f2;
+  border-radius:17px;
+  background:#fff;
+  min-height:128px;
+  padding:12px 9px;
+  text-align:center;
+  box-shadow:0 8px 20px rgba(18,43,73,.052);
+}
+.flow-step::after{content:"›";position:absolute;right:-10px;top:48px;font-size:28px;line-height:1;color:#102a43;font-weight:950;z-index:1}
+.flow-step:last-child::after{display:none}
+.flow-step b{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;margin-bottom:7px;font-weight:950}
+.flow-step strong{display:block;font-size:14px;color:#102a43;line-height:1.25;margin-bottom:5px;font-weight:950;letter-spacing:-.035em}
+.flow-step span{display:block;font-size:12.5px;color:#475569;line-height:1.38;font-weight:700}
+.table-wrap{overflow:auto;border-radius:17px;border:1px solid var(--line);background:#fff}
+table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;font-size:14px;min-width:760px}
+th,td{padding:12px 14px;border-bottom:1px solid #e7eef8;text-align:left;vertical-align:top;line-height:1.55;color:#26364d} 
+tr:last-child td{border-bottom:0}
+th{background:#f0f6ff;color:#102a43;font-weight:950;white-space:nowrap}
+td:first-child{font-weight:950;color:#102a43}
+.note{
+  border:1px solid #bfdbfe;
+  background:#eff6ff;
+  color:#183b63;
+  border-radius:18px;
+  padding:14px 16px;
+  margin-top:12px;
+  font-size:14px;
+  line-height:1.65;
+  font-weight:800;
+}
+.warn{
+  border:1px solid #fed7aa;
+  background:#fff7ed;
+  color:#7c2d12;
+  border-radius:18px;
+  padding:14px 16px;
+  margin-top:12px;
+  font-size:14px;
+  line-height:1.65;
+  font-weight:800;
+}
+.check-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0;padding:0;list-style:none}
+.check-list li{position:relative;border:1px solid #d9e4f2;background:#fff;border-radius:14px;padding:10px 12px 10px 34px;color:#334155;font-size:14px;line-height:1.55;font-weight:750}
+.check-list li::before{content:"✓";position:absolute;left:12px;top:10px;width:16px;height:16px;border-radius:50%;background:#1f2b49;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:950}
+.tag-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.tag{display:inline-flex;align-items:center;border:1px solid #d7e5f7;background:#f8fbff;border-radius:999px;padding:6px 10px;font-size:13px;font-weight:900;color:#26364d;line-height:1.2}
+.site-footer{margin:22px 0 0;text-align:center;font-weight:800}
+.source-line{font-size:12.5px;color:#65758d;line-height:1.5;margin-bottom:4px;word-break:keep-all}
+.brand-line{font-size:14px;color:#1f2b49;font-weight:900;line-height:1.45;word-break:keep-all}
+@media (max-width:1200px){
+  .manual-menu{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .flow-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .flow-step::after{display:none}
+  .summary-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:820px){
+  :root{--gap:16px}
+  .hero{padding:24px 24px 22px;min-height:136px;border-radius:24px}
+  .hero::after{left:24px;right:24px;bottom:22px;height:3px}
+  .hero h1{font-size:clamp(27px,7vw,42px)}
+  .hero p{font-size:15px;margin-bottom:18px}
+  .menu-wrap{position:relative;top:auto;padding:13px;border-radius:23px}
+  .manual-menu{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .manual-tab{min-height:46px;border-radius:15px;font-size:13px;padding:8px 5px}
+  .summary-strip,.grid-2,.grid-3,.grid-4,.check-list{grid-template-columns:1fr}
+  .block{padding:14px;border-radius:20px}
+  .block-title{min-height:44px;padding:8px 10px;gap:7px;flex-wrap:nowrap}
+  .block-title .pill{font-size:11px;padding:5px 8px}
+  .block-title h3{font-size:17px}
+  .section-no{width:38px;height:38px;flex-basis:38px;font-size:15px}
+  .section-head h2{font-size:23px}
+  .section-lead{font-size:13px}
+  .flow-grid{grid-template-columns:1fr;gap:8px}
+  .flow-step{text-align:left;min-height:auto;display:grid;grid-template-columns:34px 1fr;gap:1px 9px;align-items:start;padding:10px 12px}
+  .flow-step b{grid-row:1 / span 2;margin:0;width:28px;height:28px}
+  .flow-step strong{margin:0 0 2px;font-size:14px}
+  .flow-step span{font-size:12.5px}
+  table{min-width:680px;font-size:13px}
+  th,td{padding:10px 11px}
+}
+@media (max-width:420px){
+  :root{--gap:10px}
+  .hero{margin-top:10px;padding:20px 18px 19px;border-radius:22px;min-height:118px}
+  .hero::after{left:18px;right:18px;bottom:18px}
+  .hero h1{font-size:24px;letter-spacing:-.08em}
+  .hero p{font-size:13.2px;line-height:1.5}
+  .page-shell{margin-top:12px}
+  .manual-tab{font-size:11.5px;letter-spacing:-.07em;min-height:42px}
+  .card{padding:12px 13px}
+  .card h4{font-size:15px}
+  .card p,.card ul,.check-list li,.note,.warn{font-size:13px}
+}
+
+
+/* =========================================================
+   FINAL FIX 2026-07-06
+   1) 초록/청록 계열 제거: 진한 파랑 계열로 통일
+   2) 메뉴는 넓은 화면에서 8개 한 줄, 스마트폰 폭에서는 4개씩 2줄
+   3) 원본 사례를 학생용 설명으로 추가
+   ========================================================= */
+:root{--teal:#122b49 !important;}
+.hero::after{
+  background:linear-gradient(90deg,rgba(255,255,255,.68) 0%,rgba(255,255,255,.34) 52%,rgba(255,255,255,.03) 100%) !important;
+  box-shadow:0 0 10px rgba(255,255,255,.12) !important;
+}
+.menu-wrap{
+  padding:12px 14px !important;
+  border-radius:24px !important;
+}
+.manual-menu{
+  display:grid !important;
+  grid-template-columns:repeat(8,minmax(0,1fr)) !important;
+  gap:6px !important;
+  width:100% !important;
+  overflow:visible !important;
+}
+.manual-tab{
+  min-width:0 !important;
+  min-height:48px !important;
+  padding:8px 5px !important;
+  border-radius:16px !important;
+  font-size:clamp(11.5px,.86vw,15px) !important;
+  letter-spacing:-.06em !important;
+  background:#f7f9fd !important;
+  color:#1f2b49 !important;
+}
+.manual-tab.active{
+  background:#1f2b49 !important;
+  color:#fff !important;
+  border-color:#1f2b49 !important;
+}
+.check-list li::before{background:#1f2b49 !important;}
+.block-title{
+  background:linear-gradient(180deg,#dce7f7 0%,#cbdaf0 100%) !important;
+  border-color:#9fb2d1 !important;
+}
+.example-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.example-card{
+  border:1px solid #d6e0ee;
+  border-left:6px solid #1f2b49;
+  background:#fff;
+  border-radius:18px;
+  padding:15px 16px;
+  box-shadow:0 8px 20px rgba(18,43,73,.052);
+}
+.example-card h4{margin:0 0 8px;color:#102a43;font-size:16.5px;line-height:1.3;font-weight:950;letter-spacing:-.035em}
+.example-card p{margin:0;color:#334155;font-size:14px;line-height:1.66;font-weight:700}
+.example-card ul{margin:8px 0 0;padding-left:18px;color:#334155;font-size:14px;line-height:1.62;font-weight:700}
+@media (max-width:1200px){
+  .manual-menu{grid-template-columns:repeat(8,minmax(0,1fr)) !important;gap:5px !important;}
+  .manual-tab{font-size:clamp(10.5px,.98vw,13px) !important;padding-left:3px !important;padding-right:3px !important;}
+}
+@media (max-width:820px){
+  .manual-menu{grid-template-columns:repeat(4,minmax(0,1fr)) !important;gap:5px !important;}
+  .manual-tab{min-height:42px !important;border-radius:14px !important;font-size:clamp(10px,2.55vw,12.2px) !important;padding:7px 2px !important;}
+  .menu-wrap{padding:10px !important;border-radius:20px !important;}
+  .example-grid{grid-template-columns:1fr;}
+}
+@media (max-width:420px){
+  .manual-menu{grid-template-columns:repeat(4,minmax(0,1fr)) !important;gap:4px !important;}
+  .manual-tab{min-height:40px !important;font-size:clamp(9px,2.52vw,10.7px) !important;letter-spacing:-.075em !important;}
+  .example-card{padding:12px 13px;}
+  .example-card h4{font-size:15px;}
+  .example-card p,.example-card ul{font-size:13px;}
+}
+
+
+
+/* FINAL FIX: index 제목 박스와 R&E 매뉴얼 제목 박스 통일, 제목 아래 초록선 복원 */
+:root{
+  --page-max:1440px;
+  --page-gap:68px;
+  --top-box-width:min(calc(100% - var(--page-gap) * 2), var(--page-max));
+}
+.hero,
+.page-shell{
+  width:var(--top-box-width) !important;
+  max-width:none !important;
+}
+.hero{
+  position:relative !important;
+  overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-start !important;
+  justify-content:center !important;
+  margin:18px auto 12px !important;
+  padding:24px 36px 29px !important;
+  min-height:auto !important;
+  color:#fff !important;
+  border-radius:22px !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  background:
+    radial-gradient(circle at 86% 28%, rgba(80,205,196,.20) 0%, rgba(80,205,196,.08) 24%, transparent 46%),
+    linear-gradient(135deg,#161d3d 0%,#24325c 55%,#3d4f74 100%) !important;
+  box-shadow:0 10px 22px rgba(15,23,42,.14) !important;
+  isolation:isolate !important;
+}
+.hero::before{
+  content:"" !important;
+  position:absolute !important;
+  right:-12% !important;
+  top:-55% !important;
+  width:48% !important;
+  height:170% !important;
+  background:radial-gradient(circle,rgba(255,255,255,.08),transparent 62%) !important;
+  pointer-events:none !important;
+  z-index:0 !important;
+}
+.hero::after{
+  content:"" !important;
+  position:absolute !important;
+  left:36px !important;
+  right:36px !important;
+  bottom:16px !important;
+  height:2px !important;
+  border-radius:999px !important;
+  background:linear-gradient(90deg,rgba(80,205,196,.96) 0%,rgba(80,205,196,.92) 18%,rgba(80,205,196,.72) 46%,rgba(80,205,196,.36) 68%,rgba(80,205,196,.12) 84%,rgba(80,205,196,.02) 100%) !important;
+  box-shadow:0 0 10px rgba(80,205,196,.18) !important;
+  pointer-events:none !important;
+  z-index:0 !important;
+  display:block !important;
+}
+.hero h1,
+.hero p{
+  position:relative !important;
+  z-index:1 !important;
+}
+.hero h1{
+  margin:0 !important;
+  max-width:1180px !important;
+  color:#fff !important;
+  font-size:clamp(28px,3.6vw,42px) !important;
+  line-height:1.08 !important;
+  font-weight:900 !important;
+  letter-spacing:-.06em !important;
+  text-shadow:none !important;
+  white-space:normal !important;
+  word-break:keep-all !important;
+}
+.hero p{
+  margin:9px 0 16px !important;
+  max-width:1180px !important;
+  color:#edf4ff !important;
+  font-size:clamp(14px,1.15vw,16px) !important;
+  line-height:1.55 !important;
+  font-weight:800 !important;
+  letter-spacing:-.035em !important;
+}
+.page-shell{margin:14px auto 48px !important;}
+@media (max-width:980px){
+  :root{--page-gap:18px;}
+  .hero{margin:10px auto 10px !important;padding:22px 24px 27px !important;border-radius:20px !important;}
+  .hero::before{right:-26% !important;width:64% !important;}
+  .hero::after{left:24px !important;right:24px !important;bottom:14px !important;}
+  .hero h1{font-size:clamp(25px,6vw,34px) !important;line-height:1.12 !important;}
+  .hero p{font-size:13.5px !important;margin-bottom:15px !important;}
+}
+@media (max-width:560px){
+  :root{--page-gap:12px;}
+  .hero{margin:10px auto 10px !important;padding:20px 18px 25px !important;border-radius:18px !important;}
+  .hero::after{left:18px !important;right:18px !important;}
+  .hero h1{font-size:clamp(23px,7.2vw,31px) !important;}
+  .hero p{font-size:12.6px !important;line-height:1.45 !important;}
+}
+@media (max-width:380px){
+  .hero h1{font-size:clamp(21px,6.5vw,26px) !important;}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <h1>과학영재 창의연구 R&amp;E 매뉴얼</h1>
+  <p>연구 문제 발견부터 연구 설계, 실험 수행, 데이터 분석, 결론, 보고서·발표까지 학생이 실제 탐구활동을 진행할 때 바로 확인할 수 있도록 정리한 핵심 가이드입니다.</p>
+</header>
+
+<div class="page-shell">
+  <div class="menu-wrap" aria-label="R&E 매뉴얼 큰 제목 메뉴">
+    <div class="manual-menu">
+      <button class="manual-tab active" type="button" data-target="foundation">연구의 기초</button>
+      <button class="manual-tab" type="button" data-target="problem">연구 문제 발견</button>
+      <button class="manual-tab" type="button" data-target="design">연구 설계</button>
+      <button class="manual-tab" type="button" data-target="conduct">연구 수행</button>
+      <button class="manual-tab" type="button" data-target="analysis">자료 분석</button>
+      <button class="manual-tab" type="button" data-target="conclusion">결론 도출</button>
+      <button class="manual-tab" type="button" data-target="writing">글쓰기·발표</button>
+      <button class="manual-tab" type="button" data-target="checklist">체크리스트</button>
+    </div>
+  </div>
+
+  <main class="content-panel">
+    <section class="manual-section active" id="foundation">
+      <div class="section-head"><span class="section-no">01</span><div><h2>연구의 기초</h2><p class="section-lead">R&amp;E는 정답을 맞히는 활동이 아니라, 가치 있는 질문을 과학적 방법으로 검증하고 기록하는 탐구 과정입니다.</p></div></div>
+      <div class="summary-strip">
+        <div class="summary-box"><b>연구의 의미</b><p>연구는 하나의 주제에 대해 합리적이고 체계적인 방법으로 자료를 모아 질문에 대한 답이나 문제의 해법을 찾는 과정입니다.</p></div>
+        <div class="summary-box"><b>학생 과제 연구</b><p>교과에서 배운 개념과 원리를 활용해 학생이 스스로 주제를 정하고 방법을 설계하며 결론까지 도출하는 활동입니다.</p></div>
+        <div class="summary-box"><b>핵심 역량</b><p>주제 탐색, 실험 설계, 자료 분석, 보고서 작성, 발표, 협업과 의사소통까지 실제 연구자의 과정을 경험합니다.</p></div>
+        <div class="summary-box"><b>실패의 의미</b><p>예상과 다른 결과도 의미가 있습니다. 실패 원인, 한계, 개선 방향을 기록하면 다음 연구의 출발점이 됩니다.</p></div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">연구흐름</span><h3>R&amp;E 연구 진행 9단계</h3></div>
+        <div class="flow-grid">
+          <div class="flow-step"><b>1</b><strong>주제 탐색</strong><span>교과·생활·진로에서 궁금한 현상 찾기</span></div>
+          <div class="flow-step"><b>2</b><strong>연구 문제 발견</strong><span>탐구 가능한 질문으로 좁히기</span></div>
+          <div class="flow-step"><b>3</b><strong>연구 계획 수립</strong><span>가설, 변인, 방법, 일정 정리</span></div>
+          <div class="flow-step"><b>4</b><strong>지식·기능 습득</strong><span>선행연구, 장비 사용법, 분석법 익히기</span></div>
+          <div class="flow-step"><b>5</b><strong>실험 설계</strong><span>조작·통제·종속변인과 반복 조건 설계</span></div>
+          <div class="flow-step"><b>6</b><strong>실행·결과 정리</strong><span>측정, 기록, 표·그래프 정리</span></div>
+          <div class="flow-step"><b>7</b><strong>보고서 작성</strong><span>문제, 방법, 결과, 해석을 논리적으로 구성</span></div>
+          <div class="flow-step"><b>8</b><strong>연구 발표</strong><span>핵심 결과를 압축해 설명하고 질문 받기</span></div>
+          <div class="flow-step"><b>9</b><strong>평가·개선</strong><span>피드백을 반영해 한계와 후속 연구 정리</span></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">방법</span><h3>귀납적 연구와 가설-연역적 연구</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>구분</th><th>흐름</th><th>학생이 이해할 핵심</th><th>주의할 점</th></tr></thead>
+            <tbody>
+              <tr><td>귀납적 연구</td><td>현상 관찰 → 문제 인식 → 자료 수집 → 자료 해석 → 결론 도출</td><td>여러 관찰과 실험 결과에서 규칙, 경향, 패턴을 발견하는 방식입니다.</td><td>표본이 적거나 조건이 편향되면 일반화가 어렵습니다. 새 사례가 나오면 결론이 바뀔 수 있습니다.</td></tr>
+              <tr><td>가설-연역적 연구</td><td>현상 관찰 → 문제 인식 → 가설 설정 → 탐구 설계 → 탐구 수행 → 자료 해석 → 결론 도출</td><td>먼저 잠정적 설명인 가설을 세운 뒤, 실험 설계로 가설을 검증합니다.</td><td>결과가 가설과 맞더라도 다른 요인 때문에 그런 결과가 나왔을 가능성을 함께 검토해야 합니다.</td></tr>
+              <tr><td>실제 연구</td><td>두 방법이 섞여 사용됨</td><td>관찰 단계에서는 귀납적으로 질문을 만들고, 검증 단계에서는 가설-연역적으로 실험하는 경우가 많습니다.</td><td>연구 문제, 가설, 변인, 자료 해석이 서로 연결되어야 합니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title"><span class="pill">원본 사례</span><h3>연구 방법을 이해하는 과학사 사례</h3></div>
+        <div class="example-grid">
+          <div class="example-card"><h4>보일의 법칙: 관찰 자료에서 규칙 찾기</h4><p>보일은 공기를 압축하면서 압력과 부피의 관계를 측정했고, 여러 측정값을 비교해 압력이 커질수록 부피가 작아지는 규칙을 발견했습니다. 학생 연구에서는 이처럼 여러 조건의 데이터를 모아 일정한 패턴을 찾는 방식이 귀납적 연구에 해당합니다.</p></div>
+          <div class="example-card"><h4>후크의 법칙: 힘과 늘어난 길이 비교</h4><p>후크는 탄성이 있는 물체에 힘을 가하고 늘어난 길이를 측정해 두 값 사이의 비례 관계를 찾았습니다. 이 사례는 ‘조작변인: 가한 힘’, ‘종속변인: 늘어난 길이’처럼 변인을 명확히 정하면 교과 개념도 탐구 주제가 될 수 있음을 보여줍니다.</p></div>
+          <div class="example-card"><h4>케쿨레의 벤젠 구조: 창의적 가설</h4><p>벤젠 구조를 고민하던 케쿨레는 고리 모양 구조라는 가설을 세우고, 이후 실험과 자료를 통해 이를 설명하려 했습니다. 가설-연역적 연구에서는 처음부터 완벽한 답을 아는 것이 아니라, 설명 가능한 가설을 세운 뒤 검증 가능한 증거를 찾습니다.</p></div>
+          <div class="example-card"><h4>DNA 이중 나선: 데이터 기반 가설 검증</h4><p>DNA의 X-선 회절 자료는 구조를 추론하는 핵심 근거가 되었습니다. 중요한 점은 ‘상상’만으로 결론을 낸 것이 아니라, 가설이 맞다면 어떤 데이터 패턴이 나타나야 하는지 예측하고 실제 자료와 비교했다는 점입니다.</p></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">기록</span><h3>연구 노트는 최종 보고서의 원자료</h3></div>
+        <ul class="check-list">
+          <li>연구 문제를 떠올린 순간부터 실험, 데이터, 분석, 회의 내용까지 기록합니다.</li>
+          <li>날짜, 시작·종료 시간, 작성자, 확인자, 실험 장소, 온도·습도 같은 환경 조건을 적습니다.</li>
+          <li>실패한 실험, 이상값, 실수도 지우지 않고 남겨 원인 분석에 활용합니다.</li>
+          <li>수정할 때는 수정액으로 지우지 말고 두 줄을 긋고 수정 내용을 덧붙입니다.</li>
+          <li>나중에 노트만 보고도 같은 실험을 반복할 수 있을 정도로 재료와 절차를 구체화합니다.</li>
+          <li>사진, 그래프, 코드, 측정 파일명, 장비 설정값도 함께 기록합니다.</li>
+        </ul>
+        <div class="note">연구 노트는 예쁘게 꾸미는 노트가 아니라, 연구가 실제로 어떻게 진행되었는지 증명하는 문서입니다. 표절·연구윤리 문제를 설명할 때도 중요한 근거가 됩니다.</div>
+      </div>
+    </section>
+
+    <section class="manual-section" id="problem">
+      <div class="section-head"><span class="section-no">02</span><div><h2>연구 문제의 발견</h2><p class="section-lead">좋은 연구는 거창한 주제보다 ‘내가 실제로 검증할 수 있는 질문’을 정확히 잡는 데서 시작됩니다.</p></div></div>
+      <div class="block">
+        <div class="block-title"><span class="pill">주제</span><h3>좋은 연구 문제의 조건</h3></div>
+        <div class="grid-3">
+          <div class="card"><h4>스스로 답할 수 있는가</h4><p>검색으로 끝나는 질문이 아니라, 실험·조사·측정·분석을 통해 학생이 직접 근거를 만들 수 있어야 합니다.</p></div>
+          <div class="card"><h4>아직 탐구 가치가 있는가</h4><p>이미 완전히 해결된 문제가 아닌지 선행연구를 확인하고, 기존 연구와 다른 관점이나 조건을 찾아야 합니다.</p></div>
+          <div class="card"><h4>현실적으로 가능한가</h4><p>학교 장비, 시간, 예산, 안전 조건 안에서 수행 가능해야 합니다. 너무 큰 주제는 실패 가능성이 높습니다.</p></div>
+          <div class="card"><h4>기간 안에 끝낼 수 있는가</h4><p>1년 또는 수행평가 기간 안에 예비 실험, 본 실험, 분석, 보고서 작성까지 가능한 범위여야 합니다.</p></div>
+          <div class="card"><h4>실생활·교과와 연결되는가</h4><p>교과 개념에서 출발해 생활 속 문제로 확장하면 설득력이 높고, 학생부 탐구 기록으로도 자연스럽습니다.</p></div>
+          <div class="card"><h4>활용 가능성이 있는가</h4><p>문제 해결, 개선 방안, 후속 연구, 진로 연계 등 연구 결과가 어디에 쓰일 수 있는지 설명할 수 있어야 합니다.</p></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">탐색</span><h3>연구 질문을 만드는 방법</h3></div>
+        <ul class="check-list">
+          <li>1~2주 정도 주변 현상과 불편함을 관찰하며 궁금한 점을 계속 기록합니다.</li>
+          <li>교과서 개념을 생활 속 현상으로 바꿔 봅니다. 예: 탄성력, 압력, 빛, 열, 미세먼지, 센서, 알고리즘.</li>
+          <li>처음 질문은 넓게 만들고, 공통 키워드별로 묶어 최종 질문을 좁힙니다.</li>
+          <li>“왜 그럴까?”에서 끝내지 말고 “무엇을 바꾸면 어떤 값이 달라질까?” 형태로 바꿉니다.</li>
+          <li>관찰 가능한 변인, 측정 가능한 결과값, 비교 조건이 들어가도록 질문을 고칩니다.</li>
+          <li>지도교사, 전문가, 선행연구를 통해 고등학생 수준에서 가능한 범위인지 확인합니다.</li>
+        </ul>
+        <div class="note">질문 예시 구조: “○○ 조건을 변화시키면 △△ 결과값은 어떻게 달라지는가?” / “□□ 방법은 기존 방법보다 ○○을 얼마나 개선하는가?”</div>
+      </div>
+
+      <div class="block">
+        <div class="block-title"><span class="pill">원본 사례</span><h3>생활 속 현상을 R&amp;E 주제로 바꾸는 예시</h3></div>
+        <div class="example-grid">
+          <div class="example-card"><h4>라면을 맛있게 끓이는 조건</h4><p>단순히 “라면을 맛있게 끓이는 법”을 묻는 것이 아니라, 찬물에서 시작한 면과 끓는 물에 넣은 면을 비교하고 익힌 면발이 끊어지는 길이를 측정하면 ‘가열 조건에 따른 면의 탄성 변화’라는 연구 문제가 됩니다. 생활 주제라도 측정값이 있으면 과학 탐구가 됩니다.</p></div>
+          <div class="example-card"><h4>걸을 때 머그잔 커피가 쏟아지는 이유</h4><p>일상에서 흔한 현상도 연구 주제가 될 수 있습니다. 컵의 지름, 액체 높이, 걸음 속도, 손의 흔들림 주기를 바꾸어 액체가 넘치는 조건을 비교하면 유체의 진동과 공명, 운동 주기와 연결된 탐구로 확장할 수 있습니다.</p></div>
+          <div class="example-card"><h4>미세먼지 질문의 정교화</h4><ul><li>미세먼지를 더 쉽게 검출할 수 있는가?</li><li>초음파 진동으로 미세먼지를 포집할 수 있는가?</li><li>거르는 방식이 아닌 제거 방식의 마스크를 만들 수 있는가?</li></ul><p>처음에는 넓은 질문이어도, ‘검출·포집·제거’처럼 목적을 나누면 실험 방법이 구체화됩니다.</p></div>
+          <div class="example-card"><h4>풍선과 음향 공중부양 질문</h4><ul><li>풍선이 천장에 오래 붙어 있는 조건은 무엇인가?</li><li>풍선 팽창 중 표면의 광학 특성은 어떻게 변하는가?</li><li>음파로 연기나 미세 입자를 특정 위치에 모을 수 있는가?</li></ul><p>이런 질문은 정전기, 열역학, 파동, 정상파처럼 교과 개념과 연결되며, 학생 연구에서는 한 가지 변인부터 좁혀 실험하는 것이 좋습니다.</p></div>
+        </div>
+        <div class="note">원본 매뉴얼의 사례들은 공통적으로 “생활 속 궁금증 → 측정 가능한 변인 → 비교 가능한 데이터 → 과학 개념 연결”의 흐름을 가집니다. 학생들은 처음부터 거창한 주제를 찾기보다, 작은 현상을 정확히 측정하는 방향으로 시작하는 것이 좋습니다.</div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">문헌</span><h3>참고문헌 검색 경로와 활용법</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>경로</th><th>활용 목적</th><th>주의할 점</th></tr></thead>
+            <tbody>
+              <tr><td>YouTube</td><td>현상 관찰, 실험 장치 아이디어, 변인 설정 아이디어를 얻는 데 유용합니다.</td><td>영상은 출발점일 뿐입니다. 과학적 근거와 출처가 있는지 별도로 확인해야 합니다.</td></tr>
+              <tr><td>위키피디아</td><td>낯선 분야의 개념, 용어, 전체 구조를 빠르게 파악할 때 도움이 됩니다.</td><td>최종 보고서의 핵심 근거로 쓰기보다, 더 신뢰도 높은 자료를 찾기 위한 길잡이로 활용합니다.</td></tr>
+              <tr><td>전문 교재·교과서</td><td>배경 이론을 안정적으로 정리할 때 필요합니다. 논문에서 생략한 기초 개념을 보완합니다.</td><td>학생 수준에 맞게 개념을 재정리해야 합니다. 이해하지 못한 이론을 그대로 옮기면 보고서 신뢰도가 낮아집니다.</td></tr>
+              <tr><td>Google Scholar</td><td>학술 논문, 초록, 무료 PDF, 인용 정보 확인에 유용합니다.</td><td>영문 논문은 초록·그림·결론부터 읽고, 필요한 부분을 선별해 정리합니다.</td></tr>
+              <tr><td>RISS·KISS·DBpia</td><td>국문 논문, 학위논문, 학술지 자료 검색에 적합합니다.</td><td>처음 접하는 분야는 배경 설명이 긴 학위논문이 오히려 이해에 도움이 될 수 있습니다.</td></tr>
+              <tr><td>과학전람회·발명품 자료</td><td>학생 수준의 연구 주제, 실험 방법, 보고서 표현 방식을 참고할 수 있습니다.</td><td>그대로 따라 하면 차별성이 부족합니다. 조건, 방법, 대상, 분석을 다르게 설계해야 합니다.</td></tr>
+              <tr><td>전문가 연락</td><td>문헌에서 해결되지 않는 장비·분석·실험 설계 문제를 조언받을 수 있습니다.</td><td>막연히 질문하지 말고 연구계획서를 정리한 뒤 구체적인 질문으로 연락합니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">윤리</span><h3>연구 윤리: 정직과 책임감</h3></div>
+        <div class="grid-2">
+          <div class="card"><h4>정직</h4><p>다른 사람의 아이디어, 데이터, 그림, 문장을 사용했다면 반드시 출처를 표시합니다. 데이터는 실제 수집한 대로 기록하고, 원하는 결론에 맞춰 고치지 않습니다.</p></div>
+          <div class="card"><h4>책임감</h4><p>연구가 사람, 생명체, 환경, 안전에 미칠 영향을 고려해야 합니다. 유해 화학물질, 감염 위험 대상, 생명체 실험은 특히 주의해야 합니다.</p></div>
+        </div>
+        <div class="warn">반드시 피해야 할 연구부정행위: 위조, 변조, 표절, 부당한 저자 표시, 부당한 중복 제출·게재입니다. 특히 한 과목에 낸 보고서를 다른 과목에 그대로 제출하려면 반드시 지도교사와 먼저 상의해야 합니다.</div>
+      </div>
+    </section>
+
+    <section class="manual-section" id="design">
+      <div class="section-head"><span class="section-no">03</span><div><h2>연구 설계</h2><p class="section-lead">연구 설계는 하고 싶은 실험을 나열하는 것이 아니라, 질문에 답하기 위한 논리적 구조를 만드는 단계입니다.</p></div></div>
+      <div class="block">
+        <div class="block-title"><span class="pill">계획서</span><h3>연구계획서에 들어가야 할 내용</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>항목</th><th>작성 방향</th><th>학생이 조심할 점</th></tr></thead>
+            <tbody>
+              <tr><td>연구 제목</td><td>대상, 방법, 범위, 핵심 변인이 드러나게 간결하게 씁니다.</td><td>“~에 대한 연구”처럼 막연한 제목은 피합니다.</td></tr>
+              <tr><td>요약문</td><td>연구의 필요성, 목적, 방법, 기대효과를 1쪽 이내로 압축합니다.</td><td>처음부터 쓰기 어렵다면 본문을 먼저 쓰고 마지막에 요약합니다.</td></tr>
+              <tr><td>필요성·목적</td><td>왜 이 문제가 중요한지, 선행연구와 무엇이 다른지 설명합니다.</td><td>단순한 관심이 아니라 해결할 가치가 있는 문제로 제시합니다.</td></tr>
+              <tr><td>연구 내용·방법</td><td>무엇을 어디까지 연구하고, 어떤 절차와 장비로 데이터를 얻을지 씁니다.</td><td>주요 변인, 가설, 실험 조건, 반복 횟수를 구체화합니다.</td></tr>
+              <tr><td>기대효과·활용</td><td>예상 결과, 사회적 기여, 후속 연구 가능성, 활용 방안을 정리합니다.</td><td>과장된 효과보다 연구 결과로 말할 수 있는 범위를 제시합니다.</td></tr>
+              <tr><td>추진 일정</td><td>주제 선정, 선행연구, 예비 실험, 본 실험, 분석, 발표, 보고서 제출을 월별로 배치합니다.</td><td>실험 실패와 재실험 시간을 반드시 확보합니다.</td></tr>
+              <tr><td>참고문헌</td><td>이미 조사한 자료와 앞으로 분석할 자료를 모두 기록합니다.</td><td>출처 누락은 연구 윤리 문제로 이어질 수 있습니다.</td></tr>
+              <tr><td>역할 분담</td><td>팀원의 장점과 책임을 반영해 조사, 실험, 코딩, 분석, 발표 역할을 나눕니다.</td><td>무임승차나 역할 충돌이 생기지 않도록 세부 업무를 명확히 씁니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">평가</span><h3>좋은 연구계획서의 평가 기준</h3></div>
+        <div class="grid-3">
+          <div class="card"><h4>창의성·적절성</h4><p>선행연구와의 차별성, 실생활 문제와의 관련성, 융합적 접근, 학생 눈높이에 맞는 실천 가능성이 드러나야 합니다.</p></div>
+          <div class="card"><h4>계획의 충실성</h4><p>문제 해결 방법이 구체적이고, 학생이 직접 설계하는 과정과 새로운 산출물 또는 아이디어가 예상되어야 합니다.</p></div>
+          <div class="card"><h4>추진체계</h4><p>학생 역할, 지도교사·전문가 역할, 일정, 예산, 장비 활용 계획이 현실적으로 정리되어야 합니다.</p></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">변인</span><h3>실험 설계의 핵심 용어</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>용어</th><th>뜻</th><th>작성 예시 방향</th></tr></thead>
+            <tbody>
+              <tr><td>조작적 정의</td><td>막연한 현상을 실제로 관찰·측정 가능한 형태로 정의하는 것입니다.</td><td>“소리가 크다” → “녹음 파일의 최대 진폭이 크다”처럼 수치화합니다.</td></tr>
+              <tr><td>가설</td><td>연구 문제에 대한 잠정적 설명 또는 예측입니다.</td><td>“A가 증가하면 B는 감소할 것이다”처럼 변인 간 관계가 드러나야 합니다.</td></tr>
+              <tr><td>독립변인</td><td>실험 결과에 영향을 줄 수 있는 원인 후보입니다.</td><td>재료 크기, 거리, 온도, 속도, 센서 위치 등 가능한 요인을 나열합니다.</td></tr>
+              <tr><td>조작변인</td><td>독립변인 중 실제로 의도적으로 바꿔 보는 변인입니다.</td><td>이번 연구에서 바꿀 조건을 1~2개로 명확히 정합니다.</td></tr>
+              <tr><td>통제변인</td><td>조작변인의 효과만 보기 위해 일정하게 유지하는 조건입니다.</td><td>재료, 장비, 측정 시간, 환경 조건 등을 같게 유지합니다.</td></tr>
+              <tr><td>종속변인</td><td>조작변인의 영향을 받아 측정되는 결과값입니다.</td><td>길이, 시간, 온도, 진폭, 정확도, 오차율 등 수치로 기록합니다.</td></tr>
+              <tr><td>실험군·대조군</td><td>처치를 가한 집단과 비교 기준이 되는 집단입니다.</td><td>모든 연구에 꼭 필요한 것은 아니지만, 비교 실험에서는 매우 중요합니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title"><span class="pill">원본 사례</span><h3>매미자석 소리로 보는 실험 설계 예시</h3></div>
+        <div class="example-grid">
+          <div class="example-card"><h4>막연한 질문</h4><p>“매미자석을 부딪치면 왜 매미소리가 날까?”는 흥미로운 질문이지만, 그대로는 측정하기 어렵습니다. 먼저 ‘매미소리’를 시간에 따른 진동수와 진폭 변화로 바꾸어 정의해야 합니다.</p></div>
+          <div class="example-card"><h4>조작적 정의</h4><p>매미소리를 “충돌 후 시간이 지날수록 진동수는 커지고 진폭은 작아지는 소리”로 정의하면 녹음 파일의 파형, 진폭, 충돌 간격 등을 분석할 수 있습니다.</p></div>
+          <div class="example-card"><h4>가설 설정</h4><p>매미자석 특유의 소리는 자석끼리 반복적으로 충돌하면서 여러 번의 짧은 소리가 이어지고, 이를 사람이 하나의 독특한 소리로 인식하기 때문에 발생한다는 가설을 세울 수 있습니다.</p></div>
+          <div class="example-card"><h4>변인 구분</h4><ul><li>독립변인: 자석 모양, 세기, 종류, 거리, 충돌 강도, 크기, 반발계수</li><li>조작변인: 이번 실험에서 실제로 바꾸는 자석 크기, 거리, 반발계수 등</li><li>통제변인: 자석 종류, 녹음 거리, 충돌 방법, 주변 소음</li><li>종속변인: 큰 진폭 소리의 간격, 시간에 따른 진폭 변화</li></ul></div>
+        </div>
+        <div class="note">이 사례의 핵심은 ‘재미있는 현상’을 바로 실험하지 않고, 측정 가능한 언어로 바꾼 뒤 가설과 변인을 세운다는 점입니다. 좋은 연구 설계는 실험 장비보다 먼저 논리 구조가 잡혀 있어야 합니다.</div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">검토</span><h3>계획 단계에서 꼭 점검할 부분</h3></div>
+        <ul class="check-list">
+          <li>연구 과정을 문헌조사, 장비 준비, 예비 실험, 본 실험, 분석, 보고서로 세분화했는가?</li>
+          <li>연구 문제 → 가설 → 변인 → 실험 방법 → 데이터 분석 → 결론이 논리적으로 이어지는가?</li>
+          <li>주장에 필요한 이론적 토대와 선행연구를 충분히 찾았는가?</li>
+          <li>실험 장비, 재료, 시간, 비용, 안전, 윤리 조건을 현실적으로 확인했는가?</li>
+          <li>예상 범위를 벗어나는 경계값, 이상값, 실패 가능성을 미리 고려했는가?</li>
+          <li>팀원별 역할과 책임, 자료 공유 방식, 연구노트 확인 방식을 정했는가?</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="manual-section" id="conduct">
+      <div class="section-head"><span class="section-no">04</span><div><h2>연구 수행</h2><p class="section-lead">실험 수행 단계에서는 안전, 변인 통제, 측정 신뢰도, 기록의 일관성이 연구의 품질을 결정합니다.</p></div></div>
+      <div class="block">
+        <div class="block-title"><span class="pill">점검</span><h3>실험 전·중·후 단계 점검</h3></div>
+        <ul class="check-list">
+          <li>가설을 검증하기에 적합한 실험인지 확인합니다.</li>
+          <li>조작변인과 통제변인이 구분되어 있고 실제로 통제가 되는지 점검합니다.</li>
+          <li>변화를 다양한 방법으로 관찰하고 있는지 확인합니다. 사진, 영상, 센서값, 표가 함께 있으면 좋습니다.</li>
+          <li>결과를 연구노트와 원본 데이터 파일에 빠짐없이 기록합니다.</li>
+          <li>예비 실험으로 장비 작동, 측정 범위, 반복 횟수, 소요 시간을 먼저 확인합니다.</li>
+          <li>실험 후에는 실패 원인, 이상값, 다음 실험의 수정 사항을 즉시 적습니다.</li>
+        </ul>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">안전</span><h3>연구 과정 안전 수칙</h3></div>
+        <div class="grid-2">
+          <div class="card"><h4>지도교사 입회</h4><p>지시되지 않은 실험을 하거나 학생 단독으로 위험 실험을 진행하지 않습니다. 실험 전 지도교사에게 절차와 위험요소를 확인받습니다.</p></div>
+          <div class="card"><h4>보호구 착용</h4><p>실험복, 보안경, 장갑, 마스크 등 필요한 안전보호구를 착용합니다. 긴 머리는 묶고 발이 노출되는 신발은 피합니다.</p></div>
+          <div class="card"><h4>실험실 위치 확인</h4><p>소화기, 비상 샤워기, 눈 세척기, 흄후드, 환풍기, 전기 차단기, 비상구 위치를 먼저 확인합니다.</p></div>
+          <div class="card"><h4>정리와 폐기</h4><p>실험 후 시약, 기구, 전열기, 가스밸브, 수도꼭지를 확인하고 폐기물은 지정된 통에 분리합니다.</p></div>
+        </div>
+        <div class="warn">화학·생명과학 실험은 시약, 감염, 생명체 훼손 문제가 있을 수 있고, 물리·공학 실험도 충격, 전기, 열, 날카로운 부품 위험이 있습니다. 연구보다 안전이 우선입니다.</div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">측정</span><h3>관찰·측정·오차 이해</h3></div>
+        <div class="grid-3">
+          <div class="card"><h4>측정</h4><p>길이, 질량, 온도, 시간, 힘, 압력처럼 단위로 나타낼 수 있는 물리량을 도구로 재어 기록하는 활동입니다.</p></div>
+          <div class="card"><h4>오차</h4><p>측정값과 참값의 차이입니다. 완전히 없앨 수 없으므로 반복 측정과 장비 보정으로 줄여야 합니다.</p></div>
+          <div class="card"><h4>불확실도</h4><p>참값을 알 수 없을 때 측정값에 포함된 변동의 범위를 추정한 값입니다. 결과는 “대푯값 ± 불확실도” 형태로 나타냅니다.</p></div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title"><span class="pill">원본 사례</span><h3>선행연구를 그대로 따라 하기 전에 확인할 점</h3></div>
+        <div class="example-grid">
+          <div class="example-card"><h4>계란 익힘 정도를 비파괴적으로 판단하는 연구</h4><p>예를 들어 계란이 얼마나 익었는지 외부에서 알아내는 연구를 한다면, 계란의 구조와 성분, 열전도도, 점도, 굴절률 등을 먼저 조사해야 합니다. 선행연구에서 빛의 반사 정도로 익힘 정도를 비교한 실험이 있다 해도, 계란 품종·크기·보관 온도·측정 온도 조건이 다르면 그대로 적용하기 어렵습니다.</p></div>
+          <div class="example-card"><h4>선행연구의 역할</h4><p>선행연구는 ‘그대로 베끼는 자료’도 아니고 ‘무조건 비판할 대상’도 아닙니다. 내 연구 조건과 얼마나 일치하는지 확인하고, 다른 조건에서 생기는 차이를 한계 또는 새로운 연구 문제로 정리해야 합니다.</p></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">장비</span><h3>컴퓨터·센서 기반 측정 활용</h3></div>
+        <div class="grid-2">
+          <div class="card"><h4>MBL·PASCO·센서</h4><p>온도, 습도, 힘, 압력 등 센서 입력을 컴퓨터로 받아 실시간 표와 그래프로 볼 수 있습니다. 측정 편의성이 높지만 센서의 정확도와 보정 상태를 확인해야 합니다.</p></div>
+          <div class="card"><h4>Arduino·Raspberry Pi</h4><p>저렴한 센서와 보드를 활용해 직접 측정 장치를 만들 수 있습니다. 다만 센서가 어떤 원리로 값을 내는지, 코드가 어떤 방식으로 데이터를 변환하는지 이해해야 합니다.</p></div>
+        </div>
+        <div class="note">센서값이 숫자로 나온다고 해서 항상 정확한 데이터는 아닙니다. 장비 스펙, 측정 범위, 최소 단위, 샘플링 간격, 캘리브레이션 여부를 함께 확인해야 합니다.</div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">연구노트</span><h3>수행 단계 연구노트 필수 기록</h3></div>
+        <ul class="check-list">
+          <li>실험 날짜, 시간, 장소, 참여자, 확인자를 적습니다.</li>
+          <li>실험 환경: 온도, 습도, 조명, 전원 상태, 주변 조건을 기록합니다.</li>
+          <li>재료명, 장비명, 모델명, 센서 설정값, 코드 버전, 데이터 파일명을 남깁니다.</li>
+          <li>실험 중 발생한 돌발 상황과 수정 사항을 적습니다.</li>
+          <li>실패한 결과도 삭제하지 말고 원인 추정과 함께 보관합니다.</li>
+          <li>사진·영상·그래프를 찍었다면 파일명과 촬영 조건을 함께 적습니다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="manual-section" id="analysis">
+      <div class="section-head"><span class="section-no">05</span><div><h2>자료 해석 및 분석</h2><p class="section-lead">데이터 분석은 그래프를 예쁘게 그리는 일이 아니라, 데이터가 어떤 근거로 어떤 결론을 말하는지 판단하는 과정입니다.</p></div></div>
+      <div class="block">
+        <div class="block-title"><span class="pill">데이터</span><h3>데이터의 의미</h3></div>
+        <div class="grid-2">
+          <div class="card"><h4>데이터는 실제 세계의 일부</h4><p>관찰·측정한 숫자, 기호, 텍스트, 그림, 사진, 음성 등이 데이터입니다. 데이터는 실제 현상을 반영하지만, 현상의 모든 것을 100% 담지는 못합니다.</p></div>
+          <div class="card"><h4>표현 방식이 해석을 바꾼다</h4><p>같은 데이터도 일별 평균, 월별 합계, 변화율, 비율, 분포로 나타내면 다르게 보일 수 있습니다. 어떤 표현이 연구 질문에 맞는지 선택해야 합니다.</p></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">전처리</span><h3>분석 전에 해야 할 데이터 정리</h3></div>
+        <ul class="check-list">
+          <li>결측치가 있는지 확인하고, 삭제할지 대체할지 기준을 정합니다.</li>
+          <li>단위가 서로 다르면 비교가 왜곡될 수 있으므로 단위와 스케일을 맞춥니다.</li>
+          <li>이상값이 실험 오류인지 의미 있는 특이값인지 연구노트와 대조합니다.</li>
+          <li>사진, 영상, 텍스트도 컴퓨터 비전·자연어 처리로 분석 가능한 데이터가 될 수 있습니다.</li>
+          <li>분석에 실제로 필요한 특징값을 추출하는 과정을 피처 엔지니어링이라고 볼 수 있습니다.</li>
+          <li>그래프에는 축 이름, 단위, 범례, 추세선, 측정 조건을 명확히 표시합니다.</li>
+        </ul>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">통계</span><h3>자주 쓰는 통계 방법의 의미</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>방법</th><th>언제 쓰는가</th><th>핵심 의미</th><th>주의할 점</th></tr></thead>
+            <tbody>
+              <tr><td>기술 통계</td><td>데이터의 전체 모습을 요약할 때</td><td>평균, 중앙값, 최빈값, 분산, 표준편차로 데이터 분포를 설명합니다.</td><td>평균만 보면 이상값이나 분포의 치우침을 놓칠 수 있습니다.</td></tr>
+              <tr><td>t검정</td><td>두 집단 평균 차이를 비교할 때</td><td>두 집단 사이 차이가 우연인지 의미 있는 차이인지 판단합니다.</td><td>정규분포 가정 등 기본 조건을 확인해야 합니다.</td></tr>
+              <tr><td>분산분석</td><td>셋 이상 집단 또는 여러 조건을 비교할 때</td><td>집단 간 평균과 분산 차이가 유의미한지 살핍니다.</td><td>독립변인 수에 따라 일원·이원·다원 분석이 달라집니다.</td></tr>
+              <tr><td>상관분석</td><td>두 변수의 선형 관계를 볼 때</td><td>X가 커질수록 Y도 커지는지 또는 작아지는지 관계의 방향과 정도를 봅니다.</td><td>상관관계가 인과관계를 뜻하지는 않습니다.</td></tr>
+              <tr><td>회귀분석</td><td>변수 사이 관계식을 만들거나 예측할 때</td><td>독립변수와 종속변수의 관계를 수식으로 표현합니다.</td><td>식이 잘 맞는 것처럼 보여도 과적합이나 해석 오류를 주의해야 합니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title"><span class="pill">원본 사례</span><h3>데이터 해석을 돕는 사례 모음</h3></div>
+        <div class="example-grid">
+          <div class="example-card"><h4>로봇 관절 데이터</h4><p>사람의 팔 움직임을 모두 기록하려면 근육, 피부, 관절, 회전, 힘의 변화까지 고려해야 합니다. 실제 연구에서는 관절을 하나의 강체로 단순화해 각도나 각속도만 측정할 수 있습니다. 즉 데이터는 실제 세계를 줄여 표현한 것이므로, 무엇을 생략했는지 함께 설명해야 합니다.</p></div>
+          <div class="example-card"><h4>케플러와 행성 위치 데이터</h4><p>같은 행성 위치 자료라도 원형 궤도라고 해석할 수도 있고, 타원 궤도라는 새로운 모형으로 해석할 수도 있습니다. 데이터 분석은 계산만 하는 일이 아니라, 자료가 어떤 모형을 더 잘 설명하는지 판단하는 과정입니다.</p></div>
+          <div class="example-card"><h4>일별 기온과 폭염일수</h4><p>일별 평균기온 그래프만 보면 변화가 약해 보일 수 있지만, 월별 폭염일수로 표현하면 더위의 증가 경향이 잘 드러날 수 있습니다. 같은 데이터도 표현 기준에 따라 결론의 초점이 달라집니다.</p></div>
+          <div class="example-card"><h4>몬티 홀 문제와 조건부 확률</h4><p>새 정보가 주어지면 기존 확률 판단이 바뀔 수 있습니다. 과학 연구에서도 데이터가 추가될 때 기존 가설을 수정하거나 새로운 가설을 검토하는 태도가 필요합니다.</p></div>
+          <div class="example-card"><h4>식물군 t검정 사례</h4><p>빛을 차단한 식물군과 그렇지 않은 식물군의 키 평균을 비교할 때 t검정을 쓸 수 있습니다. 단, 두 집단이 정규분포에 가깝다는 조건을 검토해야 하며, 조건을 모르고 통계 버튼만 누르면 잘못된 결론이 나올 수 있습니다.</p></div>
+          <div class="example-card"><h4>회귀분석 사례</h4><p>해양 생물의 수명을 수온, 일조량, 포식자 수와 연결해 식으로 나타내는 것이 회귀분석의 예입니다. 식이 만들어졌다고 끝나는 것이 아니라, 실제 관측값과 예측값의 차이인 잔차를 확인해야 합니다.</p></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">모형</span><h3>시뮬레이션·피팅·오차</h3></div>
+        <div class="grid-3">
+          <div class="card"><h4>시뮬레이션</h4><p>이론이나 모형으로 실제 실험 전에 경향을 예측하는 방법입니다. Python, 공개 라이브러리, 물리 시뮬레이터 등을 활용할 수 있습니다.</p></div>
+          <div class="card"><h4>동영상 분석</h4><p>Tracker 같은 도구로 위치, 속도, 각속도 등을 분석할 수 있습니다. 프레임 수, 카메라 위치, 왜곡을 고려해야 합니다.</p></div>
+          <div class="card"><h4>데이터 피팅</h4><p>실험값과 이론값이 얼마나 잘 맞는지 추세선과 잔차로 확인합니다. MAE, MSE, RMSE 같은 지표로 오차를 비교할 수 있습니다.</p></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">오차</span><h3>정확도·정밀도와 오차 분석</h3></div>
+        <div class="grid-2">
+          <div class="card"><h4>정확도와 정밀도</h4><p>정확도는 관측값이 참값에 얼마나 가까운가, 정밀도는 반복 측정값들이 서로 얼마나 비슷한가를 뜻합니다. 정확하지만 흩어질 수도 있고, 정밀하지만 한쪽으로 치우칠 수도 있습니다.</p></div>
+          <div class="card"><h4>우연 오차와 계통 오차</h4><p>우연 오차는 불규칙하게 발생하며 반복 측정으로 줄일 수 있습니다. 계통 오차는 장비, 환경, 측정자 습관 등 특정 원인으로 한쪽 방향으로 생기며 보정이 필요합니다.</p></div>
+        </div>
+        <div class="note">측정값은 유효숫자를 지켜 표현해야 합니다. 불확실도는 보통 한 자리 유효숫자로 나타내고, 대표값은 불확실도와 같은 소수점 자리까지 맞추는 것이 좋습니다.</div>
+      </div>
+    </section>
+
+    <section class="manual-section" id="conclusion">
+      <div class="section-head"><span class="section-no">06</span><div><h2>연구에서의 결론 도출</h2><p class="section-lead">결론은 결과의 반복 요약이 아니라, 처음의 연구 질문에 대해 근거를 바탕으로 답을 내리는 부분입니다.</p></div></div>
+      <div class="block">
+        <div class="block-title"><span class="pill">검증</span><h3>가설 검증과 의미 해석</h3></div>
+        <div class="grid-2">
+          <div class="card"><h4>예상과 달라도 연구는 의미 있다</h4><p>가설이 맞지 않아도 연구가 실패한 것은 아닙니다. 왜 다른 결과가 나왔는지, 어떤 변인이 영향을 주었는지 분석하면 새로운 연구 문제가 됩니다.</p></div>
+          <div class="card"><h4>근거가 결론의 힘이다</h4><p>가설을 채택하거나 기각할 때는 데이터, 통계 결과, 오차 범위, 선행연구와의 비교를 함께 제시해야 합니다.</p></div>
+        </div>
+        <div class="note">통계 검정을 사용할 때는 유의수준, 오차 크기, 이전 연구와의 비교를 함께 고려합니다. 숫자가 나왔다고 자동으로 결론이 되는 것은 아닙니다.</div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">작성</span><h3>결론 작성 원칙</h3></div>
+        <ul class="check-list">
+          <li>가능한 한 간단명료하게 진술합니다.</li>
+          <li>가설을 지지하거나 반박하는 실험 결과를 핵심만 정리합니다.</li>
+          <li>수집한 결과에 근거하고 과도한 예측이나 추측은 피합니다.</li>
+          <li>결과와 결론을 같은 말로 반복하지 않고, 결과에서 논리적으로 추론한 답을 제시합니다.</li>
+          <li>서론과 본론에서 다루지 않은 새로운 내용을 결론에서 갑자기 말하지 않습니다.</li>
+          <li>연구의 한계와 오차 원인을 솔직하게 제시합니다.</li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <div class="block-title"><span class="pill">원본 사례</span><h3>후속 연구를 찾는 방법</h3></div>
+        <div class="example-grid">
+          <div class="example-card"><h4>물병 세우기 연구의 확장</h4><p>물이 든 플라스틱 병을 회전시켜 세우는 과정을 분석했다면, 연구가 끝난 뒤 다른 병의 모양, 물의 양, 회전 속도, 병 재질을 바꾸면 어떻게 달라지는지 예측할 수 있습니다. 기존 결과를 다른 조건에 적용해 보는 것이 후속 연구의 출발점입니다.</p></div>
+          <div class="example-card"><h4>연구의 가치는 ‘몇 걸음 나아갔는가’</h4><p>학생 연구 하나로 완벽한 법칙을 만드는 것은 어렵습니다. 하지만 선행연구와 비교해 더 넓은 조건을 검토했거나, 더 정확한 측정 방법을 제안했거나, 새로운 변수의 영향을 발견했다면 충분히 의미 있는 연구입니다.</p></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">확장</span><h3>후속 연구와 연구의 가치</h3></div>
+        <div class="grid-3">
+          <div class="card"><h4>다른 조건으로 적용</h4><p>이번 실험에서 쓰지 않은 재료, 범위, 환경으로 확장하면 어떤 결과가 나올지 예측할 수 있습니다.</p></div>
+          <div class="card"><h4>한계 개선</h4><p>측정 장비, 반복 횟수, 통제 조건, 분석 방법이 부족했다면 이를 개선하는 것이 다음 연구의 목적이 됩니다.</p></div>
+          <div class="card"><h4>선행연구와 비교</h4><p>내 연구가 기존 연구와 얼마나 부합하는지, 어떤 점을 새롭게 보여주는지 객관적으로 설명해야 연구 가치가 드러납니다.</p></div>
+        </div>
+        <div class="note">좋은 결론은 “완벽한 법칙을 발견했다”가 아니라 “기존 연구보다 어떤 조건, 어떤 방법, 어떤 결과에서 한 걸음 나아갔다”를 설명하는 것입니다.</div>
+      </div>
+    </section>
+
+    <section class="manual-section" id="writing">
+      <div class="section-head"><span class="section-no">07</span><div><h2>글쓰기 및 발표</h2><p class="section-lead">아무리 좋은 연구라도 글과 발표로 남기지 않으면 연구의 가치가 제대로 전달되지 않습니다.</p></div></div>
+      <div class="block">
+        <div class="block-title"><span class="pill">보고서</span><h3>과학 연구 보고서의 기본 구성</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>구성</th><th>역할</th><th>작성 팁</th></tr></thead>
+            <tbody>
+              <tr><td>제목</td><td>연구의 대상, 방법, 범위, 특성을 드러냅니다.</td><td>독자가 제목만 보고도 어떤 연구인지 알 수 있게 씁니다.</td></tr>
+              <tr><td>요약문</td><td>연구목적, 방법, 결과, 분석, 결론을 압축합니다.</td><td>보통 500~1000자 정도로 전체 연구가 드러나게 씁니다.</td></tr>
+              <tr><td>서론</td><td>연구의 필요성, 가치, 범위, 선행연구, 차별성을 설명합니다.</td><td>넓은 배경에서 세부 연구 문제로 좁혀 들어갑니다.</td></tr>
+              <tr><td>연구방법</td><td>실험 장치, 환경, 절차, 변수, 데이터 신뢰성을 설명합니다.</td><td>다른 사람이 재현할 수 있을 정도로 구체적으로 씁니다.</td></tr>
+              <tr><td>결과 및 분석</td><td>실험 결과를 보여주고 경향, 상관관계, 원인을 해석합니다.</td><td>그래프 설명 → 그래프 해석 → 해석 논의 순서가 효과적입니다.</td></tr>
+              <tr><td>결론</td><td>연구 질문에 대한 자신의 답과 연구의 의미를 정리합니다.</td><td>본문에서 다루지 않은 새 주장을 추가하지 않습니다.</td></tr>
+              <tr><td>참고문헌</td><td>인용한 문헌과 자료를 정리합니다.</td><td>출처 표기 누락은 연구 윤리 문제입니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">초고</span><h3>1페이지 초고로 글의 뼈대 만들기</h3></div>
+        <div class="grid-2">
+          <div class="card"><h4>왜 필요한가</h4><p>보고서는 길고 복잡해지기 쉽습니다. 1~2쪽 분량의 짧은 초고를 먼저 만들면 연구의 논리 흐름을 잃지 않고 작성할 수 있습니다.</p></div>
+          <div class="card"><h4>무엇을 쓰는가</h4><p>연구 목적, 방법, 주요 결과, 결과 해석, 결론을 문장과 계층 구조로 정리합니다. 이후 요약문과 결론 작성에도 활용됩니다.</p></div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title"><span class="pill">원본 사례</span><h3>보고서와 발표를 이해하는 사례</h3></div>
+        <div class="example-grid">
+          <div class="example-card"><h4>야구배트 sweet spot 초록 사례</h4><p>원본 매뉴얼은 야구배트의 이론적 sweet spot과 실험으로 얻은 sweet spot을 비교한 학생 연구 초록을 예시로 듭니다. 좋은 초록은 연구 목적, 실험 범위와 방법, 주요 변수, 핵심 결과, 활용 가능성을 짧게 모두 보여줍니다.</p></div>
+          <div class="example-card"><h4>AFM 탐침 제작 서론 사례</h4><p>원자현미경 탐침을 학교나 연구실에서 제작할 수 있는 방법을 개발한 사례는, 서론만 읽어도 ‘왜 필요한지’, ‘어떤 방법을 쓸 것인지’, ‘기존 방식과 무엇이 다른지’가 드러나야 한다는 점을 보여줍니다.</p></div>
+          <div class="example-card"><h4>뉴턴과 후크 논쟁</h4><p>과학자의 업적은 글로 남고, 글을 통해 주장과 근거가 검토됩니다. 연구 보고서는 단순 제출물이 아니라 내 연구의 증거를 남기는 공식적인 기록입니다.</p></div>
+          <div class="example-card"><h4>솔베이 회의와 질의응답</h4><p>연구 발표는 연구를 자랑하는 시간이 아니라 질문과 비판을 통해 연구를 보완하는 과정입니다. 어려운 질문을 받았을 때 방어적으로 대응하기보다, 한계와 개선 방향을 차분히 설명하는 태도가 중요합니다.</p></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">표현</span><h3>결과와 그래프를 쓰는 법</h3></div>
+        <ul class="check-list">
+          <li>그래프에는 x축, y축, 단위, 범례, 추세선 의미를 명확히 적습니다.</li>
+          <li>그래프 설명에는 실험방법을 반복하지 말고, 그래프가 보여주는 목적과 읽는 방법을 씁니다.</li>
+          <li>그래프 해석에서는 데이터가 보여주는 상관관계와 경향을 객관적으로 나열합니다.</li>
+          <li>논의에서는 그 경향이 과학적으로 타당한지, 선행연구와 어떤 관련이 있는지 설명합니다.</li>
+          <li>몇 개의 핵심 그래프는 서로 모순되지 않는 하나의 큰 논지로 연결되어야 합니다.</li>
+          <li>실험 장치는 사진보다 개념도, 실험 조건은 표, 절차는 순서도, 데이터는 그래프가 효과적입니다.</li>
+        </ul>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">발표</span><h3>과학 연구 발표 준비</h3></div>
+        <div class="grid-3">
+          <div class="card"><h4>시간 배분</h4><p>발표 시간은 반드시 지킵니다. 20분 발표라면 15분 발표와 5분 질의응답처럼 질문 시간을 남기는 구성이 좋습니다.</p></div>
+          <div class="card"><h4>슬라이드 분량</h4><p>이공학 발표에서는 1분당 1쪽 내외가 적당합니다. 20분이면 최대 20쪽 정도를 기준으로 조정합니다.</p></div>
+          <div class="card"><h4>대본 분량</h4><p>1분당 약 100단어 수준으로 대본을 준비하되, 실제 발표는 문장 암기보다 핵심 키워드 중심으로 진행합니다.</p></div>
+        </div>
+        <div class="table-wrap" style="margin-top:12px">
+          <table>
+            <thead><tr><th>슬라이드 구성</th><th>권장 분량</th><th>내용</th></tr></thead>
+            <tbody>
+              <tr><td>표지</td><td>1쪽</td><td>연구 제목, 발표자, 소속, 발표회 이름, 발표일</td></tr>
+              <tr><td>목차</td><td>1쪽</td><td>발표 흐름을 간단히 안내</td></tr>
+              <tr><td>서론</td><td>2~3쪽</td><td>연구 분야의 이슈, 핵심 문헌, 문제 상황</td></tr>
+              <tr><td>동기·목적</td><td>1~2쪽</td><td>세부 연구 질문, 가설, 연구 목적</td></tr>
+              <tr><td>실험 방법·이론</td><td>2~4쪽</td><td>장치, 절차, 변수, 데이터 가공, 신뢰성</td></tr>
+              <tr><td>결과 및 분석</td><td>10쪽 이상</td><td>핵심 그래프, 발견한 경향, 과학적 설명</td></tr>
+              <tr><td>결론</td><td>1쪽</td><td>밝혀낸 사실을 4~5문장으로 압축</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">태도</span><h3>발표 자료와 질의응답 유의사항</h3></div>
+        <ul class="check-list">
+          <li>표와 그림에는 출처, 범례, 축 이름, 단위를 빠뜨리지 않습니다.</li>
+          <li>한 슬라이드에는 하나의 주장만 담고, 하단에 핵심 문장을 넣으면 이해가 쉬워집니다.</li>
+          <li>대본을 완성한 뒤 반드시 소리 내어 읽어 시간을 확인합니다.</li>
+          <li>긴장하면 말이 빨라지므로 실제 발표 시간보다 약간 여유 있게 연습합니다.</li>
+          <li>대본 전체를 외우기보다 키워드 순서와 어려운 용어를 손노트로 준비합니다.</li>
+          <li>질의응답에서는 방어적으로 반응하지 말고 질문 의도를 듣고 메모합니다.</li>
+          <li>4:3 빔프로젝터에서는 4:3 비율 자료가 안정적이고, 최소 글자 크기는 12pt 이상을 권장합니다. 16:10 화면에서는 14pt 이상이 좋습니다.</li>
+          <li>특수 폰트, 동영상, 음향 파일은 발표장 컴퓨터에서 사전에 열어 보고 확인합니다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="manual-section" id="checklist">
+      <div class="section-head"><span class="section-no">✓</span><div><h2>학생용 빠른 체크리스트</h2><p class="section-lead">연구를 시작하거나 보고서를 제출하기 전, 아래 항목만 확인해도 탐구의 완성도를 크게 높일 수 있습니다.</p></div></div>
+      <div class="block">
+        <div class="block-title"><span class="pill">시작 전</span><h3>연구 문제 체크</h3></div>
+        <ul class="check-list">
+          <li>내 질문은 실험·조사·측정·분석으로 답할 수 있는가?</li>
+          <li>선행연구와 비교했을 때 다른 점이 있는가?</li>
+          <li>고등학생 수준, 학교 장비, 정해진 기간 안에서 가능한가?</li>
+          <li>연구 결과가 실생활, 진로, 교과 개념과 연결되는가?</li>
+          <li>안전·윤리 문제가 없는가?</li>
+          <li>측정할 종속변인을 수치로 정했는가?</li>
+        </ul>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">계획서</span><h3>연구계획서 빠른 양식</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>항목</th><th>학생이 채워야 할 문장</th></tr></thead>
+            <tbody>
+              <tr><td>연구 제목</td><td>본 연구는 [대상]에서 [방법/조건]에 따른 [결과값]의 변화를 분석한다.</td></tr>
+              <tr><td>연구 동기</td><td>[생활/수업/진로]에서 발견한 문제 때문에 이 주제를 선택하였다.</td></tr>
+              <tr><td>연구 문제</td><td>[조작변인]을 변화시키면 [종속변인]은 어떻게 달라지는가?</td></tr>
+              <tr><td>가설</td><td>[조작변인]이 증가/감소하면 [종속변인]은 증가/감소할 것이다.</td></tr>
+              <tr><td>연구 방법</td><td>[재료/장비]를 이용하여 [조건]을 바꾸고 [반복 횟수]만큼 측정한다.</td></tr>
+              <tr><td>분석 방법</td><td>측정값을 표와 그래프로 정리하고, 평균/오차/상관관계/회귀식 등을 이용해 해석한다.</td></tr>
+              <tr><td>기대효과</td><td>이 연구는 [문제 해결/개선/후속 연구/진로 연계]에 활용될 수 있다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">수행</span><h3>실험·분석 체크</h3></div>
+        <div class="grid-2">
+          <div class="card"><h4>실험 체크</h4><ul><li>조작변인과 통제변인을 구분했는가?</li><li>반복 측정 횟수가 충분한가?</li><li>장비 최소 단위와 불확실도를 기록했는가?</li><li>실험 환경과 돌발 상황을 기록했는가?</li></ul></div>
+          <div class="card"><h4>분석 체크</h4><ul><li>축 이름, 단위, 범례가 있는 그래프인가?</li><li>이상값과 결측치를 어떻게 처리했는가?</li><li>평균뿐 아니라 분포와 오차도 확인했는가?</li><li>결과 해석이 데이터 근거와 연결되는가?</li></ul></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title"><span class="pill">제출 전</span><h3>보고서·발표 최종 점검</h3></div>
+        <ul class="check-list">
+          <li>제목만 보고도 연구 대상과 방법이 드러나는가?</li>
+          <li>요약문에 목적, 방법, 결과, 결론이 모두 들어갔는가?</li>
+          <li>서론에 선행연구와 차별성이 나타나는가?</li>
+          <li>연구방법을 다른 사람이 재현할 수 있을 정도로 썼는가?</li>
+          <li>결과와 결론을 반복하지 않고, 결론은 질문에 대한 답으로 썼는가?</li>
+          <li>참고문헌과 그림·표 출처를 빠뜨리지 않았는가?</li>
+          <li>발표 자료는 한 장에 한 주장으로 구성했는가?</li>
+          <li>질의응답 예상 질문과 한계 설명을 준비했는가?</li>
+        </ul>
+        <div class="tag-row"><span class="tag">주제</span><span class="tag">가설</span><span class="tag">변인</span><span class="tag">통제</span><span class="tag">측정</span><span class="tag">오차</span><span class="tag">그래프</span><span class="tag">결론</span><span class="tag">출처</span><span class="tag">후속연구</span></div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="source-line">자료 출처: 과학영재 창의연구 학생 매뉴얼, 부산광역시영재교육진흥원 R&amp;E지원센터 발행</div>
+    <div class="brand-line">R&amp;E 매뉴얼 [ 송도이샘로봇 ]</div>
+  </footer>
+</div>
+
+<script>
+const tabs = Array.from(document.querySelectorAll('.manual-tab'));
+const sections = Array.from(document.querySelectorAll('.manual-section'));
+function showSection(id, updateHash=true, doScroll=true){
+  tabs.forEach(tab => tab.classList.toggle('active', tab.dataset.target === id));
+  sections.forEach(section => section.classList.toggle('active', section.id === id));
+  if(updateHash) history.replaceState(null, '', '#' + id);
+  if(doScroll) document.querySelector('.content-panel').scrollIntoView({behavior:'smooth', block:'start'});
+}
+tabs.forEach(tab => tab.addEventListener('click', () => showSection(tab.dataset.target)));
+const initial = location.hash ? location.hash.slice(1) : 'foundation';
+if(document.getElementById(initial)) showSection(initial, false, false);
+</script>
+</body>
+</html>
