@@ -137,6 +137,17 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .research-table th{background:#edf3fa}
 .research-input{display:block;width:100%;border:0;background:transparent;padding:7px 8px;font-family:inherit;font-size:11px;color:var(--text)}
 .research-table th .research-input{font-weight:500;text-align:center}
+.rich-editor{min-height:310px;overflow:auto;white-space:pre-wrap}
+.rich-editor:empty::before{content:attr(data-placeholder);color:#a3a7af;white-space:pre-wrap;pointer-events:none}
+.inline-table-block{position:relative;margin:18px 0;padding:38px 12px 12px;background:#fff;border:1px solid #d8d1c5;border-radius:12px;white-space:normal}
+.inline-table-tools{position:absolute;top:7px;right:8px;display:flex;gap:5px}
+.inline-table-tools button{padding:4px 7px;color:#7f3528;font-size:10px;font-weight:800;background:#fff5f2;border:1px solid #edc1b6;border-radius:6px;cursor:pointer}
+.inline-table-caption{margin:0 0 7px;color:#263047;font-size:12px;font-weight:900;text-align:center}
+.inline-content-table{width:100%;border-collapse:collapse;table-layout:fixed;background:#fff}
+.inline-content-table th,.inline-content-table td{padding:8px;border:1px solid #aeb6c1;color:#263047;font-size:12px;text-align:center;overflow-wrap:anywhere}
+.inline-content-table th{background:#f1eee7;font-weight:900}
+.table-insert-btn{padding:5px 9px;color:#fff;font-size:10px;font-weight:900;background:var(--teal);border:1px solid var(--teal);border-radius:6px;cursor:pointer;white-space:nowrap}
+.table-insert-btn:hover{background:#10675f}
 .d-table-wrap{overflow-x:auto;margin-top:10px}
 .d-table-title{font-size:12px;font-weight:500;margin:12px 0 5px}
 .d-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px;background:#fff}
@@ -165,6 +176,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .d-section{margin-bottom:26px}
 .d-sec-title{font-size:14px;font-weight:600;color:var(--accent);padding-bottom:7px;border-bottom:1px solid var(--border);margin-bottom:12px;font-family:'Noto Serif KR',serif}
 .d-content{font-size:13px;line-height:1.85;white-space:pre-wrap;background:var(--bg);padding:11px 13px;border-radius:var(--radius);border:1px solid var(--border)}
+.d-content.rich-output{white-space:normal}
+.rich-output .inline-table-block{margin:18px 0;padding:0;background:transparent;border:0}
+.rich-output .inline-table-caption{margin-bottom:7px}
 
 /* SKELETON */
 .skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:6px}
@@ -287,6 +301,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
 .btn-cancel{color:var(--ink);background:#fff;border-color:var(--line)}
 .btn-submit{background:var(--orange);box-shadow:0 8px 18px rgba(185,81,57,.2)}
 .btn-submit:hover{background:#a84732}
+.btn-hwpx{margin-right:auto;padding:12px 18px;color:#fff;background:var(--teal);border:0;border-radius:11px;font-size:12px;font-weight:900;cursor:pointer;box-shadow:0 8px 18px rgba(23,124,114,.18)}
+.btn-hwpx:hover{background:#10675f}
 
 .report-card{padding:22px 24px;background:var(--panel);border-color:var(--line);border-radius:18px;box-shadow:0 9px 25px rgba(25,34,56,.04)}
 .report-card:hover{border-color:#c9bda9;box-shadow:0 16px 34px rgba(25,34,56,.1)}
@@ -404,7 +420,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
       <div class="form-body">
         <div class="field-row">
           <div class="field"><label>제목 *</label><input id="f-title" placeholder="탐구 제목을 입력하세요" /></div>
-          <div class="field"><label>출품 부문 *</label><input id="f-category" placeholder="예) 산업 및 에너지" /></div>
+          <div class="field"><label>출품 부문 *</label><input id="f-category" value="산업 및 에너지" placeholder="예) 산업 및 에너지" /></div>
         </div>
         <div class="field-row">
           <div class="field"><label>작성자 이름 *</label><input id="f-author" placeholder="학생 이름" /></div>
@@ -454,9 +470,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
           <div class="tb-sep"></div>
           <button class="hbtn plain" onclick="insertText('f-sec2','\n')">줄바꿈</button>
         </div>
-        <textarea class="reditor" id="f-sec2" rows="12"
-          placeholder="1. 연구 대상 및 기본 조건 설정&#10;가. 연구 대상&#10;나. 기본 조건&#10;&#10;2. 분석 방법&#10;&#10;3. 변수 설정&#10;가) 독립변수&#10;나) 종속변수&#10;다) 통제변수"
-          oninput="updateCounter('f-sec2','cc-sec2','cb-sec2',600)"></textarea>
+        <div class="reditor rich-editor" id="f-sec2" contenteditable="true" role="textbox" aria-multiline="true"
+          data-placeholder="1. 연구 대상 및 기본 조건 설정&#10;가. 연구 대상&#10;나. 기본 조건&#10;&#10;2. 분석 방법&#10;&#10;3. 변수 설정&#10;가) 독립변수&#10;나) 종속변수&#10;다) 통제변수"
+          oninput="updateCounter('f-sec2','cc-sec2','cb-sec2',600)"></div>
         <div class="char-counter">
           <span class="char-num" id="cc-sec2">0자</span>
           <div class="char-bar-wrap"><div class="char-bar" id="cb-sec2" style="width:0%"></div></div>
@@ -466,7 +482,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
           <div class="table-field-head">
             <div>
               <div class="table-field-title">표 자료 (선택)</div>
-              <div class="table-field-help">결과표를 여러 개 추가할 수 있으며, 셀을 클릭해 직접 입력하고 행·열 수를 조절할 수 있습니다.</div>
+              <div class="table-field-help">아래에서 표를 완성한 뒤 <b>본문에 삽입</b>을 누르세요. 커서 위치에 표가 들어가고 표 아래에서 글을 계속 작성할 수 있습니다.</div>
             </div>
             <button type="button" class="table-add-btn" onclick="addResearchTable()">＋ 표 추가</button>
           </div>
@@ -523,6 +539,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
     </div>
 
     <div class="form-actions">
+      <button type="button" class="btn-hwpx" onclick="downloadReportHwpx()">한글파일 다운로드 (HWPX)</button>
       <button class="btn-cancel" onclick="showList()">취소</button>
       <button class="btn-submit" id="btn-save" onclick="saveReport()">
         <div class="spinner" id="save-spinner"></div>
@@ -569,6 +586,7 @@ let _resumeCodeHash = '';
 let _resumeCodeLabel = '';
 let _resumeCodeBusy = false;
 let _draftSaveTimer = null;
+let _sec2SelectionRange = null;
 
 async function initFirebase() {
   try {
@@ -592,7 +610,7 @@ async function initFirebase() {
     console.warn('⚠️ Firebase 인증 미설정, localStorage 사용:', e.message);
   }
 }
-initFirebase();
+const firebaseReadyPromise = initFirebase();
 
 // ═══════════════════════════════════════════════
 // localStorage fallback helpers
@@ -643,6 +661,7 @@ function collectCurrentReport() {
     school: v('f-school'),
     sec1: v('f-sec1'),
     sec2: v('f-sec2'),
+    sec2Html: cleanRichEditorHTML(),
     sec2tables: collectResearchTables(),
     sec3: v('f-sec3'),
     sec4: v('f-sec4'),
@@ -661,11 +680,14 @@ function applyReportToForm(report) {
   const safe = report && typeof report === 'object' ? report : {};
   resetForm();
   document.getElementById('f-title').value = safe.title || '';
-  document.getElementById('f-category').value = safe.category || '';
+  document.getElementById('f-category').value = safe.category || '산업 및 에너지';
   document.getElementById('f-author').value = safe.author || '';
   document.getElementById('f-school').value = safe.school || '';
   document.getElementById('f-sec1').value = safe.sec1 || '';
-  document.getElementById('f-sec2').value = safe.sec2 || '';
+  const sec2Editor = document.getElementById('f-sec2');
+  sec2Editor.innerHTML = safe.sec2Html
+    ? sanitizeRichEditorHTML(safe.sec2Html)
+    : plainTextToRichHTML(safe.sec2 || '');
   document.getElementById('f-sec3').value = safe.sec3 || '';
   document.getElementById('f-sec4').value = safe.sec4 || '';
   loadResearchTables(safe.sec2tables);
@@ -862,18 +884,18 @@ async function updateLinkedCode({ silent = false } = {}) {
   }
 }
 
-async function loadByResumeCode() {
+async function loadByResumeCode(rawCode = null, { skipReplaceConfirm = false } = {}) {
   if (_resumeCodeBusy) return;
   const input = document.getElementById('resume-code-input');
-  const code = normalizeResumeCode(input?.value);
+  const code = normalizeResumeCode(rawCode ?? input?.value);
   if (!validResumeCode(code)) {
     showToast('저장코드는 공백을 제외하고 6~24자로 입력하세요', true);
     input?.focus();
-    return;
+    return false;
   }
   if (!useFirebase || !auth?.currentUser) {
     showToast('Firebase Authentication에서 익명 로그인을 사용 설정하세요', true);
-    return;
+    return false;
   }
 
   setCodeButtonsDisabled(true);
@@ -884,11 +906,11 @@ async function loadByResumeCode() {
     if (!snapshot.exists) {
       setHeaderSaveStatus('코드 없음');
       showToast('해당 저장코드로 저장된 보고서를 찾지 못했습니다', true);
-      return;
+      return false;
     }
-    if (reportHasContent() && !confirm('현재 작성 중인 내용을 저장코드의 내용으로 바꿀까요?')) {
+    if (!skipReplaceConfirm && reportHasContent() && !confirm('현재 작성 중인 내용을 저장코드의 내용으로 바꿀까요?')) {
       setHeaderSaveStatus('열기 취소');
-      return;
+      return false;
     }
     const data = snapshot.data() || {};
     _editingId = null;
@@ -904,10 +926,12 @@ async function loadByResumeCode() {
     showView('view-form');
     setHeaderSaveStatus(`불러옴 · ${saveTimeText()}`);
     showToast('저장코드의 보고서를 불러왔습니다');
+    return true;
   } catch (error) {
     console.error('저장코드 불러오기 실패:', error);
     setHeaderSaveStatus('열기 실패');
     showToast('보고서를 불러오지 못했습니다. Firebase 설정을 확인하세요', true);
+    return false;
   } finally {
     setCodeButtonsDisabled(false);
   }
@@ -935,6 +959,185 @@ function startNewReport() {
 // Firestore는 중첩 배열을 허용하지 않으므로 행을 { cells: [] } 형태로 저장합니다.
 // ═══════════════════════════════════════════════
 let _researchTableSeq = 0;
+
+function plainTextToRichHTML(text) {
+  const source = String(text ?? '');
+  if (!source) return '';
+  return source.split('\n').map(line => {
+    const div = document.createElement('div');
+    div.textContent = line;
+    return `<div>${div.innerHTML || '<br>'}</div>`;
+  }).join('');
+}
+
+function sanitizeRichEditorHTML(html) {
+  const template = document.createElement('template');
+  template.innerHTML = String(html ?? '');
+  template.content.querySelectorAll('script,style,iframe,object,embed,link,meta,img,svg').forEach(node => node.remove());
+
+  const allowedTags = new Set(['DIV','P','BR','SPAN','B','STRONG','I','EM','U','UL','OL','LI','TABLE','THEAD','TBODY','TR','TH','TD','BUTTON']);
+  const allowedClasses = new Set(['inline-table-block','inline-table-tools','inline-table-caption','inline-content-table']);
+  [...template.content.querySelectorAll('*')].forEach(element => {
+    if (!allowedTags.has(element.tagName)) {
+      element.replaceWith(...element.childNodes);
+      return;
+    }
+    const originalClasses = String(element.getAttribute('class') || '').split(/\s+/).filter(name => allowedClasses.has(name));
+    const originalSourceId = String(element.getAttribute('data-source-table-id') || '').replace(/[^a-zA-Z0-9_-]/g, '');
+    const originalColspan = Math.max(1, Math.min(10, Number(element.getAttribute('colspan')) || 1));
+    const originalRowspan = Math.max(1, Math.min(50, Number(element.getAttribute('rowspan')) || 1));
+    [...element.attributes].forEach(attribute => element.removeAttribute(attribute.name));
+    if (originalClasses.length) element.className = originalClasses.join(' ');
+    if (element.classList.contains('inline-table-block')) {
+      if (originalSourceId) element.dataset.sourceTableId = originalSourceId;
+      element.setAttribute('contenteditable', 'false');
+    }
+    if (element.tagName === 'BUTTON' && element.closest('.inline-table-tools')) {
+      element.type = 'button';
+      element.dataset.removeInlineTable = '';
+      element.textContent = '본문에서 삭제';
+    }
+    if (['TH','TD'].includes(element.tagName)) {
+      if (originalColspan > 1) element.setAttribute('colspan', String(originalColspan));
+      if (originalRowspan > 1) element.setAttribute('rowspan', String(originalRowspan));
+    }
+  });
+  return template.innerHTML.trim();
+}
+
+function cleanRichEditorHTML() {
+  const editor = document.getElementById('f-sec2');
+  return editor ? sanitizeRichEditorHTML(editor.innerHTML) : '';
+}
+
+function richEditorDisplayHTML(html) {
+  const template = document.createElement('template');
+  template.innerHTML = sanitizeRichEditorHTML(html);
+  template.content.querySelectorAll('.inline-table-tools').forEach(node => node.remove());
+  template.content.querySelectorAll('[contenteditable]').forEach(node => node.removeAttribute('contenteditable'));
+  return template.innerHTML;
+}
+
+function selectionInsideEditor(editor, range) {
+  return Boolean(editor && range && editor.contains(range.commonAncestorContainer));
+}
+
+function editorInsertionRange(editor) {
+  const selection = window.getSelection();
+  if (selection?.rangeCount) {
+    const activeRange = selection.getRangeAt(0);
+    if (selectionInsideEditor(editor, activeRange)) return activeRange.cloneRange();
+  }
+  if (selectionInsideEditor(editor, _sec2SelectionRange)) return _sec2SelectionRange.cloneRange();
+  const range = document.createRange();
+  range.selectNodeContents(editor);
+  range.collapse(false);
+  return range;
+}
+
+function placeCaretAtStart(element) {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  range.collapse(true);
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  _sec2SelectionRange = range.cloneRange();
+}
+
+function insertTextInRichEditor(editor, text) {
+  editor.focus();
+  const range = editorInsertionRange(editor);
+  range.deleteContents();
+  const node = document.createTextNode(text);
+  range.insertNode(node);
+  range.setStartAfter(node);
+  range.collapse(true);
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  _sec2SelectionRange = range.cloneRange();
+  editor.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+function makeInlineTableBlock(card) {
+  const block = document.createElement('div');
+  block.className = 'inline-table-block';
+  block.dataset.sourceTableId = card.dataset.tableId;
+  block.setAttribute('contenteditable', 'false');
+
+  const tools = document.createElement('div');
+  tools.className = 'inline-table-tools';
+  const removeButton = document.createElement('button');
+  removeButton.type = 'button';
+  removeButton.dataset.removeInlineTable = '';
+  removeButton.textContent = '본문에서 삭제';
+  tools.appendChild(removeButton);
+  block.appendChild(tools);
+
+  const caption = document.createElement('div');
+  caption.className = 'inline-table-caption';
+  caption.textContent = card.querySelector('.table-title-input')?.value.trim() || '표';
+  block.appendChild(caption);
+
+  const table = document.createElement('table');
+  table.className = 'inline-content-table';
+  const tbody = document.createElement('tbody');
+  card.querySelectorAll('tbody tr').forEach((sourceRow, rowIndex) => {
+    const row = document.createElement('tr');
+    sourceRow.querySelectorAll('.research-input').forEach(input => {
+      const cell = document.createElement(rowIndex === 0 ? 'th' : 'td');
+      cell.textContent = input.value.trim();
+      row.appendChild(cell);
+    });
+    tbody.appendChild(row);
+  });
+  table.appendChild(tbody);
+  block.appendChild(table);
+  return block;
+}
+
+function refreshTableInsertButtons() {
+  document.querySelectorAll('#research-table-list .table-editor-card').forEach(card => {
+    const inserted = document.querySelector(`#f-sec2 .inline-table-block[data-source-table-id="${card.dataset.tableId}"]`);
+    const button = card.querySelector('.table-insert-btn');
+    if (button) button.textContent = inserted ? '본문 표 업데이트' : '본문에 삽입';
+  });
+}
+
+function insertOrUpdateResearchTable(card) {
+  const editor = document.getElementById('f-sec2');
+  if (!editor) return;
+  const block = makeInlineTableBlock(card);
+  const existing = editor.querySelector(`.inline-table-block[data-source-table-id="${card.dataset.tableId}"]`);
+
+  if (existing) {
+    existing.replaceWith(block);
+    let next = block.nextElementSibling;
+    if (!next) {
+      next = document.createElement('div');
+      next.innerHTML = '<br>';
+      block.after(next);
+    }
+    editor.focus();
+    placeCaretAtStart(next);
+    showToast('본문의 표를 업데이트했습니다');
+  } else {
+    const range = editorInsertionRange(editor);
+    range.deleteContents();
+    const after = document.createElement('div');
+    after.innerHTML = '<br>';
+    const fragment = document.createDocumentFragment();
+    fragment.append(block, after);
+    range.insertNode(fragment);
+    editor.focus();
+    placeCaretAtStart(after);
+    showToast('커서 위치에 표를 삽입했습니다. 아래에서 글을 계속 작성하세요');
+  }
+
+  refreshTableInsertButtons();
+  editor.dispatchEvent(new Event('input', { bubbles: true }));
+}
 
 function updateResearchTableEmptyState() {
   const list = document.getElementById('research-table-list');
@@ -972,7 +1175,7 @@ function addResearchTable(savedTable) {
 
   const card = document.createElement('div');
   card.className = 'table-editor-card';
-  card.dataset.tableId = String(++_researchTableSeq);
+  card.dataset.tableId = String(savedTable?.id || `table-${Date.now()}-${++_researchTableSeq}`);
 
   const top = document.createElement('div');
   top.className = 'table-editor-top';
@@ -1000,6 +1203,13 @@ function addResearchTable(savedTable) {
     button.addEventListener('click', () => handler(card));
     controls.appendChild(button);
   });
+
+  const insertButton = document.createElement('button');
+  insertButton.type = 'button';
+  insertButton.className = 'table-insert-btn';
+  insertButton.textContent = '본문에 삽입';
+  insertButton.addEventListener('click', () => insertOrUpdateResearchTable(card));
+  controls.appendChild(insertButton);
 
   const removeButton = document.createElement('button');
   removeButton.type = 'button';
@@ -1071,6 +1281,7 @@ function removeResearchTableColumn(card) {
 
 function removeResearchTable(card) {
   if (!confirm('이 표를 삭제할까요?')) return;
+  document.querySelector(`#f-sec2 .inline-table-block[data-source-table-id="${card.dataset.tableId}"]`)?.remove();
   card.remove();
   updateResearchTableEmptyState();
   scheduleDraftSave();
@@ -1078,6 +1289,7 @@ function removeResearchTable(card) {
 
 function collectResearchTables() {
   return Array.from(document.querySelectorAll('#research-table-list .table-editor-card')).map(card => ({
+    id: card.dataset.tableId,
     title: card.querySelector('.table-title-input')?.value.trim() || '',
     rows: Array.from(card.querySelectorAll('tbody tr')).map(row => ({
       cells: Array.from(row.querySelectorAll('.research-input')).map(input => input.value.trim()),
@@ -1091,6 +1303,7 @@ function loadResearchTables(tables) {
   list.innerHTML = '';
   (Array.isArray(tables) ? tables : []).forEach(table => addResearchTable(table));
   updateResearchTableEmptyState();
+  refreshTableInsertButtons();
 }
 
 // ═══════════════════════════════════════════════
@@ -1262,10 +1475,13 @@ async function showDetail(id) {
   document.getElementById('d-tag').textContent   = r.category;
 
   const txt = t   => t   ? `<div class="d-content">${escapeHtml(t)}</div>` : '<div class="d-content" style="color:#bbb">내용 없음</div>';
+  const sec2Content = r.sec2Html
+    ? `<div class="d-content rich-output">${richEditorDisplayHTML(r.sec2Html)}</div>`
+    : `${txt(r.sec2)}${renderResearchTablesDetail(r.sec2tables)}`;
 
   document.getElementById('d-body').innerHTML = `
     <div class="d-section"><div class="d-sec-title">Ⅰ. 탐구(연구) 동기 및 목적</div>${txt(r.sec1)}</div>
-    <div class="d-section"><div class="d-sec-title">Ⅱ. 탐구(연구) 방법</div>${txt(r.sec2)}${renderResearchTablesDetail(r.sec2tables)}</div>
+    <div class="d-section"><div class="d-sec-title">Ⅱ. 탐구(연구) 방법</div>${sec2Content}</div>
     <div class="d-section"><div class="d-sec-title">Ⅲ. 예상 결과</div>${txt(r.sec3)}</div>
     <div class="d-section"><div class="d-sec-title">Ⅳ. 기대 효과</div>${txt(r.sec4)}</div>`;
   showView('view-detail');
@@ -1316,19 +1532,27 @@ const NUMS = {
 
 function insertHeading(id, type) {
   const el = document.getElementById(id);
-  const pos = el.selectionStart;
-  const before = el.value.substring(0, pos);
-  const after  = el.value.substring(pos);
+  if (!el) return;
+  const sourceText = el.isContentEditable ? el.innerText : el.value;
   const nums = NUMS[type] || NUMS['1'];
   let count = 0;
-  before.split('\n').forEach(line => {
-    nums.forEach((n, i) => {
+  sourceText.split('\n').forEach(line => {
+    nums.forEach(n => {
       const t = type.includes('(') ? `(${n})` : type.endsWith(')') ? `${n})` : `${n}.`;
       if (line.trim().startsWith(t)) count++;
     });
   });
   const label = nums[Math.min(count, nums.length - 1)];
-  let prefix = type.startsWith('(') ? `\n(${label}) ` : type.endsWith(')') ? `\n${label}) ` : `\n${label}. `;
+  const prefix = type.startsWith('(') ? `\n(${label}) ` : type.endsWith(')') ? `\n${label}) ` : `\n${label}. `;
+
+  if (el.isContentEditable) {
+    insertTextInRichEditor(el, prefix);
+    return;
+  }
+
+  const pos = el.selectionStart;
+  const before = el.value.substring(0, pos);
+  const after  = el.value.substring(pos);
   el.value = before + prefix + after;
   el.selectionStart = el.selectionEnd = pos + prefix.length;
   el.focus();
@@ -1337,6 +1561,11 @@ function insertHeading(id, type) {
 
 function insertText(id, text) {
   const el = document.getElementById(id);
+  if (!el) return;
+  if (el.isContentEditable) {
+    insertTextInRichEditor(el, text);
+    return;
+  }
   const pos = el.selectionStart;
   el.value = el.value.substring(0, pos) + text + el.value.substring(pos);
   el.selectionStart = el.selectionEnd = pos + text.length;
@@ -1349,7 +1578,8 @@ function updateCounter(fieldId, counterId, barId, minChars) {
   const cnt = document.getElementById(counterId);
   const bar = document.getElementById(barId);
   if (!el || !cnt) return;
-  const len = el.value.replace(/\s/g, '').length;
+  const rawText = el.isContentEditable ? el.innerText : el.value;
+  const len = rawText.replace(/\s/g, '').length;
   cnt.textContent = len + '자';
   if (minChars > 0) {
     const pct = Math.min(100, (len / minChars) * 100);
@@ -1364,8 +1594,12 @@ function resetForm() {
   ['f-title','f-category','f-author','f-school',
    'f-sec1','f-sec2','f-sec3','f-sec4'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.value = '';
+    if (el) {
+      if (el.isContentEditable) el.innerHTML = '';
+      else el.value = '';
+    }
   });
+  document.getElementById('f-category').value = '산업 및 에너지';
   ['cc-sec1','cc-sec2','cc-sec3','cc-sec4'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.textContent = '0자'; el.className = 'char-num'; }
@@ -1377,7 +1611,11 @@ function resetForm() {
   loadResearchTables([]);
 }
 
-const v = id => document.getElementById(id).value.trim();
+const v = id => {
+  const element = document.getElementById(id);
+  if (!element) return '';
+  return String(element.isContentEditable ? element.innerText : element.value).trim();
+};
 
 function showToast(msg, isErr) {
   const t = document.getElementById('toast');
@@ -1387,10 +1625,315 @@ function showToast(msg, isErr) {
 }
 
 // ═══════════════════════════════════════════════
+// 한글 HWPX 다운로드
+// 별도 라이브러리 없이 HWPX 표준 ZIP 패키지를 생성합니다.
+// ═══════════════════════════════════════════════
+function hwpxXmlText(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+function hwpxCrc32(bytes) {
+  if (!hwpxCrc32.table) {
+    hwpxCrc32.table = Array.from({ length: 256 }, (_, number) => {
+      let value = number;
+      for (let bit = 0; bit < 8; bit++) value = (value & 1) ? (0xEDB88320 ^ (value >>> 1)) : (value >>> 1);
+      return value >>> 0;
+    });
+  }
+  let crc = 0xFFFFFFFF;
+  for (const byte of bytes) crc = hwpxCrc32.table[(crc ^ byte) & 0xFF] ^ (crc >>> 8);
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+
+function hwpxLe16(value) {
+  return Uint8Array.of(value & 0xFF, (value >>> 8) & 0xFF);
+}
+
+function hwpxLe32(value) {
+  return Uint8Array.of(value & 0xFF, (value >>> 8) & 0xFF, (value >>> 16) & 0xFF, (value >>> 24) & 0xFF);
+}
+
+function hwpxConcat(parts) {
+  const total = parts.reduce((sum, part) => sum + part.length, 0);
+  const output = new Uint8Array(total);
+  let offset = 0;
+  parts.forEach(part => { output.set(part, offset); offset += part.length; });
+  return output;
+}
+
+function hwpxFontFace(language) {
+  return `<hh:fontface lang="${language}" fontCnt="1"><hh:font id="0" face="맑은 고딕" type="TTF" isEmbedded="0"><hh:typeInfo familyType="FCAT_GOTHIC" weight="6" proportion="4" contrast="0" strokeVariation="1" armStyle="1" letterform="1" midline="1" xHeight="1"/></hh:font></hh:fontface>`;
+}
+
+function hwpxCharPr(id, height, bold = false, color = '#172039') {
+  return `<hh:charPr id="${id}" height="${height}" textColor="${color}" shadeColor="none" useFontSpace="0" useKerning="0" symMark="NONE" borderFillIDRef="2"><hh:fontRef hangul="0" latin="0" hanja="0" japanese="0" other="0" symbol="0" user="0"/><hh:ratio hangul="100" latin="100" hanja="100" japanese="100" other="100" symbol="100" user="100"/><hh:spacing hangul="0" latin="0" hanja="0" japanese="0" other="0" symbol="0" user="0"/><hh:relSz hangul="100" latin="100" hanja="100" japanese="100" other="100" symbol="100" user="100"/><hh:offset hangul="0" latin="0" hanja="0" japanese="0" other="0" symbol="0" user="0"/>${bold ? '<hh:bold/>' : ''}<hh:underline type="NONE" shape="SOLID" color="#000000"/><hh:strikeout shape="NONE" color="#000000"/><hh:outline type="NONE"/><hh:shadow type="NONE" color="#C0C0C0" offsetX="10" offsetY="10"/></hh:charPr>`;
+}
+
+function hwpxParaPr(id, align = 'JUSTIFY', before = 0, after = 100, borderFillIDRef = 2) {
+  return `<hh:paraPr id="${id}" tabPrIDRef="0" condense="0" fontLineHeight="0" snapToGrid="1" suppressLineNumbers="0" checked="0" textDir="LTR"><hh:align horizontal="${align}" vertical="BASELINE"/><hh:heading type="NONE" idRef="0" level="0"/><hh:breakSetting breakLatinWord="KEEP_WORD" breakNonLatinWord="BREAK_WORD" widowOrphan="0" keepWithNext="0" keepLines="0" pageBreakBefore="0" lineWrap="BREAK"/><hh:autoSpacing eAsianEng="0" eAsianNum="0"/><hp:switch><hp:case hp:required-namespace="http://www.hancom.co.kr/hwpml/2016/HwpUnitChar"><hh:margin><hc:intent value="0" unit="HWPUNIT"/><hc:left value="0" unit="HWPUNIT"/><hc:right value="0" unit="HWPUNIT"/><hc:prev value="${before}" unit="HWPUNIT"/><hc:next value="${after}" unit="HWPUNIT"/></hh:margin><hh:lineSpacing type="PERCENT" value="165" unit="HWPUNIT"/></hp:case><hp:default><hh:margin><hc:intent value="0" unit="HWPUNIT"/><hc:left value="0" unit="HWPUNIT"/><hc:right value="0" unit="HWPUNIT"/><hc:prev value="${before}" unit="HWPUNIT"/><hc:next value="${after}" unit="HWPUNIT"/></hh:margin><hh:lineSpacing type="PERCENT" value="165" unit="HWPUNIT"/></hp:default></hp:switch><hh:border borderFillIDRef="${borderFillIDRef}" offsetLeft="0" offsetRight="0" offsetTop="0" offsetBottom="0" connect="0" ignoreMargin="0"/></hh:paraPr>`;
+}
+
+function hwpxHeaderXml() {
+  const languages = ['HANGUL','LATIN','HANJA','JAPANESE','OTHER','SYMBOL','USER'];
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<hh:head xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core" xmlns:hh="http://www.hancom.co.kr/hwpml/2011/head" xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" version="1.5" secCnt="1">
+<hh:beginNum page="1" footnote="1" endnote="1" pic="1" tbl="1" equation="1"/><hh:refList>
+<hh:fontfaces itemCnt="7">${languages.map(hwpxFontFace).join('')}</hh:fontfaces>
+<hh:borderFills itemCnt="5">
+<hh:borderFill id="1" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0"><hh:slash type="NONE" Crooked="0" isCounter="0"/><hh:backSlash type="NONE" Crooked="0" isCounter="0"/><hh:leftBorder type="NONE" width="0.1 mm" color="#000000"/><hh:rightBorder type="NONE" width="0.1 mm" color="#000000"/><hh:topBorder type="NONE" width="0.1 mm" color="#000000"/><hh:bottomBorder type="NONE" width="0.1 mm" color="#000000"/><hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/></hh:borderFill>
+<hh:borderFill id="2" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0"><hh:slash type="NONE" Crooked="0" isCounter="0"/><hh:backSlash type="NONE" Crooked="0" isCounter="0"/><hh:leftBorder type="NONE" width="0.1 mm" color="#000000"/><hh:rightBorder type="NONE" width="0.1 mm" color="#000000"/><hh:topBorder type="NONE" width="0.1 mm" color="#000000"/><hh:bottomBorder type="NONE" width="0.1 mm" color="#000000"/><hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/><hc:fillBrush><hc:winBrush faceColor="none" hatchColor="#999999" alpha="0"/></hc:fillBrush></hh:borderFill>
+<hh:borderFill id="3" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0"><hh:slash type="NONE" Crooked="0" isCounter="0"/><hh:backSlash type="NONE" Crooked="0" isCounter="0"/><hh:leftBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:rightBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:topBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:bottomBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/><hc:fillBrush><hc:winBrush faceColor="#FFFFFF" hatchColor="#FFFFFF" alpha="0"/></hc:fillBrush></hh:borderFill>
+<hh:borderFill id="4" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0"><hh:slash type="NONE" Crooked="0" isCounter="0"/><hh:backSlash type="NONE" Crooked="0" isCounter="0"/><hh:leftBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:rightBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:topBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:bottomBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/><hc:fillBrush><hc:winBrush faceColor="#F1F4F6" hatchColor="#F1F4F6" alpha="0"/></hc:fillBrush></hh:borderFill>
+<hh:borderFill id="5" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0"><hh:slash type="NONE" Crooked="0" isCounter="0"/><hh:backSlash type="NONE" Crooked="0" isCounter="0"/><hh:leftBorder type="NONE" width="0.1 mm" color="#192238"/><hh:rightBorder type="NONE" width="0.1 mm" color="#192238"/><hh:topBorder type="NONE" width="0.1 mm" color="#192238"/><hh:bottomBorder type="SOLID" width="0.3 mm" color="#192238"/><hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/></hh:borderFill>
+</hh:borderFills>
+<hh:charProperties itemCnt="6">${hwpxCharPr(0,1050)}${hwpxCharPr(1,1050,true,'#1F5962')}${hwpxCharPr(2,1500,true,'#192238')}${hwpxCharPr(3,2600,true,'#192238')}${hwpxCharPr(4,1050,true,'#192238')}${hwpxCharPr(5,950,false,'#4B5568')}</hh:charProperties>
+<hh:tabProperties itemCnt="1"><hh:tabPr id="0" autoTabLeft="0" autoTabRight="0"/></hh:tabProperties>
+<hh:paraProperties itemCnt="5">${hwpxParaPr(0)}${hwpxParaPr(1,'CENTER',0,120)}${hwpxParaPr(2,'LEFT')}${hwpxParaPr(3,'LEFT',0,100,5)}${hwpxParaPr(4,'JUSTIFY',420,100)}</hh:paraProperties>
+<hh:styles itemCnt="1"><hh:style id="0" type="PARA" name="바탕글" engName="Normal" paraPrIDRef="0" charPrIDRef="0" nextStyleIDRef="0" langID="1042" lockForm="0"/></hh:styles>
+</hh:refList><hh:compatibleDocument targetProgram="HWP201X"><hh:layoutCompatibility/></hh:compatibleDocument><hh:docOption><hh:linkinfo path="" pageInherit="0" footnoteInherit="0"/></hh:docOption></hh:head>`;
+}
+
+let hwpxParagraphSequence = 1000000000;
+let hwpxTableSequence = 2000000000;
+
+function hwpxParagraphXml(value, options = {}) {
+  const id = hwpxParagraphSequence++;
+  const text = String(value ?? '') || ' ';
+  return `<hp:p id="${id}" paraPrIDRef="${options.paraPr ?? 0}" styleIDRef="0" pageBreak="${options.pageBreak ? 1 : 0}" columnBreak="0" merged="0"><hp:run charPrIDRef="${options.charPr ?? 0}"><hp:t>${hwpxXmlText(text)}</hp:t></hp:run></hp:p>`;
+}
+
+function hwpxBodyXml(value) {
+  const lines = String(value ?? '').replace(/\r\n/g, '\n').split('\n');
+  if (!lines.some(line => line.trim())) return hwpxParagraphXml(' ');
+  return lines.map(line => hwpxParagraphXml(line.trim() || ' ')).join('');
+}
+
+function hwpxCellXml(text, options = {}) {
+  const paragraphId = hwpxParagraphSequence++;
+  return `<hp:tc name="" header="0" hasMargin="1" protect="0" editable="0" dirty="1" borderFillIDRef="${options.borderFillIDRef ?? 3}"><hp:subList id="" textDirection="HORIZONTAL" lineWrap="BREAK" vertAlign="CENTER" linkListIDRef="0" linkListNextIDRef="0" textWidth="0" textHeight="0" hasTextRef="0" hasNumRef="0"><hp:p id="${paragraphId}" paraPrIDRef="${options.paraPr ?? 2}" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0"><hp:run charPrIDRef="${options.charPr ?? 0}"><hp:t>${hwpxXmlText(String(text ?? '') || ' ')}</hp:t></hp:run></hp:p></hp:subList><hp:cellAddr colAddr="${options.colAddr ?? 0}" rowAddr="${options.rowAddr ?? 0}"/><hp:cellSpan colSpan="${options.colSpan ?? 1}" rowSpan="${options.rowSpan ?? 1}"/><hp:cellSz width="${options.width ?? 10000}" height="${options.height ?? 3300}"/><hp:cellMargin left="360" right="360" top="260" bottom="260"/></hp:tc>`;
+}
+
+function hwpxTableXml(rows, columnCount, width = 42000) {
+  if (!rows.length || !columnCount) return '';
+  const rowHeight = 3500;
+  const cellsWidth = Math.floor(width / columnCount);
+  const tableId = hwpxTableSequence++;
+  const rowsXml = rows.map((row, rowIndex) => {
+    const cellsXml = row.cells.map((cell, cellIndex) => hwpxCellXml(cell.text, {
+      colAddr: cell.colAddr ?? cellIndex,
+      rowAddr: rowIndex,
+      colSpan: cell.colSpan ?? 1,
+      width: cell.width ?? (cellsWidth * (cell.colSpan ?? 1)),
+      height: rowHeight,
+      borderFillIDRef: cell.borderFillIDRef ?? (rowIndex === 0 ? 4 : 3),
+      charPr: cell.charPr ?? (rowIndex === 0 ? 4 : 0),
+      paraPr: cell.paraPr ?? 1,
+    })).join('');
+    return `<hp:tr>${cellsXml}</hp:tr>`;
+  }).join('');
+  const table = `<hp:tbl id="${tableId}" zOrder="0" numberingType="TABLE" textWrap="TOP_AND_BOTTOM" textFlow="BOTH_SIDES" lock="0" dropcapstyle="None" pageBreak="CELL" repeatHeader="0" rowCnt="${rows.length}" colCnt="${columnCount}" cellSpacing="0" borderFillIDRef="3" noAdjust="0"><hp:sz width="${width}" widthRelTo="ABSOLUTE" height="${rows.length * rowHeight}" heightRelTo="ABSOLUTE" protect="0"/><hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1" allowOverlap="0" holdAnchorAndSO="0" vertRelTo="PARA" horzRelTo="COLUMN" vertAlign="TOP" horzAlign="CENTER" vertOffset="0" horzOffset="0"/><hp:outMargin left="0" right="0" top="0" bottom="0"/><hp:inMargin left="0" right="0" top="0" bottom="0"/>${rowsXml}</hp:tbl>`;
+  return `<hp:p id="${hwpxParagraphSequence++}" paraPrIDRef="1" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0"><hp:run charPrIDRef="0">${table}</hp:run></hp:p>`;
+}
+
+function hwpxBasicInfoTableXml(report) {
+  const rows = [
+    { cells: [
+      { text: '보고서 제목', colAddr: 0, width: 7000, borderFillIDRef: 4, charPr: 4 },
+      { text: report.title, colAddr: 1, colSpan: 3, width: 35000, borderFillIDRef: 3, charPr: 4, paraPr: 2 },
+    ]},
+    { cells: [
+      { text: '작성자', colAddr: 0, width: 7000, borderFillIDRef: 4, charPr: 4 },
+      { text: report.author, colAddr: 1, width: 14000, borderFillIDRef: 3 },
+      { text: '학교 / 학년', colAddr: 2, width: 7000, borderFillIDRef: 4, charPr: 4 },
+      { text: report.school, colAddr: 3, width: 14000, borderFillIDRef: 3 },
+    ]},
+    { cells: [
+      { text: '출품 부문', colAddr: 0, width: 7000, borderFillIDRef: 4, charPr: 4 },
+      { text: report.category, colAddr: 1, colSpan: 3, width: 35000, borderFillIDRef: 3 },
+    ]},
+  ];
+  return hwpxTableXml(rows, 4);
+}
+
+function hwpxEditorTokens(editor) {
+  const tokens = [];
+  let textBuffer = '';
+  const flushText = () => {
+    if (textBuffer.replace(/\s/g, '')) tokens.push({ type: 'text', text: textBuffer.replace(/\n{3,}/g, '\n\n') });
+    textBuffer = '';
+  };
+  const tableToken = element => {
+    const table = element.matches('table') ? element : element.querySelector('table');
+    if (!table) return;
+    const rows = [...table.querySelectorAll('tr')].map(row => [...row.querySelectorAll('th,td')].map(cell => cell.textContent.trim()));
+    if (!rows.length) return;
+    tokens.push({
+      type: 'table',
+      title: element.querySelector?.('.inline-table-caption')?.textContent.trim() || '',
+      rows,
+    });
+  };
+  const walk = node => {
+    if (node.nodeType === Node.TEXT_NODE) { textBuffer += node.nodeValue || ''; return; }
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    const element = node;
+    if (element.classList.contains('inline-table-block') || element.tagName === 'TABLE') {
+      flushText();
+      tableToken(element);
+      return;
+    }
+    if (element.tagName === 'BR') { textBuffer += '\n'; return; }
+    const blockTag = ['DIV','P','LI','UL','OL'].includes(element.tagName);
+    [...element.childNodes].forEach(walk);
+    if (blockTag) textBuffer += '\n';
+  };
+  [...editor.childNodes].forEach(walk);
+  flushText();
+  return tokens;
+}
+
+function hwpxRichSectionXml(editor) {
+  const tokens = hwpxEditorTokens(editor);
+  if (!tokens.length) return hwpxParagraphXml(' ');
+  let content = '';
+  tokens.forEach(token => {
+    if (token.type === 'text') {
+      content += hwpxBodyXml(token.text);
+      return;
+    }
+    if (token.title) content += hwpxParagraphXml(token.title, { charPr: 1, paraPr: 1 });
+    const columnCount = Math.max(1, ...token.rows.map(row => row.length));
+    const rows = token.rows.map(row => ({ cells: Array.from({ length: columnCount }, (_, index) => ({ text: row[index] || '' })) }));
+    content += hwpxTableXml(rows, columnCount);
+    content += hwpxParagraphXml(' ');
+  });
+  return content;
+}
+
+function hwpxSectionXml(content) {
+  const sectionProperties = `<hp:p id="1" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0"><hp:run charPrIDRef="0"><hp:secPr id="" textDirection="HORIZONTAL" spaceColumns="1134" tabStop="8000" tabStopVal="4000" tabStopUnit="HWPUNIT" outlineShapeIDRef="0" memoShapeIDRef="0" textVerticalWidthHead="0" masterPageCnt="0"><hp:grid lineGrid="0" charGrid="0" wonggojiFormat="0"/><hp:startNum pageStartsOn="BOTH" page="1" pic="1" tbl="1" equation="1"/><hp:visibility hideFirstHeader="0" hideFirstFooter="0" hideFirstMasterPage="0" border="SHOW_ALL" fill="SHOW_ALL" hideFirstPageNum="0" hideFirstEmptyLine="0" showLineNumber="0"/><hp:pagePr landscape="WIDELY" width="59528" height="84188" gutterType="LEFT_ONLY"><hp:margin header="4252" footer="4252" gutter="0" left="8504" right="8504" top="5668" bottom="4252"/></hp:pagePr></hp:secPr><hp:ctrl><hp:colPr id="" type="NEWSPAPER" layout="LEFT" colCount="1" sameSz="1" sameGap="0"/></hp:ctrl></hp:run></hp:p>`;
+  return `<?xml version="1.0" encoding="UTF-8"?><hs:sec xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section" xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core">${sectionProperties}${content}</hs:sec>`;
+}
+
+function hwpxPackageFiles(title, sectionXml, previewText) {
+  const safeTitle = hwpxXmlText(title);
+  return {
+    mimetype: 'application/hwp+zip',
+    'version.xml': `<?xml version="1.0" encoding="UTF-8"?><hv:HCFVersion xmlns:hv="http://www.hancom.co.kr/hwpml/2011/version" tagetApplication="WORDPROCESSOR" major="5" minor="1" micro="1" buildNumber="0" os="1" xmlVersion="1.5" application="Hancom Office Hangul" appVersion="13, 0, 0, 1408 WIN32LEWindows_10"/>`,
+    'META-INF/container.xml': `<?xml version="1.0" encoding="UTF-8"?><ocf:container xmlns:ocf="urn:oasis:names:tc:opendocument:xmlns:container" xmlns:hpf="http://www.hancom.co.kr/schema/2011/hpf"><ocf:rootfiles><ocf:rootfile full-path="Contents/content.hpf" media-type="application/hwpml-package+xml"/></ocf:rootfiles></ocf:container>`,
+    'META-INF/manifest.xml': `<?xml version="1.0" encoding="UTF-8"?><odf:manifest xmlns:odf="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0"><odf:file-entry odf:full-path="/" odf:media-type="application/hwp+zip"/><odf:file-entry odf:full-path="version.xml" odf:media-type="text/xml"/><odf:file-entry odf:full-path="Contents/content.hpf" odf:media-type="text/xml"/><odf:file-entry odf:full-path="Contents/header.xml" odf:media-type="text/xml"/><odf:file-entry odf:full-path="Contents/section0.xml" odf:media-type="text/xml"/><odf:file-entry odf:full-path="Preview/PrvText.txt" odf:media-type="text/plain"/></odf:manifest>`,
+    'Contents/content.hpf': `<?xml version="1.0" encoding="UTF-8"?><opf:package xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf/" version="" unique-identifier="" id=""><opf:metadata><opf:title>${safeTitle}</opf:title><opf:language>ko</opf:language><opf:meta name="creator" content="과학전람회 보고서"/><opf:meta name="description" content="${safeTitle}"/></opf:metadata><opf:manifest><opf:item id="header" href="Contents/header.xml" media-type="application/xml"/><opf:item id="section0" href="Contents/section0.xml" media-type="application/xml"/></opf:manifest><opf:spine><opf:itemref idref="header" linear="yes"/><opf:itemref idref="section0" linear="yes"/></opf:spine></opf:package>`,
+    'Contents/header.xml': hwpxHeaderXml(),
+    'Contents/section0.xml': sectionXml,
+    'Preview/PrvText.txt': String(previewText ?? '').slice(0, 4096),
+  };
+}
+
+function hwpxZipBlob(files) {
+  const encoder = new TextEncoder();
+  const localParts = [];
+  const centralParts = [];
+  let localOffset = 0;
+  const now = new Date();
+  const year = Math.max(1980, now.getFullYear());
+  const dosTime = ((now.getHours() & 31) << 11) | ((now.getMinutes() & 63) << 5) | (Math.floor(now.getSeconds() / 2) & 31);
+  const dosDate = (((year - 1980) & 127) << 9) | (((now.getMonth() + 1) & 15) << 5) | (now.getDate() & 31);
+  const entries = Object.entries(files).sort(([first], [second]) => first === 'mimetype' ? -1 : second === 'mimetype' ? 1 : 0);
+
+  entries.forEach(([name, content]) => {
+    const nameBytes = encoder.encode(name);
+    const data = content instanceof Uint8Array ? content : encoder.encode(String(content));
+    const crc = hwpxCrc32(data);
+    const localHeader = hwpxConcat([hwpxLe32(0x04034B50),hwpxLe16(20),hwpxLe16(0x0800),hwpxLe16(0),hwpxLe16(dosTime),hwpxLe16(dosDate),hwpxLe32(crc),hwpxLe32(data.length),hwpxLe32(data.length),hwpxLe16(nameBytes.length),hwpxLe16(0),nameBytes]);
+    localParts.push(localHeader, data);
+    centralParts.push(hwpxConcat([hwpxLe32(0x02014B50),hwpxLe16(20),hwpxLe16(20),hwpxLe16(0x0800),hwpxLe16(0),hwpxLe16(dosTime),hwpxLe16(dosDate),hwpxLe32(crc),hwpxLe32(data.length),hwpxLe32(data.length),hwpxLe16(nameBytes.length),hwpxLe16(0),hwpxLe16(0),hwpxLe16(0),hwpxLe16(0),hwpxLe32(0),hwpxLe32(localOffset),nameBytes]));
+    localOffset += localHeader.length + data.length;
+  });
+
+  const local = hwpxConcat(localParts);
+  const central = hwpxConcat(centralParts);
+  const count = entries.length;
+  const end = hwpxConcat([hwpxLe32(0x06054B50),hwpxLe16(0),hwpxLe16(0),hwpxLe16(count),hwpxLe16(count),hwpxLe32(central.length),hwpxLe32(local.length),hwpxLe16(0)]);
+  return new Blob([local, central, end], { type: 'application/hwp+zip' });
+}
+
+function safeDownloadName(value) {
+  return String(value ?? '').trim().replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, '_').slice(0, 70) || '과학전람회_보고서';
+}
+
+function downloadReportHwpx() {
+  const report = collectCurrentReport();
+  if (!report.title) return showToast('보고서 제목을 먼저 입력하세요', true);
+  if (!report.author) return showToast('작성자 이름을 먼저 입력하세요', true);
+
+  hwpxParagraphSequence = 1000000000;
+  hwpxTableSequence = 2000000000;
+  let content = '';
+  content += hwpxParagraphXml('과학전람회 보고서', { charPr: 3, paraPr: 1 });
+  content += hwpxParagraphXml(' ');
+  content += hwpxBasicInfoTableXml(report);
+  content += hwpxParagraphXml(' ');
+
+  const addSection = (title, body, richEditor = null) => {
+    content += hwpxParagraphXml(' ');
+    content += hwpxParagraphXml(title, { charPr: 2, paraPr: 3 });
+    content += hwpxParagraphXml(' ');
+    content += richEditor ? hwpxRichSectionXml(richEditor) : hwpxBodyXml(body);
+  };
+  addSection('Ⅰ. 탐구(연구) 동기 및 목적', report.sec1);
+  addSection('Ⅱ. 탐구(연구) 방법', report.sec2, document.getElementById('f-sec2'));
+  addSection('Ⅲ. 예상 결과', report.sec3);
+  addSection('Ⅳ. 기대 효과', report.sec4);
+
+  const date = new Date().toISOString().slice(0,10).replaceAll('-', '');
+  const fileName = `${safeDownloadName(report.author)}_${safeDownloadName(report.title)}_${date}.hwpx`;
+  const sectionXml = hwpxSectionXml(content);
+  const blob = hwpxZipBlob(hwpxPackageFiles(report.title, sectionXml, [report.title, report.author, report.school, report.category].filter(Boolean).join('\n')));
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  saveLocalDraft({ silent: true });
+  showToast('본문의 글과 표를 포함한 HWPX 파일을 다운로드했습니다');
+}
+
+// ═══════════════════════════════════════════════
 // 초기 로드
 // ═══════════════════════════════════════════════
 document.addEventListener('input', event => {
   if (event.target.closest?.('#view-form')) scheduleDraftSave();
+});
+
+document.addEventListener('selectionchange', () => {
+  const editor = document.getElementById('f-sec2');
+  const selection = window.getSelection();
+  if (!editor || !selection?.rangeCount) return;
+  const range = selection.getRangeAt(0);
+  if (selectionInsideEditor(editor, range)) _sec2SelectionRange = range.cloneRange();
+});
+
+document.getElementById('f-sec2')?.addEventListener('paste', event => {
+  event.preventDefault();
+  const text = event.clipboardData?.getData('text/plain') || '';
+  insertTextInRichEditor(event.currentTarget, text);
+});
+
+document.addEventListener('click', event => {
+  const button = event.target.closest?.('[data-remove-inline-table]');
+  if (!button) return;
+  const block = button.closest('.inline-table-block');
+  const editor = document.getElementById('f-sec2');
+  if (!block || !editor?.contains(block)) return;
+  block.remove();
+  refreshTableInsertButtons();
+  editor.dispatchEvent(new Event('input', { bubbles: true }));
+  showToast('본문에서 표를 삭제했습니다. 아래 편집용 표는 유지됩니다');
 });
 
 document.addEventListener('keydown', event => {
@@ -1403,7 +1946,20 @@ window.addEventListener('pagehide', () => {
   }
 });
 
-if (!restoreLocalDraft()) renderList();
+async function initializePage() {
+  const params = new URLSearchParams(window.location.search);
+  const urlCode = params.get('studentId') || params.get('code') || params.get('id');
+  if (urlCode) {
+    await firebaseReadyPromise;
+    const opened = await loadByResumeCode(urlCode, { skipReplaceConfirm: true });
+    if (opened) return;
+    renderList();
+    return;
+  }
+  if (!restoreLocalDraft()) renderList();
+}
+
+initializePage();
 </script>
 </body>
 </html>
