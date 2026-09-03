@@ -722,7 +722,7 @@
           <td class="topic">${escapeHTML(info.title)}</td>
           <td>${safeResumeCode(record) ? `<button type="button" class="code-link-button" data-code-report-index="${index}">${escapeHTML(safeResumeCode(record))}</button>` : "-"}</td>
           <td>${escapeHTML(formatDateTime(record))}</td>
-          <td><button type="button" class="view-button" data-report-index="${index}">보고서 보기</button></td>
+          <td><button type="button" class="view-button" data-report-index="${index}">보고서 열기 ↗</button></td>
           <td><button type="button" class="delete-button" data-delete-index="${index}">삭제</button></td>
         </tr>`;
       }).join("");
@@ -939,7 +939,7 @@
       const button = event.target.closest("[data-report-index]");
       if (!button) return;
       const index = Number(button.dataset.reportIndex);
-      if (Number.isInteger(index) && filteredReports[index]) openReport(filteredReports[index]);
+      if (Number.isInteger(index) && filteredReports[index]) openStudentReport(safeResumeCode(filteredReports[index]));
     });
     $("#open-resume-code-button").addEventListener("click", () => openStudentReport($("#resume-code-input").value));
     $("#resume-code-input").addEventListener("keydown", (event) => {
