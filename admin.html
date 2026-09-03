@@ -305,6 +305,12 @@
     .report-section h4 { margin: 15px 0 7px; color: #2b5d64; font-size: 13px; }
     .report-section p { margin: 0; color: #3f495d; font-size: 13px; line-height: 1.85; white-space: pre-wrap; word-break: keep-all; }
     .report-section .empty { color: #9aa1ad; font-style: italic; }
+    .rich-report { color: #3f495d; font-size: 13px; line-height: 1.85; word-break: keep-all; }
+    .rich-report .inline-table-block { margin: 18px 0; }
+    .rich-report .inline-table-caption { margin-bottom: 7px; color: #263047; font-weight: 900; text-align: center; }
+    .rich-report table { width: 100%; min-width: 520px; border-collapse: collapse; table-layout: fixed; background: #fff; }
+    .rich-report th, .rich-report td { padding: 9px 10px; border: 1px solid #b7c0cc; text-align: center; overflow-wrap: anywhere; }
+    .rich-report th { background: #f1f4f6; }
     .reference-list { display: grid; gap: 8px; }
     .reference-item { padding: 11px 12px; background: #faf8f3; border: 1px solid #e2dcd1; border-radius: 9px; }
     .reference-item b { display: block; font-size: 12px; }
@@ -489,6 +495,7 @@
 
     const FIREBASE_SDK_VERSION = "12.18.0";
     const CODE_COLLECTION = "science_report_codes";
+    const STUDENT_REPORT_URL = "https://lhacoding.github.io/tamgu-guide/tamgu";
     const base = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}`;
 
     const [appModule, authModule, firestoreModule] = await Promise.all([
@@ -630,6 +637,30 @@
       }).join("");
     }
 
+    function safeRichReportHTML(html) {
+      const template = document.createElement("template");
+      template.innerHTML = String(html ?? "");
+      template.content.querySelectorAll("script,style,iframe,object,embed,link,meta,img,svg,.inline-table-tools,button").forEach((node) => node.remove());
+      const allowedTags = new Set(["DIV","P","BR","SPAN","B","STRONG","I","EM","U","UL","OL","LI","TABLE","THEAD","TBODY","TR","TH","TD"]);
+      const allowedClasses = new Set(["inline-table-block","inline-table-caption","inline-content-table"]);
+      [...template.content.querySelectorAll("*")].forEach((element) => {
+        if (!allowedTags.has(element.tagName)) {
+          element.replaceWith(...element.childNodes);
+          return;
+        }
+        const classes = String(element.getAttribute("class") || "").split(/\s+/).filter((name) => allowedClasses.has(name));
+        const colspan = Math.max(1, Math.min(10, Number(element.getAttribute("colspan")) || 1));
+        const rowspan = Math.max(1, Math.min(50, Number(element.getAttribute("rowspan")) || 1));
+        [...element.attributes].forEach((attribute) => element.removeAttribute(attribute.name));
+        if (classes.length) element.className = classes.join(" ");
+        if (["TH","TD"].includes(element.tagName)) {
+          if (colspan > 1) element.setAttribute("colspan", String(colspan));
+          if (rowspan > 1) element.setAttribute("rowspan", String(rowspan));
+        }
+      });
+      return template.innerHTML;
+    }
+
     function buildReportHTML(record) {
       const report = reportData(record);
       const info = safeInfo(record);
@@ -641,10 +672,14 @@
           <div><b>저장코드</b><span>${escapeHTML(safeResumeCode(record) || "-")}</span></div>
         </div>`;
 
+      const sec2Body = report.sec2Html
+        ? `<div class="rich-report">${safeRichReportHTML(report.sec2Html)}</div>`
+        : `${textBlock(report.sec2)}${researchTablesHTML(report.sec2tables)}`;
+
       return basic +
         `<section class="report-section"><h3>보고서 제목</h3>${textBlock(info.title)}</section>` +
         `<section class="report-section"><h3>Ⅰ. 탐구(연구) 동기 및 목적</h3>${textBlock(report.sec1)}</section>` +
-        `<section class="report-section"><h3>Ⅱ. 탐구(연구) 방법</h3>${textBlock(report.sec2)}${researchTablesHTML(report.sec2tables)}</section>` +
+        `<section class="report-section"><h3>Ⅱ. 탐구(연구) 방법</h3>${sec2Body}</section>` +
         `<section class="report-section"><h3>Ⅲ. 예상 결과</h3>${textBlock(report.sec3)}</section>` +
         `<section class="report-section"><h3>Ⅳ. 기대 효과</h3>${textBlock(report.sec4)}</section>`;
     }
@@ -734,7 +769,13 @@
       }
     }
 
-    function openReportByResumeCode(rawCode) {
+    function studentReportUrl(rawCode) {
+      const url = new URL(STUDENT_REPORT_URL);
+      url.searchParams.set("studentId", normalizeResumeCode(rawCode));
+      return url.toString();
+    }
+
+    function openStudentReport(rawCode) {
       clearError();
       const code = normalizeResumeCode(rawCode);
       const input = $("#resume-code-input");
@@ -745,12 +786,13 @@
       }
 
       if (input) input.value = code;
-      const record = allReports.find((item) => normalizeResumeCode(safeResumeCode(item)) === code);
-      if (!record) {
-        showError("해당 저장코드로 저장된 과학전람회 보고서를 찾지 못했습니다.");
-        return;
-      }
-      openReport(record);
+      const link = document.createElement("a");
+      link.href = studentReportUrl(code);
+      link.target = "_blank";
+      link.rel = "noopener";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     }
 
     function openReport(record) {
@@ -804,7 +846,16 @@
             console.error(redirectError);
           }
         }
-        showError(`Google 로그인에 실패했습니다. Firebase Authentication에서 Google 로그인 제공업체가 활성화되어 있는지 확인하세요. 오류: ${String(error?.message ?? error)}`);
+        if (code === "auth/unauthorized-domain") {
+          const currentDomain = window.location.hostname || "현재 로컬 실행 주소";
+          showError(`현재 도메인(${currentDomain})이 Firebase 승인된 도메인에 없습니다. Firebase 콘솔 → Authentication → 설정 → 승인된 도메인에서 ${currentDomain}을 추가하세요.`);
+          return;
+        }
+        if (code === "auth/operation-not-allowed") {
+          showError("Firebase 콘솔 → Authentication → Sign-in method에서 Google 로그인 제공업체를 사용 설정하고 저장하세요.");
+          return;
+        }
+        showError(`Google 로그인에 실패했습니다. 오류: ${String(error?.message ?? error)}`);
       }
     }
 
@@ -876,7 +927,7 @@
       const codeButton = event.target.closest("[data-code-report-index]");
       if (codeButton) {
         const index = Number(codeButton.dataset.codeReportIndex);
-        if (Number.isInteger(index) && filteredReports[index]) openReport(filteredReports[index]);
+        if (Number.isInteger(index) && filteredReports[index]) openStudentReport(safeResumeCode(filteredReports[index]));
         return;
       }
       const deleteButton = event.target.closest("[data-delete-index]");
@@ -890,11 +941,11 @@
       const index = Number(button.dataset.reportIndex);
       if (Number.isInteger(index) && filteredReports[index]) openReport(filteredReports[index]);
     });
-    $("#open-resume-code-button").addEventListener("click", () => openReportByResumeCode($("#resume-code-input").value));
+    $("#open-resume-code-button").addEventListener("click", () => openStudentReport($("#resume-code-input").value));
     $("#resume-code-input").addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
-        openReportByResumeCode(event.currentTarget.value);
+        openStudentReport(event.currentTarget.value);
       }
     });
     $("#close-modal-button").addEventListener("click", closeReport);
