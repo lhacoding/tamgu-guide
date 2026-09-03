@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="과학전람회 보고서 강사용 확인 페이지">
+  <title>과학전람회 보고서 · 강사 관리</title>
+  <style>
+    :root {
+      --navy: #192238;
+      --navy2: #24314d;
+      --paper: #f3efe7;
+      --panel: #fffdf9;
+      --ink: #172039;
+      --muted: #697184;
+      --line: #ddd6ca;
+      --orange: #b95139;
+      --gold: #e8c84e;
+      --teal: #177c72;
+      --danger: #9d3d2e;
+      --shadow: 0 16px 40px rgba(24,32,52,.10);
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--paper); }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(25,34,56,.025) 1px, transparent 1px),
+        var(--paper);
+      background-size: 100% 32px;
+      font-family: Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    [hidden] { display: none !important; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 66px;
+      padding: 10px 20px;
+      color: white;
+      background: rgba(25,34,56,.985);
+      box-shadow: 0 10px 28px rgba(14,20,35,.18);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .brand-badge {
+      padding: 7px 10px;
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: .11em;
+      border: 1px solid rgba(255,255,255,.42);
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .brand strong { font-size: 14px; white-space: nowrap; }
+    .account { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .account-email { color: #d8dfeb; font-size: 11px; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ghost-button, .primary-button, .small-button {
+      border: 0;
+      border-radius: 10px;
+      font-weight: 900;
+    }
+    .ghost-button {
+      padding: 9px 11px;
+      color: white;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.28);
+    }
+    .primary-button {
+      padding: 12px 17px;
+      color: white;
+      background: var(--orange);
+      box-shadow: 0 8px 18px rgba(185,81,57,.22);
+    }
+    .small-button {
+      padding: 9px 11px;
+      color: var(--navy);
+      background: white;
+      border: 1px solid var(--line);
+    }
+    .small-button:hover { border-color: #b9b1a4; }
+
+    .page-shell { width: min(1360px, calc(100% - 30px)); margin: 0 auto; padding: 34px 0 80px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 36px 40px;
+      color: white;
+      background:
+        radial-gradient(circle at 92% 10%, rgba(232,200,78,.20), transparent 28%),
+        radial-gradient(circle at 6% 120%, rgba(23,124,114,.25), transparent 34%),
+        var(--navy);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+    .hero .eyebrow { margin: 0 0 9px; color: var(--gold); font-size: 10px; font-weight: 950; letter-spacing: .16em; }
+    .hero h1 { margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 1.24; letter-spacing: -.045em; white-space: nowrap; }
+    .hero p { max-width: 840px; margin: 13px 0 0; color: #d3dbe8; font-size: 13px; line-height: 1.8; }
+
+    .setup-card, .login-card, .toolbar-card, .table-card, .empty-card {
+      margin-top: 20px;
+      padding: 22px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(25,34,56,.055);
+    }
+    .setup-card { border-left: 5px solid var(--gold); }
+    .setup-card h2, .login-card h2 { margin: 0 0 9px; font-size: 20px; }
+    .setup-card p, .login-card p, .empty-card p { margin: 7px 0; color: var(--muted); font-size: 13px; line-height: 1.75; }
+    .setup-card code { padding: 2px 5px; background: #f1ede5; border-radius: 5px; font-size: 12px; }
+    .login-card { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 20px; }
+
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .summary-item {
+      padding: 18px 19px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 7px 20px rgba(25,34,56,.045);
+    }
+    .summary-item span { display: block; color: var(--muted); font-size: 11px; font-weight: 850; }
+    .summary-item strong { display: block; margin-top: 6px; font-size: 24px; }
+
+    .toolbar-card {
+      display: grid;
+      grid-template-columns: minmax(220px, 1.8fr) repeat(2, minmax(120px,.7fr)) auto auto;
+      gap: 9px;
+      align-items: end;
+    }
+    .field label { display: block; margin: 0 0 6px; color: #4f596c; font-size: 11px; font-weight: 900; }
+    .field input, .field select {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 11px;
+      color: var(--ink);
+      background: white;
+      border: 1px solid #d8d1c5;
+      border-radius: 10px;
+    }
+    .code-open-card {
+      display: flex;
+      margin-top: 20px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 15px 17px;
+      background: #fbfaf7;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+    .code-open-card b { display: block; font-size: 13px; }
+    .code-open-card span { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .code-open-actions { display: flex; gap: 7px; flex: 0 0 auto; }
+    .code-open-actions input {
+      width: 190px;
+      min-height: 40px;
+      padding: 9px 10px;
+      color: var(--ink);
+      background: white;
+      border: 1px solid #d8d1c5;
+      border-radius: 9px;
+    }
+    .code-link-button {
+      padding: 5px 8px;
+      color: #245e59;
+      font-size: 10px;
+      font-weight: 900;
+      background: #edf8f6;
+      border: 1px solid #cfe8e4;
+      border-radius: 7px;
+      white-space: nowrap;
+    }
+
+    .table-card { padding: 0; overflow: hidden; }
+    .table-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 17px 19px;
+      border-bottom: 1px solid var(--line);
+    }
+    .table-head h2 { margin: 0; font-size: 18px; }
+    .table-head span { color: var(--muted); font-size: 11px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 900px; }
+    th, td { padding: 12px 13px; text-align: left; border-bottom: 1px solid #e6e0d6; font-size: 12px; vertical-align: middle; }
+    th { color: #4d586c; font-size: 11px; background: #f7f4ee; white-space: nowrap; }
+    tbody tr:hover { background: #fffaf7; }
+    td.name { font-weight: 900; }
+    td.topic { max-width: 390px; line-height: 1.55; }
+    .stage-badge {
+      display: inline-flex;
+      padding: 5px 7px;
+      color: #245e59;
+      font-size: 10px;
+      font-weight: 900;
+      background: #edf8f6;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .view-button {
+      padding: 8px 10px;
+      color: white;
+      font-size: 11px;
+      font-weight: 900;
+      background: var(--teal);
+      border: 0;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .delete-button {
+      padding: 8px 10px;
+      color: var(--danger);
+      font-size: 11px;
+      font-weight: 900;
+      background: #fff5f2;
+      border: 1px solid #edc1b6;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .delete-button:hover { background: #ffe9e3; }
+
+    .report-table-wrap { margin-top: 12px; overflow-x: auto; }
+    .report-table-title { margin: 14px 0 6px; color: #2b5d64; font-size: 13px; font-weight: 900; }
+    .report-data-table { min-width: 520px; background: #fff; }
+    .report-data-table th, .report-data-table td { padding: 9px 10px; border: 1px solid #ddd6ca; text-align: center; }
+    .report-data-table th { background: #f3efe7; }
+
+    .error-banner {
+      margin-top: 16px;
+      padding: 13px 15px;
+      color: #7f3528;
+      font-size: 12px;
+      line-height: 1.7;
+      background: #fff1ec;
+      border: 1px solid #edc1b6;
+      border-left: 5px solid var(--danger);
+      border-radius: 11px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(12,17,29,.62);
+      backdrop-filter: blur(4px);
+    }
+    .modal {
+      width: min(980px, 100%);
+      max-height: calc(100vh - 40px);
+      overflow: auto;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 28px 80px rgba(0,0,0,.28);
+    }
+    .modal-head {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 22px 24px;
+      color: white;
+      background: var(--navy);
+    }
+    .modal-head small { color: var(--gold); font-size: 10px; font-weight: 900; letter-spacing: .12em; }
+    .modal-head h2 { margin: 6px 0 0; font-size: 21px; line-height: 1.45; }
+    .modal-head p { margin: 8px 0 0; color: #ced7e3; font-size: 11px; }
+    .modal-actions { display: flex; gap: 7px; flex: 0 0 auto; }
+    .modal-body { padding: 24px; }
+    .student-meta {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .student-meta div { padding: 12px; background: #f7f4ee; border-radius: 10px; }
+    .student-meta b { display: block; color: #5e687a; font-size: 10px; }
+    .student-meta span { display: block; margin-top: 5px; font-size: 13px; font-weight: 850; }
+    .report-section { padding: 18px 3px; border-top: 1px solid #dde1e7; }
+    .report-section:first-of-type { border-top: 0; }
+    .report-section h3 { margin: 0 0 9px; color: var(--navy); font-size: 16px; }
+    .report-section h4 { margin: 15px 0 7px; color: #2b5d64; font-size: 13px; }
+    .report-section p { margin: 0; color: #3f495d; font-size: 13px; line-height: 1.85; white-space: pre-wrap; word-break: keep-all; }
+    .report-section .empty { color: #9aa1ad; font-style: italic; }
+    .reference-list { display: grid; gap: 8px; }
+    .reference-item { padding: 11px 12px; background: #faf8f3; border: 1px solid #e2dcd1; border-radius: 9px; }
+    .reference-item b { display: block; font-size: 12px; }
+    .reference-item span, .reference-item a { display: block; margin-top: 4px; color: #697184; font-size: 11px; line-height: 1.6; word-break: break-all; }
+
+    @media print {
+      .topbar, .hero, .summary-strip, .toolbar-card, .table-card, .setup-card, .login-card, .error-banner, .modal-actions { display: none !important; }
+      .modal-backdrop { position: static; display: block; padding: 0; background: white; }
+      .modal { width: 100%; max-height: none; overflow: visible; box-shadow: none; border-radius: 0; }
+      .modal-head { position: static; color: var(--ink); background: white; border-bottom: 2px solid var(--navy); }
+      .modal-head small, .modal-head p { color: #5e687a; }
+      .page-shell { width: 100%; padding: 0; }
+    }
+
+    @media (max-width: 900px) {
+      .summary-strip { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .toolbar-card { grid-template-columns: 1fr 1fr; }
+      .toolbar-card .field:first-child { grid-column: 1 / -1; }
+      .login-card { grid-template-columns: 1fr; }
+      .hero h1 { white-space: normal; }
+      .code-open-card { align-items: stretch; flex-direction: column; }
+      .code-open-actions { width: 100%; }
+      .code-open-actions input { width: auto; flex: 1; min-width: 0; }
+      .student-meta { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 560px) {
+      .topbar { padding: 9px 11px; }
+      .brand strong { display: none; }
+      .account-email { display: none; }
+      .page-shell { width: min(100% - 16px, 1360px); padding-top: 18px; }
+      .hero { padding: 27px 20px; border-radius: 18px; }
+      .summary-strip { grid-template-columns: 1fr 1fr; }
+      .toolbar-card { grid-template-columns: 1fr; }
+      .toolbar-card .field:first-child { grid-column: auto; }
+      .code-open-actions { flex-direction: column; }
+      .code-open-actions input, .code-open-actions button { width: 100%; }
+      .student-meta { grid-template-columns: 1fr 1fr; }
+      .modal-backdrop { padding: 0; }
+      .modal { max-height: 100vh; border-radius: 0; }
+      .modal-head { padding: 18px; }
+      .modal-body { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-badge">TEACHER</span>
+      <strong>과학전람회 보고서 강사 관리</strong>
+    </div>
+    <div class="account">
+      <span class="account-email" id="account-email">로그인 필요</span>
+      <button type="button" class="ghost-button" id="logout-button" hidden>로그아웃</button>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <p class="eyebrow">SCIENCE FAIR REPORT VIEWER</p>
+      <h1>학생이 저장한 과학전람회 보고서를 확인합니다.</h1>
+      <p>작성자·학교·출품 부문·보고서 제목·저장코드로 검색하고, 탐구 동기부터 기대 효과까지 한 화면에서 확인할 수 있습니다.</p>
+    </section>
+
+    <section class="setup-card" id="setup-card" hidden>
+      <h2>Firebase 설정이 필요합니다.</h2>
+      <p>Firebase 설정값과 관리자 계정이 이 파일에 등록되어 있어야 합니다. 설정을 변경한 경우 학생용 <code>index.html</code>과 동일한 Firebase 프로젝트인지 확인하세요.</p>
+      <p>Firestore 보안 규칙에도 같은 관리자 Google 계정을 등록해야 실제 보고서를 읽을 수 있습니다.</p>
+    </section>
+
+    <section class="login-card" id="login-card">
+      <div>
+        <h2>강사 Google 계정으로 로그인</h2>
+        <p>등록된 강사 계정만 학생 보고서를 조회할 수 있습니다. 로그인 후 저장코드로 제출된 과학전람회 보고서를 불러옵니다.</p>
+      </div>
+      <button type="button" class="primary-button" id="login-button">Google로 로그인</button>
+    </section>
+
+    <div class="error-banner" id="error-banner" hidden></div>
+
+    <section id="dashboard" hidden>
+      <div class="summary-strip">
+        <div class="summary-item"><span>전체 보고서</span><strong id="count-all">0</strong></div>
+        <div class="summary-item"><span>작성자 수</span><strong id="count-students">0</strong></div>
+        <div class="summary-item"><span>오늘 저장</span><strong id="count-today">0</strong></div>
+        <div class="summary-item"><span>현재 검색 결과</span><strong id="count-filtered">0</strong></div>
+      </div>
+
+      <section class="toolbar-card">
+        <div class="field">
+          <label for="search-input">검색</label>
+          <input id="search-input" type="search" placeholder="작성자 · 학교 · 제목 · 저장코드 검색">
+        </div>
+        <div class="field">
+          <label for="grade-filter">출품 부문</label>
+          <select id="grade-filter"><option value="">전체 부문</option></select>
+        </div>
+        <div class="field">
+          <label for="class-filter">학교</label>
+          <select id="class-filter"><option value="">전체 학교</option></select>
+        </div>
+        <button type="button" class="small-button" id="refresh-button">새로고침</button>
+        <button type="button" class="small-button" id="clear-filter-button">검색 초기화</button>
+      </section>
+
+      <section class="code-open-card">
+        <div>
+          <b>저장코드로 보고서 바로 찾기</b>
+          <span>학생에게 받은 저장코드를 입력하면 해당 과학전람회 보고서를 바로 열 수 있습니다.</span>
+        </div>
+        <div class="code-open-actions">
+          <input id="resume-code-input" type="text" maxlength="24" autocomplete="off" placeholder="저장코드 입력">
+          <button type="button" class="small-button" id="open-resume-code-button">보고서 열기</button>
+        </div>
+      </section>
+
+      <section class="table-card">
+        <div class="table-head">
+          <h2>학생 보고서 목록</h2>
+          <span id="load-status">Firebase에서 불러오는 중…</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>작성자</th>
+                <th>학교</th>
+                <th>출품 부문</th>
+                <th>보고서 제목</th>
+                <th>저장코드</th>
+                <th>마지막 저장</th>
+                <th>보기</th>
+                <th>삭제</th>
+              </tr>
+            </thead>
+            <tbody id="report-rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="empty-card" id="empty-card" hidden>
+        <p>조건에 맞는 보고서가 없습니다.</p>
+      </section>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="report-modal" hidden>
+    <article class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <header class="modal-head">
+        <div>
+          <small>SCIENCE FAIR REPORT</small>
+          <h2 id="modal-title">과학전람회 보고서</h2>
+          <p id="modal-subtitle"></p>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="ghost-button" id="print-button">인쇄</button>
+          <button type="button" class="ghost-button" id="close-modal-button">닫기</button>
+        </div>
+      </header>
+      <div class="modal-body" id="modal-body"></div>
+    </article>
+  </div>
+
+  <script type="module">
+    // ========================================================================
+    // 1. 학생용 index.html에 넣은 Firebase 설정값과 동일하게 입력하세요.
+    // ========================================================================
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyD0Ik2Vzb10LktFndelzfv2L6DDFjnw7gs",
+      authDomain: "tamgu-12e7f.firebaseapp.com",
+      projectId: "tamgu-12e7f",
+      storageBucket: "tamgu-12e7f.firebasestorage.app",
+      messagingSenderId: "311892441641",
+      appId: "1:311892441641:web:dcfe1c50d921963dfe7a38"
+    };
+
+    // ========================================================================
+    // 2. 보고서를 열람할 선생님 Google 계정을 입력하세요.
+    //    여러 명이면 쉼표가 아니라 배열 항목을 추가합니다.
+    //    예: ["teacher1@gmail.com", "teacher2@gmail.com"]
+    // ========================================================================
+    const ADMIN_EMAILS = ["lhahsc@gmail.com"];
+
+    const FIREBASE_SDK_VERSION = "12.18.0";
+    const CODE_COLLECTION = "science_report_codes";
+    const base = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}`;
+
+    const [appModule, authModule, firestoreModule] = await Promise.all([
+      import(`${base}/firebase-app.js`),
+      import(`${base}/firebase-auth.js`),
+      import(`${base}/firebase-firestore.js`),
+    ]);
+
+    const $ = (selector) => document.querySelector(selector);
+    const setupCard = $("#setup-card");
+    const loginCard = $("#login-card");
+    const loginButton = $("#login-button");
+    const logoutButton = $("#logout-button");
+    const accountEmail = $("#account-email");
+    const dashboard = $("#dashboard");
+    const errorBanner = $("#error-banner");
+    const loadStatus = $("#load-status");
+    const rows = $("#report-rows");
+    const emptyCard = $("#empty-card");
+    const reportModal = $("#report-modal");
+    const modalTitle = $("#modal-title");
+    const modalSubtitle = $("#modal-subtitle");
+    const modalBody = $("#modal-body");
+
+    let auth = null;
+    let db = null;
+    let allReports = [];
+    let filteredReports = [];
+    let currentReport = null;
+
+    function firebaseReady() {
+      const required = [FIREBASE_CONFIG.apiKey, FIREBASE_CONFIG.projectId, FIREBASE_CONFIG.appId];
+      return required.every((value) => {
+        const text = String(value ?? "").trim();
+        return text && !text.startsWith("PASTE_");
+      });
+    }
+
+    function adminEmailsReady() {
+      return ADMIN_EMAILS.some((email) => {
+        const text = String(email ?? "").trim();
+        return text && !text.startsWith("PASTE_") && text.includes("@");
+      });
+    }
+
+    function normalizedAdminEmails() {
+      return ADMIN_EMAILS.map((email) => String(email ?? "").trim().toLowerCase()).filter(Boolean);
+    }
+
+    function isAllowedAdmin(user) {
+      const email = String(user?.email ?? "").trim().toLowerCase();
+      return Boolean(email && normalizedAdminEmails().includes(email));
+    }
+
+    function showError(message) {
+      errorBanner.textContent = message;
+      errorBanner.hidden = false;
+    }
+
+    function clearError() {
+      errorBanner.hidden = true;
+      errorBanner.textContent = "";
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function reportData(record) {
+      return record?.report && typeof record.report === "object" ? record.report : {};
+    }
+
+    function reportTime(record) {
+      const server = record?.updatedAt;
+      if (server && typeof server.toDate === "function") return server.toDate();
+      const client = record?.updatedAtClient || reportData(record).updatedAt;
+      const date = client ? new Date(client) : null;
+      return date && !Number.isNaN(date.getTime()) ? date : null;
+    }
+
+    function formatDateTime(record) {
+      const date = reportTime(record);
+      if (!date) return "저장 시각 없음";
+      return new Intl.DateTimeFormat("ko-KR", {
+        year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit"
+      }).format(date);
+    }
+
+    function safeInfo(record) {
+      const report = reportData(record);
+      return {
+        title: String(report.title ?? "").trim() || "제목 미입력",
+        category: String(report.category ?? "").trim(),
+        author: String(report.author ?? "").trim(),
+        school: String(report.school ?? "").trim(),
+      };
+    }
+
+    function safeResumeCode(record) {
+      return String(record?.codeLabel ?? "").trim();
+    }
+
+    function normalizeResumeCode(value) {
+      return String(value ?? "").normalize("NFKC").trim().replace(/\s+/g, "").toUpperCase();
+    }
+
+    function validResumeCode(value) {
+      const code = normalizeResumeCode(value);
+      return code.length >= 6 && code.length <= 24;
+    }
+
+    function textBlock(text) {
+      const value = String(text ?? "").trim();
+      return value ? `<p>${escapeHTML(value)}</p>` : `<p class="empty">작성 내용 없음</p>`;
+    }
+
+    function reportIdentity(record) {
+      const info = safeInfo(record);
+      return [info.author || "작성자 미입력", info.school, info.category].filter(Boolean).join(" · ");
+    }
+
+    function researchTablesHTML(tables) {
+      if (!Array.isArray(tables) || !tables.length) return "";
+      return tables.map((table, tableIndex) => {
+        const rows = Array.isArray(table?.rows) ? table.rows : [];
+        if (!rows.length) return "";
+        const body = rows.map((row, rowIndex) => {
+          const cells = Array.isArray(row?.cells) ? row.cells : (Array.isArray(row) ? row : []);
+          const tag = rowIndex === 0 ? "th" : "td";
+          return `<tr>${cells.map((cell) => `<${tag}>${escapeHTML(cell)}</${tag}>`).join("")}</tr>`;
+        }).join("");
+        const title = String(table?.title ?? "").trim() || `표 ${tableIndex + 1}`;
+        return `<div class="report-table-wrap"><div class="report-table-title">${escapeHTML(title)}</div><table class="report-data-table"><tbody>${body}</tbody></table></div>`;
+      }).join("");
+    }
+
+    function buildReportHTML(record) {
+      const report = reportData(record);
+      const info = safeInfo(record);
+      const basic = `
+        <div class="student-meta">
+          <div><b>작성자</b><span>${escapeHTML(info.author || "-")}</span></div>
+          <div><b>학교</b><span>${escapeHTML(info.school || "-")}</span></div>
+          <div><b>출품 부문</b><span>${escapeHTML(info.category || "-")}</span></div>
+          <div><b>저장코드</b><span>${escapeHTML(safeResumeCode(record) || "-")}</span></div>
+        </div>`;
+
+      return basic +
+        `<section class="report-section"><h3>보고서 제목</h3>${textBlock(info.title)}</section>` +
+        `<section class="report-section"><h3>Ⅰ. 탐구(연구) 동기 및 목적</h3>${textBlock(report.sec1)}</section>` +
+        `<section class="report-section"><h3>Ⅱ. 탐구(연구) 방법</h3>${textBlock(report.sec2)}${researchTablesHTML(report.sec2tables)}</section>` +
+        `<section class="report-section"><h3>Ⅲ. 예상 결과</h3>${textBlock(report.sec3)}</section>` +
+        `<section class="report-section"><h3>Ⅳ. 기대 효과</h3>${textBlock(report.sec4)}</section>`;
+    }
+
+    function updateFilterOptions() {
+      const category = $("#grade-filter");
+      const school = $("#class-filter");
+      const currentCategory = category.value;
+      const currentSchool = school.value;
+      const categories = [...new Set(allReports.map((record) => safeInfo(record).category).filter(Boolean))].sort((a,b) => a.localeCompare(b, "ko"));
+      const schools = [...new Set(allReports.map((record) => safeInfo(record).school).filter(Boolean))].sort((a,b) => a.localeCompare(b, "ko"));
+      category.innerHTML = `<option value="">전체 부문</option>${categories.map((value) => `<option value="${escapeHTML(value)}">${escapeHTML(value)}</option>`).join("")}`;
+      school.innerHTML = `<option value="">전체 학교</option>${schools.map((value) => `<option value="${escapeHTML(value)}">${escapeHTML(value)}</option>`).join("")}`;
+      category.value = categories.includes(currentCategory) ? currentCategory : "";
+      school.value = schools.includes(currentSchool) ? currentSchool : "";
+    }
+
+    function applyFilters() {
+      const q = String($("#search-input").value ?? "").trim().toLowerCase();
+      const category = $("#grade-filter").value;
+      const school = $("#class-filter").value;
+      filteredReports = allReports.filter((record) => {
+        const info = safeInfo(record);
+        if (category && info.category !== category) return false;
+        if (school && info.school !== school) return false;
+        if (!q) return true;
+        const haystack = [info.author, info.school, info.category, info.title, safeResumeCode(record)].join(" ").toLowerCase();
+        return haystack.includes(q);
+      });
+      renderTable();
+    }
+
+    function renderTable() {
+      rows.innerHTML = filteredReports.map((record, index) => {
+        const info = safeInfo(record);
+        return `<tr>
+          <td class="name">${escapeHTML(info.author || "작성자 미입력")}</td>
+          <td>${escapeHTML(info.school || "-")}</td>
+          <td><span class="stage-badge">${escapeHTML(info.category || "미입력")}</span></td>
+          <td class="topic">${escapeHTML(info.title)}</td>
+          <td>${safeResumeCode(record) ? `<button type="button" class="code-link-button" data-code-report-index="${index}">${escapeHTML(safeResumeCode(record))}</button>` : "-"}</td>
+          <td>${escapeHTML(formatDateTime(record))}</td>
+          <td><button type="button" class="view-button" data-report-index="${index}">보고서 보기</button></td>
+          <td><button type="button" class="delete-button" data-delete-index="${index}">삭제</button></td>
+        </tr>`;
+      }).join("");
+      emptyCard.hidden = filteredReports.length > 0;
+      $("#count-filtered").textContent = String(filteredReports.length);
+      loadStatus.textContent = `${filteredReports.length}건 표시 · 최근 저장순`;
+    }
+
+    function updateSummary() {
+      $("#count-all").textContent = String(allReports.length);
+      const authors = new Set(allReports.map((record) => {
+        const info = safeInfo(record);
+        return [info.author, info.school].join("|");
+      }).filter((value) => value !== "|"));
+      $("#count-students").textContent = String(authors.size);
+      const now = new Date();
+      const todayCount = allReports.filter((r) => {
+        const d = reportTime(r);
+        return d && d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+      }).length;
+      $("#count-today").textContent = String(todayCount);
+    }
+
+    async function loadReports() {
+      clearError();
+      loadStatus.textContent = "Firebase에서 불러오는 중…";
+      rows.innerHTML = "";
+      try {
+        const snapshot = await firestoreModule.getDocs(firestoreModule.collection(db, CODE_COLLECTION));
+        allReports = snapshot.docs.map((docSnap) => ({
+          ...docSnap.data(),
+          _docId: docSnap.id,
+          _path: docSnap.ref.path,
+        }));
+        allReports.sort((a,b) => (reportTime(b)?.getTime() || 0) - (reportTime(a)?.getTime() || 0));
+        updateSummary();
+        updateFilterOptions();
+        applyFilters();
+      } catch (error) {
+        console.error(error);
+        const message = String(error?.message ?? error ?? "보고서를 불러오지 못했습니다.");
+        loadStatus.textContent = "불러오기 실패";
+        showError(`학생 보고서를 불러오지 못했습니다. Firestore 규칙의 관리자 이메일과 현재 로그인 계정이 같은지 확인하세요. 오류: ${message}`);
+      }
+    }
+
+    function openReportByResumeCode(rawCode) {
+      clearError();
+      const code = normalizeResumeCode(rawCode);
+      const input = $("#resume-code-input");
+      if (!validResumeCode(code)) {
+        showError("저장코드는 공백을 제외하고 6~24자로 입력하세요.");
+        input?.focus();
+        return;
+      }
+
+      if (input) input.value = code;
+      const record = allReports.find((item) => normalizeResumeCode(safeResumeCode(item)) === code);
+      if (!record) {
+        showError("해당 저장코드로 저장된 과학전람회 보고서를 찾지 못했습니다.");
+        return;
+      }
+      openReport(record);
+    }
+
+    function openReport(record) {
+      currentReport = record;
+      modalTitle.textContent = safeInfo(record).title;
+      modalSubtitle.textContent = `${reportIdentity(record)}${safeResumeCode(record) ? ` · 저장코드 ${safeResumeCode(record)}` : ""} · 마지막 저장 ${formatDateTime(record)}`;
+      modalBody.innerHTML = buildReportHTML(record);
+      reportModal.hidden = false;
+      document.body.style.overflow = "hidden";
+    }
+
+    async function deleteReport(record) {
+      const info = safeInfo(record);
+      if (!window.confirm(`'${info.title}' 보고서를 삭제할까요? 삭제한 보고서는 복구할 수 없습니다.`)) return;
+      clearError();
+      try {
+        await firestoreModule.deleteDoc(firestoreModule.doc(db, CODE_COLLECTION, record._docId));
+        closeReport();
+        await loadReports();
+      } catch (error) {
+        console.error(error);
+        showError(`보고서를 삭제하지 못했습니다. Firestore 규칙을 확인하세요. 오류: ${String(error?.message ?? error)}`);
+      }
+    }
+
+    function closeReport() {
+      reportModal.hidden = true;
+      currentReport = null;
+      document.body.style.overflow = "";
+    }
+
+    async function login() {
+      clearError();
+      if (!firebaseReady() || !adminEmailsReady()) {
+        setupCard.hidden = false;
+        showError("admin.html의 Firebase 설정값과 관리자 이메일을 먼저 입력해야 합니다.");
+        return;
+      }
+      try {
+        const provider = new authModule.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: "select_account" });
+        await authModule.signInWithPopup(auth, provider);
+      } catch (error) {
+        console.error(error);
+        const code = String(error?.code ?? "");
+        if (code === "auth/popup-blocked" || code === "auth/cancelled-popup-request") {
+          try {
+            await authModule.signInWithRedirect(auth, new authModule.GoogleAuthProvider());
+            return;
+          } catch (redirectError) {
+            console.error(redirectError);
+          }
+        }
+        showError(`Google 로그인에 실패했습니다. Firebase Authentication에서 Google 로그인 제공업체가 활성화되어 있는지 확인하세요. 오류: ${String(error?.message ?? error)}`);
+      }
+    }
+
+    function showSignedOut() {
+      accountEmail.textContent = "로그인 필요";
+      logoutButton.hidden = true;
+      loginCard.hidden = false;
+      dashboard.hidden = true;
+      allReports = [];
+      filteredReports = [];
+      rows.innerHTML = "";
+    }
+
+    async function handleSignedIn(user) {
+      accountEmail.textContent = user.email || "Google 로그인";
+      logoutButton.hidden = false;
+      if (!isAllowedAdmin(user)) {
+        loginCard.hidden = true;
+        dashboard.hidden = true;
+        showError(`현재 로그인한 ${user.email || "계정"}은 admin.html의 ADMIN_EMAILS에 등록된 관리자 계정이 아닙니다.`);
+        return;
+      }
+      clearError();
+      loginCard.hidden = true;
+      dashboard.hidden = false;
+      await loadReports();
+    }
+
+    async function initialize() {
+      const configured = firebaseReady() && adminEmailsReady();
+      setupCard.hidden = configured;
+      if (!firebaseReady()) {
+        showError("Firebase 설정값이 아직 입력되지 않았습니다. 학생용 index.html에 사용한 firebaseConfig를 admin.html에 복사하세요.");
+        return;
+      }
+
+      try {
+        const firebaseApp = appModule.initializeApp(FIREBASE_CONFIG);
+        auth = authModule.getAuth(firebaseApp);
+        db = firestoreModule.getFirestore(firebaseApp);
+        try { await authModule.getRedirectResult(auth); } catch (error) { console.error(error); }
+        authModule.onAuthStateChanged(auth, async (user) => {
+          if (!user) return showSignedOut();
+          await handleSignedIn(user);
+        });
+      } catch (error) {
+        console.error(error);
+        showError(`Firebase 초기화에 실패했습니다. firebaseConfig 값을 확인하세요. 오류: ${String(error?.message ?? error)}`);
+      }
+    }
+
+    loginButton.addEventListener("click", login);
+    logoutButton.addEventListener("click", async () => {
+      if (auth) await authModule.signOut(auth);
+      clearError();
+      closeReport();
+    });
+    $("#refresh-button").addEventListener("click", loadReports);
+    $("#clear-filter-button").addEventListener("click", () => {
+      $("#search-input").value = "";
+      $("#grade-filter").value = "";
+      $("#class-filter").value = "";
+      applyFilters();
+    });
+    $("#search-input").addEventListener("input", applyFilters);
+    $("#grade-filter").addEventListener("change", applyFilters);
+    $("#class-filter").addEventListener("change", applyFilters);
+    rows.addEventListener("click", (event) => {
+      const codeButton = event.target.closest("[data-code-report-index]");
+      if (codeButton) {
+        const index = Number(codeButton.dataset.codeReportIndex);
+        if (Number.isInteger(index) && filteredReports[index]) openReport(filteredReports[index]);
+        return;
+      }
+      const deleteButton = event.target.closest("[data-delete-index]");
+      if (deleteButton) {
+        const index = Number(deleteButton.dataset.deleteIndex);
+        if (Number.isInteger(index) && filteredReports[index]) void deleteReport(filteredReports[index]);
+        return;
+      }
+      const button = event.target.closest("[data-report-index]");
+      if (!button) return;
+      const index = Number(button.dataset.reportIndex);
+      if (Number.isInteger(index) && filteredReports[index]) openReport(filteredReports[index]);
+    });
+    $("#open-resume-code-button").addEventListener("click", () => openReportByResumeCode($("#resume-code-input").value));
+    $("#resume-code-input").addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        openReportByResumeCode(event.currentTarget.value);
+      }
+    });
+    $("#close-modal-button").addEventListener("click", closeReport);
+    $("#print-button").addEventListener("click", () => window.print());
+    reportModal.addEventListener("click", (event) => {
+      if (event.target === reportModal) closeReport();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !reportModal.hidden) closeReport();
+    });
+
+    initialize();
+  </script>
+</body>
+</html>
