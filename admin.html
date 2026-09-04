@@ -493,6 +493,10 @@
     // ========================================================================
     const ADMIN_EMAILS = ["lhahsc@gmail.com"];
 
+    // 학생용 페이지의 기본 Firebase Auth([DEFAULT])와 관리자 인증을 분리합니다.
+    // 같은 Firebase 프로젝트를 사용하더라도 앱 이름이 다르면 인증 저장 영역이 분리됩니다.
+    const ADMIN_FIREBASE_APP_NAME = "ADMIN_APP";
+
     const FIREBASE_SDK_VERSION = "12.18.0";
     const CODE_COLLECTION = "science_report_codes";
     const STUDENT_REPORT_URL = "https://lhacoding.github.io/tamgu-guide/tamgu";
@@ -870,12 +874,21 @@
     }
 
     async function handleSignedIn(user) {
-      accountEmail.textContent = user.email || "Google 로그인";
+      // 관리자 페이지는 Google 계정만 허용합니다.
+      // 다른 페이지의 익명 인증 상태가 들어온 경우 관리자 불일치로 오해하지 않도록 로그아웃 처리합니다.
+      if (user?.isAnonymous || !user?.email) {
+        if (auth) await authModule.signOut(auth);
+        showSignedOut();
+        showError("관리자 페이지에서는 등록된 Google 계정으로 로그인해 주세요.");
+        return;
+      }
+
+      accountEmail.textContent = user.email;
       logoutButton.hidden = false;
       if (!isAllowedAdmin(user)) {
         loginCard.hidden = true;
         dashboard.hidden = true;
-        showError(`현재 로그인한 ${user.email || "계정"}은 admin.html의 ADMIN_EMAILS에 등록된 관리자 계정이 아닙니다.`);
+        showError(`현재 로그인한 ${user.email}은 admin.html의 ADMIN_EMAILS에 등록된 관리자 계정이 아닙니다.`);
         return;
       }
       clearError();
@@ -893,9 +906,15 @@
       }
 
       try {
-        const firebaseApp = appModule.initializeApp(FIREBASE_CONFIG);
+        // 관리자 페이지는 별도 이름의 Firebase 앱을 사용합니다.
+        // 학생용 index.html에서 signInAnonymously()가 실행되어도 관리자 Google 로그인과 충돌하지 않습니다.
+        const firebaseApp = appModule.initializeApp(FIREBASE_CONFIG, ADMIN_FIREBASE_APP_NAME);
         auth = authModule.getAuth(firebaseApp);
         db = firestoreModule.getFirestore(firebaseApp);
+
+        // 관리자 로그인 상태는 ADMIN_APP 전용 저장 영역에 유지합니다.
+        await authModule.setPersistence(auth, authModule.browserLocalPersistence);
+
         try { await authModule.getRedirectResult(auth); } catch (error) { console.error(error); }
         authModule.onAuthStateChanged(auth, async (user) => {
           if (!user) return showSignedOut();
