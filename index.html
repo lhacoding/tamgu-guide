@@ -2006,6 +2006,61 @@ footer{
   #content > .section-head.compact-subtitle .section-meta{font-size:12px !important}
 }
 </style>
+
+<style id="subject-case-heading-fix">
+/* 활동 사례: 과목별 제목은 박스/배지 없이 간단한 일반 소제목으로 표시 */
+#content > .subject-case-heading{
+  margin:14px 2px 10px !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+#content > .subject-case-heading h2{
+  margin:0 !important;
+  color:#10233d !important;
+  font-family:"Pretendard","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;
+  font-size:clamp(18px,1.25vw,21px) !important;
+  font-weight:900 !important;
+  line-height:1.3 !important;
+  letter-spacing:-.04em !important;
+}
+@media(max-width:720px){
+  #content > .subject-case-heading{margin:11px 1px 8px !important;}
+  #content > .subject-case-heading h2{font-size:16px !important;}
+}
+</style>
+
+<style>
+/* 2026-09-04 상단 메뉴 글자 크기 조정
+   과학전람회 상단 메뉴와 비슷한 시각적 크기로 한 단계 축소 */
+@media (min-width:821px){
+  .global-topbar{
+    min-height:60px !important;
+  }
+  .global-topbar-inner{
+    min-height:60px !important;
+    padding:6px 20px !important;
+  }
+  .site-brand{
+    gap:10px !important;
+  }
+  .brand-badge{
+    min-height:32px !important;
+    padding:6px 12px !important;
+    font-size:10px !important;
+    letter-spacing:.09em !important;
+  }
+  .brand-title{
+    font-size:13px !important;
+  }
+  .tab{
+    min-height:40px !important;
+    padding:8px 7px !important;
+    font-size:11px !important;
+  }
+}
+</style>
 </head>
 <body>
 <div id="pageTop"></div>
@@ -4735,7 +4790,7 @@ function renderExamples() {
     <div class="subject-tabs" aria-label="활동 사례 과목 선택">
       ${SUBJECT_ORDER.map(subject => `<button class="subject-tab ${subject === currentSubject ? 'active' : ''}" type="button" data-subject="${escapeHtml(subject)}" aria-pressed="${subject === currentSubject}">${escapeHtml(subject)}</button>`).join('')}
     </div>
-    <div class="section-head compact-subtitle" id="subjectContentTop"><div class="section-title"><span class="section-badge">✓</span><h2>${escapeHtml(currentSubject)} 활동 사례</h2></div></div>
+    <div class="subject-case-heading" id="subjectContentTop"><h2>${escapeHtml(currentSubject)} 활동 사례</h2></div>
     <div class="cards">${cards}</div>`;
 }
 
