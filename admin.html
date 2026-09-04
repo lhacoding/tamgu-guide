@@ -40,8 +40,8 @@ button,input,select{font:inherit} button{cursor:pointer} [hidden]{display:none!i
 const FIREBASE_CONFIG={apiKey:"AIzaSyD0Ik2Vzb10LktFndelzfv2L6DDFjnw7gs",authDomain:"tamgu-12e7f.firebaseapp.com",projectId:"tamgu-12e7f",storageBucket:"tamgu-12e7f.firebasestorage.app",messagingSenderId:"311892441641",appId:"1:311892441641:web:dcfe1c50d921963dfe7a38"};
 const ADMIN_EMAILS=["lhahsc@gmail.com"];
 const FIREBASE_SDK_VERSION="12.18.0";
-// admin.html과 tamgu.html을 같은 폴더에 올리는 것을 기준으로 합니다.
-const WORKBOOK_URL=new URL("tamgu.html",window.location.href).toString();
+// 학생용 작품설명서 원본 사이트를 절대주소로 고정합니다.
+const WORKBOOK_URL="https://lhacoding.github.io/tamgu-guide/tamgu";
 const COLLECTION_NAME="science_report_codes";
 const base=`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}`;
 const [appModule,authModule,firestoreModule]=await Promise.all([import(`${base}/firebase-app.js`),import(`${base}/firebase-auth.js`),import(`${base}/firebase-firestore.js`)]);
