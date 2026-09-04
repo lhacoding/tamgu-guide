@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>송도이샘로봇 · 과학전람회 보고서</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- ════════════════════════════════════════════════════
+     🔧 FIREBASE 설정 — 아래 값을 본인 프로젝트 값으로 교체하세요
+     Firebase Console → 프로젝트 설정 → 앱 → SDK 설정 및 구성
+     ════════════════════════════════════════════════════ -->
+<script>
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyD0Ik2Vzb10LktFndelzfv2L6DDFjnw7gs",
+  authDomain:        "tamgu-12e7f.firebaseapp.com",
+  projectId:         "tamgu-12e7f",
+  storageBucket:     "tamgu-12e7f.firebasestorage.app",
+  messagingSenderId: "311892441641",
+  appId:             "1:311892441641:web:dcfe1c50d921963dfe7a38"
+};
+</script>
+<!-- ════════════════════════════════════════════════════ -->
+
+<!-- Firebase SDK (compat - 스탠드얼론 HTML용) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<style>
+:root {
+  --bg:#f7f6f2; --surface:#fff; --border:#e0ddd6; --border2:#ccc9c0;
+  --accent:#1a4f8a; --accent2:#2e6db4; --text:#1c1c1c; --text2:#555; --text3:#999;
+  --req:#c0392b; --req-bg:#fdf3f2; --tag-bg:#eaf0f9; --tag:#1a4f8a;
+  --ok:#1a7a3a; --ok-bg:#f0faf3; --warn:#a05000; --warn-bg:#fff8ee;
+  --radius:8px; --shadow:0 2px 12px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.7}
+
+/* CONFIG BANNER */
+.config-banner{background:#fff3cd;border-bottom:2px solid #f0ad4e;padding:10px 28px;font-size:12px;color:#856404;display:flex;align-items:center;gap:8px}
+.config-banner.hidden{display:none}
+.config-banner a{color:var(--accent);font-weight:500}
+
+/* NAV */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100}
+.nav-logo{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:700;color:var(--accent)}
+.nav-logo span{font-weight:400;color:var(--text2);font-size:12px;margin-left:8px}
+.btn-new{background:var(--accent);color:#fff;border:none;padding:6px 16px;border-radius:var(--radius);font-size:13px;cursor:pointer;font-family:inherit}
+.btn-new:hover{background:var(--accent2)}
+.nav-status{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px}
+.dot{width:7px;height:7px;border-radius:50%;background:#ccc;display:inline-block}
+.dot.ok{background:var(--ok)}
+.dot.err{background:var(--req)}
+
+.view{display:none}.view.active{display:block}
+
+/* LIST */
+.wrap{max-width:980px;margin:36px auto;padding:0 18px}
+.list-header{margin-bottom:20px}
+.list-header h1{font-family:'Noto Serif KR',serif;font-size:21px;font-weight:700}
+.list-header p{color:var(--text3);font-size:12px;margin-top:3px}
+.card-grid{display:grid;gap:14px}
+.report-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;cursor:pointer;transition:box-shadow .18s,border-color .18s}
+.report-card:hover{box-shadow:var(--shadow);border-color:var(--border2)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.card-title{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:600}
+.card-meta{font-size:12px;color:var(--text3);margin-top:4px}
+.card-tag{display:inline-block;background:var(--tag-bg);color:var(--tag);font-size:11px;padding:2px 8px;border-radius:4px;margin-top:6px}
+.btn-sm{font-size:12px;padding:3px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--bg);color:var(--text2);font-family:inherit}
+.btn-sm.del{color:var(--req);border-color:#ecc}
+.btn-sm.del:hover{background:var(--req-bg)}
+.empty-state{text-align:center;padding:70px 20px;color:var(--text3)}
+.empty-state .ico{font-size:44px;margin-bottom:14px}
+.empty-state p{font-size:14px;margin-bottom:18px}
+
+/* FORM */
+.form-wrap{max-width:980px;margin:36px auto;padding:0 18px 60px}
+.form-header{margin-bottom:22px}
+.form-header h2{font-family:'Noto Serif KR',serif;font-size:19px;font-weight:700}
+.form-header p{color:var(--text3);font-size:12px;margin-top:3px}
+
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.sec-head{background:#f0f4fa;border-bottom:1px solid var(--border);padding:11px 18px;display:flex;align-items:center;gap:9px}
+.sec-num{background:var(--accent);color:#fff;width:23px;height:23px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.sec-ttl{font-size:13px;font-weight:500}
+.sec-hint{font-size:11px;color:var(--text3);margin-left:4px}
+.form-body{padding:15px 18px}
+
+.htoolbar{display:flex;flex-wrap:wrap;gap:4px;padding:7px 10px;background:#f5f5f2;border:1px solid var(--border);border-bottom:none;border-radius:var(--radius) var(--radius) 0 0;align-items:center}
+.htoolbar .tb-label{font-size:10px;color:var(--text3);margin-right:3px;white-space:nowrap}
+.hbtn{font-size:11px;padding:2px 9px;border:1px solid var(--border2);border-radius:4px;cursor:pointer;background:var(--surface);color:var(--text2);font-family:inherit;white-space:nowrap}
+.hbtn:hover{background:var(--tag-bg);border-color:var(--accent2);color:var(--accent)}
+.hbtn.lv1{font-weight:600;font-size:12px}
+.hbtn.plain{background:transparent;border-color:transparent;color:var(--text3)}
+.hbtn.plain:hover{background:var(--bg)}
+.tb-sep{width:1px;height:16px;background:var(--border);margin:0 2px}
+
+.reditor{width:100%;border:1px solid var(--border);border-radius:0 0 var(--radius) var(--radius);padding:12px 14px;font-size:13px;font-family:'Noto Sans KR',sans-serif;color:var(--text);background:var(--surface);resize:vertical;line-height:1.9;transition:border-color .15s}
+.reditor:focus{outline:none;border-color:var(--accent2)}
+
+.char-counter{display:flex;align-items:center;justify-content:space-between;margin-top:5px;font-size:11px}
+.char-num{color:var(--text3)}
+.char-num.below{color:var(--req)}
+.char-num.ok{color:var(--ok)}
+.char-bar-wrap{flex:1;height:4px;background:var(--border);border-radius:2px;margin:0 10px}
+.char-bar{height:100%;border-radius:2px;background:var(--border2);transition:width .2s,background .2s;max-width:100%}
+.char-min{color:var(--text3);white-space:nowrap}
+
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.field label{font-size:11px;color:var(--text2);font-weight:500}
+.field input{border:1px solid var(--border);border-radius:var(--radius);padding:8px 11px;font-size:13px;font-family:inherit;color:var(--text);background:var(--bg)}
+.field input:focus{outline:none;border-color:var(--accent2);background:#fff}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+
+/* RESEARCH TABLE EDITOR */
+.table-field{margin-top:16px}
+.table-field-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+.table-field-title{font-size:11px;color:var(--text2);font-weight:500}
+.table-field-help{font-size:10px;color:var(--text3);font-weight:400;margin-top:2px}
+.table-add-btn{border:1px solid var(--accent2);background:#fff;color:var(--accent);border-radius:6px;padding:5px 11px;font-size:11px;font-family:inherit;cursor:pointer;white-space:nowrap}
+.table-add-btn:hover{background:var(--tag-bg)}
+.table-empty{border:1px dashed var(--border2);border-radius:var(--radius);padding:15px;text-align:center;color:var(--text3);font-size:11px;background:#fafaf8}
+.table-editor-card{border:1px solid var(--border);border-radius:var(--radius);padding:11px;margin-top:9px;background:#fafaf8}
+.table-editor-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.table-title-input{flex:1;min-width:180px;border:1px solid var(--border);border-radius:5px;padding:6px 9px;font-size:12px;font-family:inherit;background:#fff}
+.table-title-input:focus,.research-input:focus{outline:none;border-color:var(--accent2)}
+.table-controls{display:flex;gap:4px;flex-wrap:wrap}
+.table-control-btn{border:1px solid var(--border2);background:#fff;color:var(--text2);border-radius:4px;padding:3px 7px;font-size:10px;font-family:inherit;cursor:pointer;white-space:nowrap}
+.table-control-btn:hover{border-color:var(--accent2);color:var(--accent);background:var(--tag-bg)}
+.table-control-btn.danger{color:var(--req);border-color:#ecc}
+.table-control-btn.danger:hover{background:var(--req-bg);border-color:var(--req)}
+.research-table-scroll{width:100%;overflow-x:auto}
+.research-table{width:100%;min-width:420px;border-collapse:collapse;table-layout:fixed;background:#fff}
+.research-table th,.research-table td{border:1px solid var(--border2);padding:0;min-width:110px}
+.research-table th{background:#edf3fa}
+.research-input{display:block;width:100%;border:0;background:transparent;padding:7px 8px;font-family:inherit;font-size:11px;color:var(--text)}
+.research-table th .research-input{font-weight:500;text-align:center}
+.rich-editor{min-height:310px;overflow:auto;white-space:pre-wrap}
+.rich-editor:empty::before{content:attr(data-placeholder);color:#a3a7af;white-space:pre-wrap;pointer-events:none}
+.inline-table-block{position:relative;margin:18px 0;padding:38px 12px 12px;background:#fff;border:1px solid #d8d1c5;border-radius:12px;white-space:normal}
+.inline-table-tools{position:absolute;top:7px;right:8px;display:flex;gap:5px}
+.inline-table-tools button{padding:4px 7px;color:#7f3528;font-size:10px;font-weight:800;background:#fff5f2;border:1px solid #edc1b6;border-radius:6px;cursor:pointer}
+.inline-table-caption{margin:0 0 7px;color:#263047;font-size:12px;font-weight:900;text-align:center}
+.inline-content-table{width:100%;border-collapse:collapse;table-layout:fixed;background:#fff}
+.inline-content-table th,.inline-content-table td{padding:8px;border:1px solid #aeb6c1;color:#263047;font-size:12px;text-align:center;overflow-wrap:anywhere}
+.inline-content-table th{background:#f1eee7;font-weight:900}
+.table-insert-btn{padding:5px 9px;color:#fff;font-size:10px;font-weight:900;background:var(--teal);border:1px solid var(--teal);border-radius:6px;cursor:pointer;white-space:nowrap}
+.table-insert-btn:hover{background:#10675f}
+.d-table-wrap{overflow-x:auto;margin-top:10px}
+.d-table-title{font-size:12px;font-weight:500;margin:12px 0 5px}
+.d-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px;background:#fff}
+.d-table th,.d-table td{border:1px solid var(--border2);padding:7px 8px;white-space:pre-wrap;overflow-wrap:anywhere;text-align:center}
+.d-table th{background:#edf3fa;font-weight:500}
+
+.form-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:22px}
+.btn-cancel{padding:8px 20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);border-radius:var(--radius);cursor:pointer;font-size:13px;font-family:inherit}
+.btn-submit{padding:8px 26px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);cursor:pointer;font-size:13px;font-family:inherit;font-weight:500;display:flex;align-items:center;gap:6px}
+.btn-submit:hover{background:var(--accent2)}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed}
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.spinner.show{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* DETAIL */
+.detail-wrap{max-width:980px;margin:36px auto;padding:0 18px 60px}
+.detail-back{display:flex;align-items:center;gap:5px;color:var(--text3);font-size:13px;cursor:pointer;margin-bottom:20px}
+.detail-back:hover{color:var(--accent)}
+.detail-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.detail-head{background:#f0f4fa;padding:22px 26px;border-bottom:1px solid var(--border)}
+.detail-title{font-family:'Noto Serif KR',serif;font-size:19px;font-weight:700}
+.detail-meta{font-size:12px;color:var(--text3);margin-top:5px}
+.detail-tag{display:inline-block;background:var(--tag-bg);color:var(--tag);font-size:11px;padding:2px 9px;border-radius:4px;margin-top:7px}
+.detail-body{padding:22px 26px}
+.d-section{margin-bottom:26px}
+.d-sec-title{font-size:14px;font-weight:600;color:var(--accent);padding-bottom:7px;border-bottom:1px solid var(--border);margin-bottom:12px;font-family:'Noto Serif KR',serif}
+.d-content{font-size:13px;line-height:1.85;white-space:pre-wrap;background:var(--bg);padding:11px 13px;border-radius:var(--radius);border:1px solid var(--border)}
+.d-content.rich-output{white-space:normal}
+.rich-output .inline-table-block{margin:18px 0;padding:0;background:transparent;border:0}
+.rich-output .inline-table-caption{margin-bottom:7px}
+
+/* SKELETON */
+.skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:6px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:#1c1c1c;color:#fff;padding:9px 20px;border-radius:22px;font-size:13px;opacity:0;transition:all .3s;z-index:999;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--req)}
+
+/* 탐구보고서 완성 화면과 통일한 디자인 */
+:root{
+  --navy:#192238;--navy2:#24314d;--paper:#f3efe7;--panel:#fffdf9;
+  --ink:#172039;--muted:#697184;--line:#ddd6ca;--orange:#b95139;
+  --orange-soft:#fff0ea;--gold:#e8c84e;--teal:#177c72;
+  --bg:var(--paper);--surface:var(--panel);--border:var(--line);--border2:#cfc6b8;
+  --accent:var(--orange);--accent2:#9f422f;--text:var(--ink);--text2:#495469;
+  --text3:var(--muted);--tag-bg:var(--orange-soft);--tag:#90422f;
+  --ok:var(--teal);--radius:11px;--shadow:0 18px 54px rgba(24,32,52,.12)
+}
+html{scroll-behavior:smooth;background:var(--paper)}
+body{
+  background:linear-gradient(rgba(25,34,56,.028) 1px,transparent 1px),var(--paper);
+  background-size:100% 32px;
+  font-family:Pretendard,'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  color:var(--ink)
+}
+button,input,textarea{font:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #78a5ff;outline-offset:3px}
+.topbar{
+  min-height:64px;height:auto;padding:8px 20px;color:#fff;background:rgba(25,34,56,.98);
+  border:0;box-shadow:0 10px 28px rgba(14,20,35,.18)
+}
+.nav-logo{color:#fff;font-family:inherit;font-size:14px;font-weight:800}
+.nav-logo::before{content:'SCIENCE FAIR';display:inline-flex;margin-right:10px;padding:6px 9px;color:var(--gold);font-size:9px;font-weight:900;letter-spacing:.12em;border:1px solid rgba(255,255,255,.45);border-radius:999px}
+.nav-logo span{color:#cbd3e0;font-size:11px;margin-left:8px}
+.nav-status{color:#cbd3e0}
+.btn-new{padding:10px 14px;background:var(--orange);border-radius:10px;font-size:12px;font-weight:800;box-shadow:0 8px 18px rgba(185,81,57,.2)}
+.btn-new:hover{background:#a84732}
+.save-cluster{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.save-status{display:inline-block;width:102px;color:#cbd3e0;font-size:11px;text-align:right;white-space:nowrap}
+.resume-code-indicator{max-width:180px;padding:5px 9px;overflow:hidden;color:#f6df9a;font-size:11px;font-weight:850;text-overflow:ellipsis;white-space:nowrap;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:999px}
+.plain-action{padding:9px 12px;color:#fff;font-size:12px;font-weight:800;background:transparent;border:1px solid rgba(255,255,255,.3);border-radius:9px;cursor:pointer}
+.plain-action:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.55)}
+.plain-action:disabled{opacity:.5;cursor:not-allowed}
+
+.modal-backdrop{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(14,20,35,.62);backdrop-filter:blur(3px)}
+.code-modal{width:min(460px,100%);padding:28px;background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:0 28px 80px rgba(14,20,35,.3)}
+.code-modal .modal-eyebrow{margin-bottom:7px;color:var(--orange);font-size:11px;font-weight:900;letter-spacing:.13em}
+.code-modal h2{margin:0;color:var(--ink);font-size:24px;line-height:1.35}
+.code-modal>p{margin:12px 0 18px;color:var(--muted);font-size:13px;line-height:1.75}
+.code-modal label{display:block;color:#404b60;font-size:13px;font-weight:900}
+.code-modal input{width:100%;margin-top:7px;padding:12px 14px;color:var(--ink);background:#fff;border:1px solid #d8d1c5;border-radius:11px;font-size:14px}
+.code-modal input:focus{outline:none;border-color:var(--orange)}
+.code-modal .input-note{margin:7px 0 0;color:var(--muted);font-size:11px}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
+.modal-actions button{padding:10px 16px;border-radius:10px;font-size:12px;font-weight:900;cursor:pointer}
+.modal-cancel{color:var(--ink);background:#fff;border:1px solid var(--line)}
+.modal-primary{color:#fff;background:var(--orange);border:1px solid var(--orange)}
+.modal-primary:hover{background:#a84732}
+
+.wrap,.form-wrap,.detail-wrap{width:min(1280px,calc(100% - 30px));max-width:none;margin:0 auto;padding:48px 0 90px}
+.list-header,.form-header{
+  position:relative;overflow:hidden;min-height:224px;margin-bottom:32px;padding:46px 52px;color:#fff;
+  background:radial-gradient(circle at 90% 10%,rgba(232,200,78,.20),transparent 28%),radial-gradient(circle at 8% 110%,rgba(23,124,114,.28),transparent 34%),var(--navy);
+  border-radius:28px;box-shadow:var(--shadow)
+}
+.list-header::after,.form-header::after{position:absolute;width:410px;height:410px;right:-130px;top:-240px;content:'';border:1px solid rgba(255,255,255,.13);border-radius:50%}
+.form-eyebrow{position:relative;z-index:1;margin:0 0 13px;color:var(--gold);font-size:11px;font-weight:900;letter-spacing:.16em}
+.list-header h1,.form-header h2{position:relative;z-index:1;margin:0;color:#fff;font-family:Georgia,'Noto Serif KR',serif;font-size:clamp(34px,5vw,56px);font-weight:600;line-height:1.16;letter-spacing:-.05em}
+.form-header h2 .highlight{color:var(--gold)}
+.list-header p,.form-header>p:last-child{position:relative;z-index:1;max-width:880px;margin-top:18px;color:#d2dae7;font-size:15px;line-height:1.8}
+
+.workspace-layout{display:grid;grid-template-columns:224px minmax(0,1fr);align-items:start;gap:24px}
+.section-sidebar{position:sticky;z-index:30;top:84px;display:flex;flex-direction:column;gap:3px;margin:0;padding:14px;background:rgba(255,253,249,.98);border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 34px rgba(24,32,52,.08)}
+.section-sidebar a{display:block;padding:12px;color:#5f6879;font-size:13px;font-weight:800;line-height:1.5;text-decoration:none;border-radius:9px;word-break:keep-all}
+.section-sidebar a:hover,.section-sidebar a:focus-visible{color:var(--ink);background:#f3efe7}
+.workspace-content{min-width:0}
+.workspace-content>.form-card:first-child{margin-top:0}
+.section-anchor{scroll-margin-top:86px}
+
+.form-card{margin:16px 0 0;padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:0 9px 25px rgba(25,34,56,.055);overflow:visible}
+.sec-head{display:block;padding:0;background:transparent;border:0}
+.sec-num{display:inline;width:auto;height:auto;color:var(--ink);background:transparent;border-radius:0;font-size:22px;font-weight:900;line-height:1.35}
+.sec-ttl{display:inline;margin-left:6px;color:var(--ink);font-size:22px;font-weight:900;letter-spacing:-.025em}
+.sec-head.basic .sec-ttl{margin-left:0}
+.sec-hint{display:block;margin:9px 0 14px;color:var(--muted);font-size:14px;line-height:1.75}
+.form-body{padding:0}
+.form-body>p{margin:9px 0 14px!important;color:var(--muted)!important;font-size:13px!important;line-height:1.75}
+.field-row{gap:12px;margin-bottom:12px}
+.field{gap:0;margin-bottom:0}
+.field label,.table-field-title{display:block;margin:12px 0 7px;color:#404b60;font-size:13px;font-weight:900}
+.field input,.table-title-input{padding:12px 14px;color:var(--ink);background:#fff;border:1px solid #d8d1c5;border-radius:11px;font-size:13px}
+.field input:focus,.table-title-input:focus{background:#fff;border-color:var(--orange)}
+.htoolbar{gap:5px;padding:9px 11px;background:#faf7f1;border-color:#e2d9ca;border-radius:13px 13px 0 0}
+.htoolbar .tb-label{color:#7b8190;font-weight:800}
+.hbtn{padding:4px 9px;color:#555f70;background:#fff;border-color:#ded5c8;border-radius:6px;font-weight:700}
+.hbtn:hover{color:var(--orange);background:#fffaf7;border-color:var(--orange)}
+.reditor{min-height:150px;padding:13px 14px;color:var(--ink);background:#fff;border-color:#d8d1c5;border-radius:0 0 11px 11px;font-size:13px;line-height:1.8}
+.reditor:focus{border-color:var(--orange)}
+.char-counter{margin-top:7px}
+.char-bar-wrap{background:#e7e0d5}
+.char-bar{background:#cfc6b8}
+.table-field{margin-top:22px;padding-top:4px}
+.table-field-title{margin:0 0 3px}
+.table-field-help{font-size:11px;line-height:1.65}
+.table-add-btn{padding:9px 12px;color:var(--ink);background:#fff;border-color:var(--line);border-radius:9px;font-weight:800}
+.table-add-btn:hover{color:var(--orange);background:#fffaf7;border-color:var(--orange)}
+.table-empty{padding:18px;background:#faf7f1;border-color:#d8d1c5;border-radius:12px;font-size:12px}
+.table-editor-card{margin-top:12px;padding:14px;background:#faf7f1;border-color:#e2d9ca;border-radius:13px}
+.table-title-input{font-size:12px}
+.table-control-btn{padding:5px 8px;border-color:#d8d1c5;border-radius:6px;font-weight:700}
+.table-control-btn:hover{color:var(--orange);background:#fffaf7;border-color:var(--orange)}
+.research-table{border-radius:8px;overflow:hidden}
+.research-table th{background:#f1eee7}
+.research-table th,.research-table td{border-color:#d8d1c5}
+.research-input{padding:9px;color:var(--ink);font-size:12px}
+.form-actions{margin-top:22px}
+.btn-cancel,.btn-submit{padding:12px 18px;border-radius:11px;font-size:12px;font-weight:900}
+.btn-cancel{color:var(--ink);background:#fff;border-color:var(--line)}
+.btn-submit{background:var(--orange);box-shadow:0 8px 18px rgba(185,81,57,.2)}
+.btn-submit:hover{background:#a84732}
+.btn-hwpx{margin-right:auto;padding:12px 18px;color:#fff;background:var(--teal);border:0;border-radius:11px;font-size:12px;font-weight:900;cursor:pointer;box-shadow:0 8px 18px rgba(23,124,114,.18)}
+.btn-hwpx:hover{background:#10675f}
+
+.report-card{padding:22px 24px;background:var(--panel);border-color:var(--line);border-radius:18px;box-shadow:0 9px 25px rgba(25,34,56,.04)}
+.report-card:hover{border-color:#c9bda9;box-shadow:0 16px 34px rgba(25,34,56,.1)}
+.card-title{color:var(--ink);font-family:inherit;font-size:17px;font-weight:900}
+.card-tag{padding:4px 9px;color:#8e472f;background:var(--orange-soft);border-radius:999px;font-weight:700}
+.btn-sm{padding:6px 10px;background:#fff;border-color:var(--line)}
+.empty-state{padding:70px 20px;background:rgba(255,253,249,.8);border:1px dashed var(--line);border-radius:18px}
+
+.detail-card{background:transparent;border:0;border-radius:0;overflow:visible}
+.detail-head{position:relative;overflow:hidden;padding:42px 48px;color:#fff;background:radial-gradient(circle at 90% 10%,rgba(232,200,78,.20),transparent 28%),var(--navy);border:0;border-radius:26px;box-shadow:var(--shadow)}
+.detail-title{color:#fff;font-family:Georgia,'Noto Serif KR',serif;font-size:clamp(28px,4vw,46px);font-weight:600;letter-spacing:-.04em}
+.detail-meta{color:#d2dae7;font-size:12px}
+.detail-tag{color:var(--navy);background:var(--gold);border-radius:999px;font-weight:800}
+.detail-body{padding:16px 0 0}
+.d-section{margin:16px 0 0;padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:0 9px 25px rgba(25,34,56,.055)}
+.d-sec-title{padding:0 0 10px;color:var(--ink);border-bottom:1px solid var(--line);font-family:inherit;font-size:20px;font-weight:900}
+.d-content{padding:14px;color:var(--ink);background:#fff;border-color:#d8d1c5;border-radius:11px;line-height:1.85}
+.d-table-title{font-size:13px;font-weight:900}
+.d-table th{background:#f1eee7}
+.d-table th,.d-table td{border-color:#d8d1c5;padding:9px}
+.detail-back{margin-bottom:16px;color:#5f6879;font-weight:800}
+
+@media(max-width:900px){
+  .workspace-layout{grid-template-columns:1fr;gap:14px}
+  .section-sidebar{top:76px;flex-direction:row;gap:5px;overflow-x:auto;padding:8px;border-radius:13px}
+  .section-sidebar a{flex:0 0 auto;padding:10px 12px;text-align:center}
+  .section-anchor{scroll-margin-top:150px}
+}
+@media(max-width:720px){
+  .wrap,.form-wrap,.detail-wrap{width:min(100% - 22px,1280px);padding-top:24px}
+  .list-header,.form-header{min-height:auto;padding:34px 26px;border-radius:20px}
+  .list-header h1,.form-header h2{font-size:36px}
+  .field-row{grid-template-columns:1fr}
+  .form-card,.d-section{padding:19px}
+  .table-field-head{align-items:stretch;flex-direction:column}
+  .table-add-btn{align-self:flex-start}
+  .form-actions{flex-direction:column-reverse}
+  .form-actions button{justify-content:center;width:100%}
+  .nav-logo span{display:none}
+}
+@media(max-width:430px){
+  .topbar{align-items:flex-start;flex-wrap:wrap;gap:8px;padding:7px 10px}
+  .nav-logo{padding-top:8px}
+  .nav-logo::before{display:none}
+  .save-cluster{justify-content:flex-end;width:100%;gap:5px}
+  .save-status{display:none}
+  .resume-code-indicator{max-width:118px;padding:4px 6px;font-size:9px}
+  .plain-action{padding:7px 8px;font-size:10px}
+  .wrap,.form-wrap,.detail-wrap{width:min(100% - 16px,1280px);padding-top:18px}
+  .list-header,.form-header{padding:26px 20px;border-radius:17px}
+  .list-header h1,.form-header h2{font-size:29px}
+  .form-card,.d-section{padding:16px}
+  .sec-num,.sec-ttl{font-size:19px}
+}
+</style>
+</head>
+<body>
+
+<!-- Firebase 설정 안내 배너 -->
+<div class="config-banner" id="config-banner">
+  ⚙️ <strong>Firebase 설정 필요:</strong> 파일 상단 <code>FIREBASE_CONFIG</code>에 본인 프로젝트 값을 입력하세요.
+  <a href="https://console.firebase.google.com" target="_blank">Firebase Console 열기 →</a>
+  &nbsp;|&nbsp; 지금은 localStorage 모드로 동작 중입니다.
+</div>
+
+<nav class="topbar">
+  <div class="nav-logo">송도이샘로봇 <span>과학전람회 보고서</span></div>
+  <div class="save-cluster">
+    <span class="save-status" id="header-save-status">저장 전</span>
+    <span class="resume-code-indicator" id="resume-code-indicator" title="현재 연결된 저장코드">저장코드: 미설정</span>
+    <button type="button" class="plain-action" data-code-action onclick="startCodeSave()">저장</button>
+    <button type="button" class="plain-action" data-code-action onclick="openCodeModal('load')">열기</button>
+    <button type="button" class="plain-action" onclick="startNewReport()">새로 시작</button>
+  </div>
+</nav>
+
+<!-- 목록 -->
+<div id="view-list" class="view active">
+  <div class="wrap">
+    <div class="list-header">
+      <h1>과학전람회 보고서 목록</h1>
+      <p id="list-sub">불러오는 중...</p>
+    </div>
+    <div id="card-grid" class="card-grid"></div>
+    <div id="empty-state" class="empty-state" style="display:none">
+      <div class="ico">📋</div>
+      <p>아직 작성된 보고서가 없어요</p>
+      <button class="btn-new" onclick="showForm()">첫 번째 보고서 작성하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 작성 -->
+<div id="view-form" class="view">
+  <div class="form-wrap">
+    <section class="form-header">
+      <p class="form-eyebrow">SCIENCE FAIR REPORT</p>
+      <h2>과학전람회 <span class="highlight">보고서</span></h2>
+      <p><span id="form-mode-label">새 보고서 작성</span> · 기본 정보와 네 개의 탐구 항목을 순서대로 작성하세요.</p>
+    </section>
+
+    <div class="workspace-layout">
+      <nav class="section-sidebar" aria-label="과학전람회 보고서 항목">
+        <a href="#section-basic">기본 정보</a>
+        <a href="#section-one">Ⅰ. 탐구 동기 및 목적</a>
+        <a href="#section-two">Ⅱ. 탐구 방법</a>
+        <a href="#section-three">Ⅲ. 예상 결과</a>
+        <a href="#section-four">Ⅳ. 기대 효과</a>
+      </nav>
+      <div class="workspace-content">
+
+    <!-- 기본정보 -->
+    <div class="form-card section-anchor" id="section-basic">
+      <div class="sec-head basic"><span class="sec-ttl">기본 정보</span><span class="sec-hint">보고서 제목과 출품자 정보를 입력하세요.</span></div>
+      <div class="form-body">
+        <div class="field-row">
+          <div class="field"><label>제목 *</label><input id="f-title" placeholder="탐구 제목을 입력하세요" /></div>
+          <div class="field"><label>출품 부문 *</label><input id="f-category" value="산업 및 에너지" placeholder="예) 산업 및 에너지" /></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>작성자 이름 *</label><input id="f-author" placeholder="학생 이름" /></div>
+          <div class="field"><label>학교 / 학년</label><input id="f-school" placeholder="예) 해송고등학교 1학년" /></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ⅰ -->
+    <div class="form-card section-anchor" id="section-one">
+      <div class="sec-head"><div class="sec-num">Ⅰ</div><span class="sec-ttl">탐구(연구) 동기 및 목적</span><span class="sec-hint">학생의 삶과 연계하여 작성</span></div>
+      <div class="form-body">
+        <p style="font-size:11px;color:var(--text3);margin-bottom:8px">소제목을 삽입해 <b>1. 동기 / 2. 목적 / 3. 연구 문제</b> 구조로 작성하세요</p>
+        <div class="htoolbar">
+          <span class="tb-label">소제목 삽입</span>
+          <button class="hbtn lv1" onclick="insertHeading('f-sec1','1')">1. 첫째항목</button>
+          <button class="hbtn" onclick="insertHeading('f-sec1','가')">가. 둘째항목</button>
+          <button class="hbtn" onclick="insertHeading('f-sec1','1)')">1) 셋째항목</button>
+          <button class="hbtn" onclick="insertHeading('f-sec1','가)')">가) 넷째항목</button>
+          <button class="hbtn" onclick="insertHeading('f-sec1','(1)')">(1) 다섯째</button>
+          <button class="hbtn" onclick="insertHeading('f-sec1','(가)')">(가) 여섯째</button>
+          <div class="tb-sep"></div>
+          <button class="hbtn plain" onclick="insertText('f-sec1','\n')">줄바꿈</button>
+        </div>
+        <textarea class="reditor" id="f-sec1" rows="14"
+          placeholder="1. 동기&#10;일상에서 탐구 주제와 연결된 경험을 구체적으로 서술하세요...&#10;&#10;2. 목적&#10;가. 첫 번째 목적&#10;나. 두 번째 목적&#10;&#10;3. 연구 문제&#10;가. 연구 문제 1&#10;나. 연구 문제 2"
+          oninput="updateCounter('f-sec1','cc-sec1','cb-sec1',800)"></textarea>
+        <div class="char-counter">
+          <span class="char-num" id="cc-sec1">0자</span>
+          <div class="char-bar-wrap"><div class="char-bar" id="cb-sec1" style="width:0%"></div></div>
+          <span class="char-min">최소 800자 권장</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ⅱ -->
+    <div class="form-card section-anchor" id="section-two">
+      <div class="sec-head"><div class="sec-num">Ⅱ</div><span class="sec-ttl">탐구(연구) 방법</span><span class="sec-hint">도면이나 사진으로 구체적으로 설명</span></div>
+      <div class="form-body">
+        <p style="font-size:11px;color:var(--text3);margin-bottom:8px">연구 대상 / 기본 조건 / 분석 방법 / 변수 설정 등을 소제목으로 구분하세요</p>
+        <div class="htoolbar">
+          <span class="tb-label">소제목 삽입</span>
+          <button class="hbtn lv1" onclick="insertHeading('f-sec2','1')">1. 첫째항목</button>
+          <button class="hbtn" onclick="insertHeading('f-sec2','가')">가. 둘째항목</button>
+          <button class="hbtn" onclick="insertHeading('f-sec2','1)')">1) 셋째항목</button>
+          <button class="hbtn" onclick="insertHeading('f-sec2','가)')">가) 넷째항목</button>
+          <div class="tb-sep"></div>
+          <button class="hbtn plain" onclick="insertText('f-sec2','\n')">줄바꿈</button>
+        </div>
+        <div class="reditor rich-editor" id="f-sec2" contenteditable="true" role="textbox" aria-multiline="true"
+          data-placeholder="1. 연구 대상 및 기본 조건 설정&#10;가. 연구 대상&#10;나. 기본 조건&#10;&#10;2. 분석 방법&#10;&#10;3. 변수 설정&#10;가) 독립변수&#10;나) 종속변수&#10;다) 통제변수"
+          oninput="updateCounter('f-sec2','cc-sec2','cb-sec2',600)"></div>
+        <div class="char-counter">
+          <span class="char-num" id="cc-sec2">0자</span>
+          <div class="char-bar-wrap"><div class="char-bar" id="cb-sec2" style="width:0%"></div></div>
+          <span class="char-min">최소 600자 권장</span>
+        </div>
+        <div class="table-field">
+          <div class="table-field-head">
+            <div>
+              <div class="table-field-title">표 자료 (선택)</div>
+              <div class="table-field-help">아래에서 표를 완성한 뒤 <b>본문에 삽입</b>을 누르세요. 커서 위치에 표가 들어가고 표 아래에서 글을 계속 작성할 수 있습니다.</div>
+            </div>
+            <button type="button" class="table-add-btn" onclick="addResearchTable()">＋ 표 추가</button>
+          </div>
+          <div id="research-table-list"></div>
+          <div id="research-table-empty" class="table-empty">추가된 표가 없습니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ⅲ -->
+    <div class="form-card section-anchor" id="section-three">
+      <div class="sec-head"><div class="sec-num">Ⅲ</div><span class="sec-ttl">예상 결과</span><span class="sec-hint">유사작품 및 과학적 원리를 활용하여 작성</span></div>
+      <div class="form-body">
+        <div class="htoolbar">
+          <span class="tb-label">소제목 삽입</span>
+          <button class="hbtn lv1" onclick="insertHeading('f-sec3','1')">1. 첫째항목</button>
+          <button class="hbtn" onclick="insertHeading('f-sec3','가')">가. 둘째항목</button>
+          <button class="hbtn" onclick="insertHeading('f-sec3','1)')">1) 셋째항목</button>
+          <div class="tb-sep"></div>
+          <button class="hbtn plain" onclick="insertText('f-sec3','\n')">줄바꿈</button>
+        </div>
+        <textarea class="reditor" id="f-sec3" rows="10"
+          placeholder="1. 박스 배치 방식에 따른 적재 효율 변화 예상&#10;&#10;2. 층 조합에 따른 전체 효율 변화 예상&#10;&#10;3. 혼합 적재에 따른 공간 활용 변화 예상"
+          oninput="updateCounter('f-sec3','cc-sec3','cb-sec3',400)"></textarea>
+        <div class="char-counter">
+          <span class="char-num" id="cc-sec3">0자</span>
+          <div class="char-bar-wrap"><div class="char-bar" id="cb-sec3" style="width:0%"></div></div>
+          <span class="char-min">최소 400자 권장</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ⅳ -->
+    <div class="form-card section-anchor" id="section-four">
+      <div class="sec-head"><div class="sec-num">Ⅳ</div><span class="sec-ttl">기대 효과</span></div>
+      <div class="form-body">
+        <div class="htoolbar">
+          <span class="tb-label">소제목 삽입</span>
+          <button class="hbtn lv1" onclick="insertHeading('f-sec4','1')">1. 첫째항목</button>
+          <button class="hbtn" onclick="insertHeading('f-sec4','가')">가. 둘째항목</button>
+          <button class="hbtn" onclick="insertHeading('f-sec4','1)')">1) 셋째항목</button>
+          <div class="tb-sep"></div>
+          <button class="hbtn plain" onclick="insertText('f-sec4','\n')">줄바꿈</button>
+        </div>
+        <textarea class="reditor" id="f-sec4" rows="8"
+          placeholder="1. 탐구 결과 활용 가능성&#10;&#10;2. 비용 절감 효과&#10;&#10;3. 자동화 시스템 활용 가능성"
+          oninput="updateCounter('f-sec4','cc-sec4','cb-sec4',300)"></textarea>
+        <div class="char-counter">
+          <span class="char-num" id="cc-sec4">0자</span>
+          <div class="char-bar-wrap"><div class="char-bar" id="cb-sec4" style="width:0%"></div></div>
+          <span class="char-min">최소 300자 권장</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-hwpx" onclick="downloadReportHwpx()">한글파일 다운로드 (HWPX)</button>
+      <button class="btn-cancel" onclick="showList()">취소</button>
+      <button class="btn-submit" id="btn-save" onclick="saveReport()">
+        <div class="spinner" id="save-spinner"></div>
+        <span id="save-label">보고서 저장</span>
+      </button>
+    </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 상세 -->
+<div id="view-detail" class="view">
+  <div class="detail-wrap">
+    <div class="detail-back" onclick="showList()">← 목록으로</div>
+    <div class="detail-card">
+      <div class="detail-head">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div class="detail-title" id="d-title"></div>
+            <div class="detail-meta" id="d-meta"></div>
+            <div class="detail-tag" id="d-tag"></div>
+          </div>
+          <button class="btn-new" id="btn-edit" style="flex-shrink:0;margin-top:4px" onclick="editReport()">✏️ 수정</button>
+        </div>
+      </div>
+      <div class="detail-body" id="d-body"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// Firebase 초기화 & fallback
+// ═══════════════════════════════════════════════
+let db = null, auth = null, useFirebase = false;
+const CODE_COLLECTION = 'science_report_codes';
+const DRAFT_SK = 'science_fair_report_draft_v1';
+let _editingId = null;   // 수정 중인 보고서 ID (null이면 신규)
+let _currentDetailId = null; // 현재 상세보기 중인 ID
+let _resumeCodeHash = '';
+let _resumeCodeLabel = '';
+let _resumeCodeBusy = false;
+let _draftSaveTimer = null;
+let _sec2SelectionRange = null;
+
+async function initFirebase() {
+  try {
+    if (FIREBASE_CONFIG.apiKey === 'YOUR_API_KEY') throw new Error('config not set');
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    auth = firebase.auth();
+    await auth.signInAnonymously();
+    useFirebase = true;
+    document.getElementById('config-banner').className = 'config-banner hidden';
+    if (document.getElementById('view-list')?.classList.contains('active')) renderList();
+    console.log('✅ Firebase 연결 성공');
+  } catch(e) {
+    useFirebase = false;
+    if (document.getElementById('header-save-status')?.textContent === '저장 전') {
+      setHeaderSaveStatus('브라우저 저장');
+    }
+    const banner = document.getElementById('config-banner');
+    banner.className = 'config-banner';
+    banner.innerHTML = '⚠️ <strong>Firebase 인증 확인 필요:</strong> Firebase Authentication에서 익명 로그인을 사용 설정하면 저장코드를 사용할 수 있습니다.';
+    console.warn('⚠️ Firebase 인증 미설정, localStorage 사용:', e.message);
+  }
+}
+const firebaseReadyPromise = initFirebase();
+
+// ═══════════════════════════════════════════════
+// localStorage fallback helpers
+// ═══════════════════════════════════════════════
+const SK = 'isaem_reports_v3';
+const lsGet = () => { try { return JSON.parse(localStorage.getItem(SK)) || []; } catch { return []; } };
+const lsSet = arr => localStorage.setItem(SK, JSON.stringify(arr));
+
+// ═══════════════════════════════════════════════
+// 상단 저장 상태 · 저장코드 · 임시 저장
+// ═══════════════════════════════════════════════
+function saveTimeText(date = new Date()) {
+  return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+}
+
+function setHeaderSaveStatus(text) {
+  const status = document.getElementById('header-save-status');
+  if (status) status.textContent = text;
+}
+
+function updateResumeCodeIndicator() {
+  const indicator = document.getElementById('resume-code-indicator');
+  if (indicator) indicator.textContent = _resumeCodeLabel ? `저장코드: ${_resumeCodeLabel}` : '저장코드: 미설정';
+}
+
+function normalizeResumeCode(value) {
+  return String(value ?? '').normalize('NFKC').trim().replace(/\s+/g, '').toUpperCase();
+}
+
+function validResumeCode(value) {
+  const code = normalizeResumeCode(value);
+  return code.length >= 6 && code.length <= 24;
+}
+
+async function resumeCodeHash(value) {
+  const bytes = new TextEncoder().encode(normalizeResumeCode(value));
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(digest)]
+    .map(byte => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+function collectCurrentReport() {
+  return {
+    title: v('f-title'),
+    category: v('f-category'),
+    author: v('f-author'),
+    school: v('f-school'),
+    sec1: v('f-sec1'),
+    sec2: v('f-sec2'),
+    sec2Html: cleanRichEditorHTML(),
+    sec2tables: collectResearchTables(),
+    sec3: v('f-sec3'),
+    sec4: v('f-sec4'),
+    date: new Date().toLocaleDateString('ko-KR'),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function reportHasContent(report = collectCurrentReport()) {
+  return ['title','category','author','school','sec1','sec2','sec3','sec4']
+    .some(key => String(report[key] ?? '').trim()) ||
+    (Array.isArray(report.sec2tables) && report.sec2tables.length > 0);
+}
+
+function applyReportToForm(report) {
+  const safe = report && typeof report === 'object' ? report : {};
+  resetForm();
+  document.getElementById('f-title').value = safe.title || '';
+  document.getElementById('f-category').value = safe.category || '산업 및 에너지';
+  document.getElementById('f-author').value = safe.author || '';
+  document.getElementById('f-school').value = safe.school || '';
+  document.getElementById('f-sec1').value = safe.sec1 || '';
+  const sec2Editor = document.getElementById('f-sec2');
+  sec2Editor.innerHTML = safe.sec2Html
+    ? sanitizeRichEditorHTML(safe.sec2Html)
+    : plainTextToRichHTML(safe.sec2 || '');
+  document.getElementById('f-sec3').value = safe.sec3 || '';
+  document.getElementById('f-sec4').value = safe.sec4 || '';
+  loadResearchTables(safe.sec2tables);
+  [['f-sec1','cc-sec1','cb-sec1',800],['f-sec2','cc-sec2','cb-sec2',600],
+   ['f-sec3','cc-sec3','cb-sec3',400],['f-sec4','cc-sec4','cb-sec4',300]
+  ].forEach(([field,counter,bar,min]) => updateCounter(field,counter,bar,min));
+}
+
+function saveLocalDraft({ silent = false } = {}) {
+  try {
+    const payload = {
+      report: collectCurrentReport(),
+      resumeCodeHash: _resumeCodeHash,
+      resumeCodeLabel: _resumeCodeLabel,
+      savedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(DRAFT_SK, JSON.stringify(payload));
+    if (!silent) setHeaderSaveStatus(`저장됨 · ${saveTimeText()}`);
+    return true;
+  } catch (error) {
+    console.warn('브라우저 임시 저장 실패:', error);
+    if (!silent) setHeaderSaveStatus('저장 실패');
+    return false;
+  }
+}
+
+function scheduleDraftSave() {
+  clearTimeout(_draftSaveTimer);
+  setHeaderSaveStatus('저장 중...');
+  _draftSaveTimer = setTimeout(() => saveLocalDraft(), 650);
+}
+
+function restoreLocalDraft() {
+  try {
+    const raw = localStorage.getItem(DRAFT_SK);
+    if (!raw) return false;
+    const saved = JSON.parse(raw);
+    if (!saved?.report || !reportHasContent(saved.report)) return false;
+    _resumeCodeHash = String(saved.resumeCodeHash || '');
+    _resumeCodeLabel = String(saved.resumeCodeLabel || '');
+    applyReportToForm(saved.report);
+    document.getElementById('form-mode-label').textContent = '작성 중인 보고서';
+    document.getElementById('save-label').textContent = '보고서 저장';
+    updateResumeCodeIndicator();
+    setHeaderSaveStatus(saved.savedAt ? `저장됨 · ${saveTimeText(new Date(saved.savedAt))}` : '브라우저 저장됨');
+    showView('view-form');
+    return true;
+  } catch (error) {
+    console.warn('브라우저 임시 저장 복원 실패:', error);
+    return false;
+  }
+}
+
+function setCodeButtonsDisabled(disabled) {
+  _resumeCodeBusy = disabled;
+  document.querySelectorAll('[data-code-action], [data-code-confirm]').forEach(button => {
+    button.disabled = disabled;
+  });
+}
+
+function closeCodeModal() {
+  document.getElementById('resume-code-modal')?.remove();
+}
+
+function openCodeModal(mode = 'save') {
+  closeCodeModal();
+  const isLoad = mode === 'load';
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="modal-backdrop" id="resume-code-modal" role="dialog" aria-modal="true"
+         aria-labelledby="resume-code-title" onclick="if(event.target===this) closeCodeModal()">
+      <div class="code-modal">
+        <div class="modal-eyebrow">${isLoad ? 'OPEN SAVED REPORT' : 'SAVE FOR LATER'}</div>
+        <h2 id="resume-code-title">${isLoad ? '저장코드 열기' : '저장코드 만들기'}</h2>
+        <p>${isLoad
+          ? '다른 기기나 브라우저에서 저장한 과학전람회 보고서의 저장코드를 입력하세요.'
+          : '처음 한 번만 6~24자의 저장코드를 정하세요. 이후에는 상단의 저장 버튼으로 같은 보고서를 계속 업데이트할 수 있습니다.'}</p>
+        <label>저장코드
+          <input id="resume-code-input" maxlength="24" autocomplete="off" placeholder="예: 별빛7294"
+                 onkeydown="if(event.key==='Enter'){event.preventDefault();${isLoad ? 'loadByResumeCode()' : 'saveByResumeCode()'}}">
+        </label>
+        <div class="input-note">다른 사람이 추측하기 어려운 코드로 정하고 따로 기록해 두세요.</div>
+        <div class="modal-actions">
+          <button type="button" class="modal-cancel" onclick="closeCodeModal()">닫기</button>
+          <button type="button" class="modal-primary" data-code-confirm
+                  onclick="${isLoad ? 'loadByResumeCode()' : 'saveByResumeCode()'}">${isLoad ? '열기' : '저장'}</button>
+        </div>
+      </div>
+    </div>`);
+  setTimeout(() => document.getElementById('resume-code-input')?.focus(), 0);
+}
+
+function codeSavePayload(report) {
+  return {
+    schemaVersion: 1,
+    codeLabel: _resumeCodeLabel,
+    savedByUid: auth?.currentUser?.uid || '',
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAtClient: new Date().toISOString(),
+    report,
+  };
+}
+
+async function startCodeSave() {
+  if (_resumeCodeBusy) return;
+  if (_resumeCodeHash) {
+    await updateLinkedCode();
+    return;
+  }
+  openCodeModal('save');
+}
+
+async function saveByResumeCode() {
+  if (_resumeCodeBusy) return;
+  const input = document.getElementById('resume-code-input');
+  const code = normalizeResumeCode(input?.value);
+  if (!validResumeCode(code)) {
+    showToast('저장코드는 공백을 제외하고 6~24자로 입력하세요', true);
+    input?.focus();
+    return;
+  }
+  const report = collectCurrentReport();
+  if (!reportHasContent(report)) {
+    showToast('먼저 보고서 내용을 작성하세요', true);
+    return;
+  }
+  if (!useFirebase || !auth?.currentUser) {
+    showToast('Firebase Authentication에서 익명 로그인을 사용 설정하세요', true);
+    return;
+  }
+
+  setCodeButtonsDisabled(true);
+  setHeaderSaveStatus('저장 중...');
+  const previousHash = _resumeCodeHash;
+  const previousLabel = _resumeCodeLabel;
+  try {
+    const hash = await resumeCodeHash(code);
+    const ref = db.collection(CODE_COLLECTION).doc(hash);
+    const existing = await ref.get();
+    if (existing.exists) {
+      showToast('이미 사용 중인 저장코드입니다. 다른 코드를 입력하세요', true);
+      setHeaderSaveStatus('저장코드 중복');
+      input?.focus();
+      return;
+    }
+    _resumeCodeHash = hash;
+    _resumeCodeLabel = code;
+    await ref.set(codeSavePayload(report));
+    saveLocalDraft({ silent: true });
+    closeCodeModal();
+    updateResumeCodeIndicator();
+    setHeaderSaveStatus(`저장됨 · ${saveTimeText()}`);
+    showToast('저장코드가 설정되었습니다');
+  } catch (error) {
+    _resumeCodeHash = previousHash;
+    _resumeCodeLabel = previousLabel;
+    updateResumeCodeIndicator();
+    console.error('저장코드 생성 실패:', error);
+    setHeaderSaveStatus('저장 실패');
+    showToast(String(error?.code || '').includes('permission-denied')
+      ? 'Firestore 규칙과 익명 로그인을 확인하세요'
+      : '저장코드 저장에 실패했습니다', true);
+  } finally {
+    setCodeButtonsDisabled(false);
+  }
+}
+
+async function updateLinkedCode({ silent = false } = {}) {
+  if (_resumeCodeBusy || !_resumeCodeHash) return false;
+  const report = collectCurrentReport();
+  if (!reportHasContent(report)) {
+    if (!silent) showToast('먼저 보고서 내용을 작성하세요', true);
+    return false;
+  }
+  if (!useFirebase || !auth?.currentUser) {
+    if (!silent) showToast('Firebase Authentication에서 익명 로그인을 사용 설정하세요', true);
+    return false;
+  }
+
+  setCodeButtonsDisabled(true);
+  setHeaderSaveStatus('저장 중...');
+  try {
+    await db.collection(CODE_COLLECTION).doc(_resumeCodeHash).set(codeSavePayload(report));
+    saveLocalDraft({ silent: true });
+    setHeaderSaveStatus(`저장됨 · ${saveTimeText()}`);
+    if (!silent) showToast('저장코드에 현재 내용을 저장했습니다');
+    return true;
+  } catch (error) {
+    console.error('저장코드 업데이트 실패:', error);
+    setHeaderSaveStatus('저장 실패');
+    if (!silent) showToast('저장에 실패했습니다. Firebase 설정을 확인하세요', true);
+    return false;
+  } finally {
+    setCodeButtonsDisabled(false);
+  }
+}
+
+async function loadByResumeCode(rawCode = null, { skipReplaceConfirm = false } = {}) {
+  if (_resumeCodeBusy) return;
+  const input = document.getElementById('resume-code-input');
+  const code = normalizeResumeCode(rawCode ?? input?.value);
+  if (!validResumeCode(code)) {
+    showToast('저장코드는 공백을 제외하고 6~24자로 입력하세요', true);
+    input?.focus();
+    return false;
+  }
+  if (!useFirebase || !auth?.currentUser) {
+    showToast('Firebase Authentication에서 익명 로그인을 사용 설정하세요', true);
+    return false;
+  }
+
+  setCodeButtonsDisabled(true);
+  setHeaderSaveStatus('불러오는 중...');
+  try {
+    const hash = await resumeCodeHash(code);
+    const snapshot = await db.collection(CODE_COLLECTION).doc(hash).get();
+    if (!snapshot.exists) {
+      setHeaderSaveStatus('코드 없음');
+      showToast('해당 저장코드로 저장된 보고서를 찾지 못했습니다', true);
+      return false;
+    }
+    if (!skipReplaceConfirm && reportHasContent() && !confirm('현재 작성 중인 내용을 저장코드의 내용으로 바꿀까요?')) {
+      setHeaderSaveStatus('열기 취소');
+      return false;
+    }
+    const data = snapshot.data() || {};
+    _editingId = null;
+    _currentDetailId = null;
+    _resumeCodeHash = hash;
+    _resumeCodeLabel = code;
+    applyReportToForm(data.report || {});
+    document.getElementById('form-mode-label').textContent = '저장된 보고서 이어쓰기';
+    document.getElementById('save-label').textContent = '보고서 저장';
+    closeCodeModal();
+    updateResumeCodeIndicator();
+    saveLocalDraft({ silent: true });
+    showView('view-form');
+    setHeaderSaveStatus(`불러옴 · ${saveTimeText()}`);
+    showToast('저장코드의 보고서를 불러왔습니다');
+    return true;
+  } catch (error) {
+    console.error('저장코드 불러오기 실패:', error);
+    setHeaderSaveStatus('열기 실패');
+    showToast('보고서를 불러오지 못했습니다. Firebase 설정을 확인하세요', true);
+    return false;
+  } finally {
+    setCodeButtonsDisabled(false);
+  }
+}
+
+function startNewReport() {
+  if (reportHasContent() && !confirm('현재 작성 내용을 지우고 새 보고서를 시작할까요?')) return;
+  clearTimeout(_draftSaveTimer);
+  localStorage.removeItem(DRAFT_SK);
+  _editingId = null;
+  _currentDetailId = null;
+  _resumeCodeHash = '';
+  _resumeCodeLabel = '';
+  resetForm();
+  document.getElementById('form-mode-label').textContent = '새 보고서 작성';
+  document.getElementById('save-label').textContent = '보고서 저장';
+  updateResumeCodeIndicator();
+  setHeaderSaveStatus('저장 전');
+  showView('view-form');
+  showToast('새 보고서를 시작합니다');
+}
+
+// ═══════════════════════════════════════════════
+// Ⅱ. 탐구(연구) 방법 표 편집기
+// Firestore는 중첩 배열을 허용하지 않으므로 행을 { cells: [] } 형태로 저장합니다.
+// ═══════════════════════════════════════════════
+let _researchTableSeq = 0;
+
+function plainTextToRichHTML(text) {
+  const source = String(text ?? '');
+  if (!source) return '';
+  return source.split('\n').map(line => {
+    const div = document.createElement('div');
+    div.textContent = line;
+    return `<div>${div.innerHTML || '<br>'}</div>`;
+  }).join('');
+}
+
+function sanitizeRichEditorHTML(html) {
+  const template = document.createElement('template');
+  template.innerHTML = String(html ?? '');
+  template.content.querySelectorAll('script,style,iframe,object,embed,link,meta,img,svg').forEach(node => node.remove());
+
+  const allowedTags = new Set(['DIV','P','BR','SPAN','B','STRONG','I','EM','U','UL','OL','LI','TABLE','THEAD','TBODY','TR','TH','TD','BUTTON']);
+  const allowedClasses = new Set(['inline-table-block','inline-table-tools','inline-table-caption','inline-content-table']);
+  [...template.content.querySelectorAll('*')].forEach(element => {
+    if (!allowedTags.has(element.tagName)) {
+      element.replaceWith(...element.childNodes);
+      return;
+    }
+    const originalClasses = String(element.getAttribute('class') || '').split(/\s+/).filter(name => allowedClasses.has(name));
+    const originalSourceId = String(element.getAttribute('data-source-table-id') || '').replace(/[^a-zA-Z0-9_-]/g, '');
+    const originalColspan = Math.max(1, Math.min(10, Number(element.getAttribute('colspan')) || 1));
+    const originalRowspan = Math.max(1, Math.min(50, Number(element.getAttribute('rowspan')) || 1));
+    [...element.attributes].forEach(attribute => element.removeAttribute(attribute.name));
+    if (originalClasses.length) element.className = originalClasses.join(' ');
+    if (element.classList.contains('inline-table-block')) {
+      if (originalSourceId) element.dataset.sourceTableId = originalSourceId;
+      element.setAttribute('contenteditable', 'false');
+    }
+    if (element.tagName === 'BUTTON' && element.closest('.inline-table-tools')) {
+      element.type = 'button';
+      element.dataset.removeInlineTable = '';
+      element.textContent = '본문에서 삭제';
+    }
+    if (['TH','TD'].includes(element.tagName)) {
+      if (originalColspan > 1) element.setAttribute('colspan', String(originalColspan));
+      if (originalRowspan > 1) element.setAttribute('rowspan', String(originalRowspan));
+    }
+  });
+  return template.innerHTML.trim();
+}
+
+function cleanRichEditorHTML() {
+  const editor = document.getElementById('f-sec2');
+  return editor ? sanitizeRichEditorHTML(editor.innerHTML) : '';
+}
+
+function richEditorDisplayHTML(html) {
+  const template = document.createElement('template');
+  template.innerHTML = sanitizeRichEditorHTML(html);
+  template.content.querySelectorAll('.inline-table-tools').forEach(node => node.remove());
+  template.content.querySelectorAll('[contenteditable]').forEach(node => node.removeAttribute('contenteditable'));
+  return template.innerHTML;
+}
+
+function selectionInsideEditor(editor, range) {
+  return Boolean(editor && range && editor.contains(range.commonAncestorContainer));
+}
+
+function editorInsertionRange(editor) {
+  const selection = window.getSelection();
+  if (selection?.rangeCount) {
+    const activeRange = selection.getRangeAt(0);
+    if (selectionInsideEditor(editor, activeRange)) return activeRange.cloneRange();
+  }
+  if (selectionInsideEditor(editor, _sec2SelectionRange)) return _sec2SelectionRange.cloneRange();
+  const range = document.createRange();
+  range.selectNodeContents(editor);
+  range.collapse(false);
+  return range;
+}
+
+function placeCaretAtStart(element) {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  range.collapse(true);
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  _sec2SelectionRange = range.cloneRange();
+}
+
+function insertTextInRichEditor(editor, text) {
+  editor.focus();
+  const range = editorInsertionRange(editor);
+  range.deleteContents();
+  const node = document.createTextNode(text);
+  range.insertNode(node);
+  range.setStartAfter(node);
+  range.collapse(true);
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  _sec2SelectionRange = range.cloneRange();
+  editor.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+function makeInlineTableBlock(card) {
+  const block = document.createElement('div');
+  block.className = 'inline-table-block';
+  block.dataset.sourceTableId = card.dataset.tableId;
+  block.setAttribute('contenteditable', 'false');
+
+  const tools = document.createElement('div');
+  tools.className = 'inline-table-tools';
+  const removeButton = document.createElement('button');
+  removeButton.type = 'button';
+  removeButton.dataset.removeInlineTable = '';
+  removeButton.textContent = '본문에서 삭제';
+  tools.appendChild(removeButton);
+  block.appendChild(tools);
+
+  const caption = document.createElement('div');
+  caption.className = 'inline-table-caption';
+  caption.textContent = card.querySelector('.table-title-input')?.value.trim() || '표';
+  block.appendChild(caption);
+
+  const table = document.createElement('table');
+  table.className = 'inline-content-table';
+  const tbody = document.createElement('tbody');
+  card.querySelectorAll('tbody tr').forEach((sourceRow, rowIndex) => {
+    const row = document.createElement('tr');
+    sourceRow.querySelectorAll('.research-input').forEach(input => {
+      const cell = document.createElement(rowIndex === 0 ? 'th' : 'td');
+      cell.textContent = input.value.trim();
+      row.appendChild(cell);
+    });
+    tbody.appendChild(row);
+  });
+  table.appendChild(tbody);
+  block.appendChild(table);
+  return block;
+}
+
+function refreshTableInsertButtons() {
+  document.querySelectorAll('#research-table-list .table-editor-card').forEach(card => {
+    const inserted = document.querySelector(`#f-sec2 .inline-table-block[data-source-table-id="${card.dataset.tableId}"]`);
+    const button = card.querySelector('.table-insert-btn');
+    if (button) button.textContent = inserted ? '본문 표 업데이트' : '본문에 삽입';
+  });
+}
+
+function insertOrUpdateResearchTable(card) {
+  const editor = document.getElementById('f-sec2');
+  if (!editor) return;
+  const block = makeInlineTableBlock(card);
+  const existing = editor.querySelector(`.inline-table-block[data-source-table-id="${card.dataset.tableId}"]`);
+
+  if (existing) {
+    existing.replaceWith(block);
+    let next = block.nextElementSibling;
+    if (!next) {
+      next = document.createElement('div');
+      next.innerHTML = '<br>';
+      block.after(next);
+    }
+    editor.focus();
+    placeCaretAtStart(next);
+    showToast('본문의 표를 업데이트했습니다');
+  } else {
+    const range = editorInsertionRange(editor);
+    range.deleteContents();
+    const after = document.createElement('div');
+    after.innerHTML = '<br>';
+    const fragment = document.createDocumentFragment();
+    fragment.append(block, after);
+    range.insertNode(fragment);
+    editor.focus();
+    placeCaretAtStart(after);
+    showToast('커서 위치에 표를 삽입했습니다. 아래에서 글을 계속 작성하세요');
+  }
+
+  refreshTableInsertButtons();
+  editor.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+function updateResearchTableEmptyState() {
+  const list = document.getElementById('research-table-list');
+  const empty = document.getElementById('research-table-empty');
+  if (!list || !empty) return;
+  empty.style.display = list.children.length ? 'none' : 'block';
+}
+
+function makeResearchCell(value, isHeader) {
+  const cell = document.createElement(isHeader ? 'th' : 'td');
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'research-input';
+  input.value = value || '';
+  input.placeholder = isHeader ? '항목' : '내용 입력';
+  input.setAttribute('aria-label', isHeader ? '표 머리글' : '표 내용');
+  cell.appendChild(input);
+  return cell;
+}
+
+function addResearchTable(savedTable) {
+  const list = document.getElementById('research-table-list');
+  if (!list) return;
+
+  const defaultRows = [
+    { cells: ['', '', ''] },
+    { cells: ['', '', ''] },
+    { cells: ['', '', ''] },
+  ];
+  const sourceRows = Array.isArray(savedTable?.rows) && savedTable.rows.length
+    ? savedTable.rows
+    : defaultRows;
+  const rows = sourceRows.map(row => Array.isArray(row) ? row : (Array.isArray(row?.cells) ? row.cells : []));
+  const columnCount = Math.max(2, ...rows.map(row => row.length));
+
+  const card = document.createElement('div');
+  card.className = 'table-editor-card';
+  card.dataset.tableId = String(savedTable?.id || `table-${Date.now()}-${++_researchTableSeq}`);
+
+  const top = document.createElement('div');
+  top.className = 'table-editor-top';
+
+  const title = document.createElement('input');
+  title.type = 'text';
+  title.className = 'table-title-input';
+  title.placeholder = '표 제목을 입력하세요 (예: 실험 조건별 측정 결과)';
+  title.value = savedTable?.title || '';
+  title.setAttribute('aria-label', '표 제목');
+  top.appendChild(title);
+
+  const controls = document.createElement('div');
+  controls.className = 'table-controls';
+  [
+    ['＋ 행', addResearchTableRow],
+    ['－ 행', removeResearchTableRow],
+    ['＋ 열', addResearchTableColumn],
+    ['－ 열', removeResearchTableColumn],
+  ].forEach(([label, handler]) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'table-control-btn';
+    button.textContent = label;
+    button.addEventListener('click', () => handler(card));
+    controls.appendChild(button);
+  });
+
+  const insertButton = document.createElement('button');
+  insertButton.type = 'button';
+  insertButton.className = 'table-insert-btn';
+  insertButton.textContent = '본문에 삽입';
+  insertButton.addEventListener('click', () => insertOrUpdateResearchTable(card));
+  controls.appendChild(insertButton);
+
+  const removeButton = document.createElement('button');
+  removeButton.type = 'button';
+  removeButton.className = 'table-control-btn danger';
+  removeButton.textContent = '표 삭제';
+  removeButton.addEventListener('click', () => removeResearchTable(card));
+  controls.appendChild(removeButton);
+  top.appendChild(controls);
+  card.appendChild(top);
+
+  const scroll = document.createElement('div');
+  scroll.className = 'research-table-scroll';
+  const table = document.createElement('table');
+  table.className = 'research-table';
+  const tbody = document.createElement('tbody');
+
+  rows.forEach((rowValues, rowIndex) => {
+    const row = document.createElement('tr');
+    for (let colIndex = 0; colIndex < columnCount; colIndex++) {
+      row.appendChild(makeResearchCell(rowValues[colIndex] || '', rowIndex === 0));
+    }
+    tbody.appendChild(row);
+  });
+  while (tbody.rows.length < 2) addResearchTableRowToBody(tbody, columnCount);
+
+  table.appendChild(tbody);
+  scroll.appendChild(table);
+  card.appendChild(scroll);
+  list.appendChild(card);
+  updateResearchTableEmptyState();
+  scheduleDraftSave();
+}
+
+function addResearchTableRowToBody(tbody, columnCount) {
+  const row = document.createElement('tr');
+  for (let i = 0; i < columnCount; i++) row.appendChild(makeResearchCell('', false));
+  tbody.appendChild(row);
+}
+
+function addResearchTableRow(card) {
+  const tbody = card.querySelector('tbody');
+  const columnCount = tbody.rows[0]?.cells.length || 2;
+  addResearchTableRowToBody(tbody, columnCount);
+  scheduleDraftSave();
+}
+
+function removeResearchTableRow(card) {
+  const tbody = card.querySelector('tbody');
+  if (tbody.rows.length <= 2) return showToast('머리글을 포함해 최소 2행은 유지해야 합니다', true);
+  tbody.deleteRow(-1);
+  scheduleDraftSave();
+}
+
+function addResearchTableColumn(card) {
+  const rows = card.querySelectorAll('tbody tr');
+  const currentCount = rows[0]?.cells.length || 0;
+  if (currentCount >= 10) return showToast('표의 열은 최대 10개까지 추가할 수 있습니다', true);
+  rows.forEach((row, rowIndex) => row.appendChild(makeResearchCell('', rowIndex === 0)));
+  scheduleDraftSave();
+}
+
+function removeResearchTableColumn(card) {
+  const rows = card.querySelectorAll('tbody tr');
+  const currentCount = rows[0]?.cells.length || 0;
+  if (currentCount <= 2) return showToast('표는 최소 2열을 유지해야 합니다', true);
+  rows.forEach(row => row.deleteCell(-1));
+  scheduleDraftSave();
+}
+
+function removeResearchTable(card) {
+  if (!confirm('이 표를 삭제할까요?')) return;
+  document.querySelector(`#f-sec2 .inline-table-block[data-source-table-id="${card.dataset.tableId}"]`)?.remove();
+  card.remove();
+  updateResearchTableEmptyState();
+  scheduleDraftSave();
+}
+
+function collectResearchTables() {
+  return Array.from(document.querySelectorAll('#research-table-list .table-editor-card')).map(card => ({
+    id: card.dataset.tableId,
+    title: card.querySelector('.table-title-input')?.value.trim() || '',
+    rows: Array.from(card.querySelectorAll('tbody tr')).map(row => ({
+      cells: Array.from(row.querySelectorAll('.research-input')).map(input => input.value.trim()),
+    })),
+  }));
+}
+
+function loadResearchTables(tables) {
+  const list = document.getElementById('research-table-list');
+  if (!list) return;
+  list.innerHTML = '';
+  (Array.isArray(tables) ? tables : []).forEach(table => addResearchTable(table));
+  updateResearchTableEmptyState();
+  refreshTableInsertButtons();
+}
+
+// ═══════════════════════════════════════════════
+// 보고서 저장
+// 일반 목록은 현재 브라우저에만 저장하고, 공유·제출본은 저장코드 문서로 저장합니다.
+// ═══════════════════════════════════════════════
+async function saveReport() {
+  const title    = v('f-title');
+  const category = v('f-category');
+  const author   = v('f-author');
+
+  if (!title)    return showToast('제목을 입력하세요', true);
+  if (!category) return showToast('출품 부문을 입력하세요', true);
+  if (!author)   return showToast('작성자 이름을 입력하세요', true);
+
+  setSaving(true);
+  try {
+    const report = collectCurrentReport();
+    const list = lsGet();
+    const savedId = _editingId || Date.now().toString();
+    const existingIndex = list.findIndex(item => item.id === savedId);
+    const existing = existingIndex >= 0 ? list[existingIndex] : null;
+    const localRecord = {
+      ...existing,
+      ...report,
+      id: savedId,
+      createdAt: existing?.createdAt || new Date().toISOString(),
+    };
+    if (existingIndex >= 0) list[existingIndex] = localRecord;
+    else list.unshift(localRecord);
+    lsSet(list);
+    _editingId = savedId;
+    saveLocalDraft({ silent: true });
+    if (_resumeCodeHash) {
+      const cloudSaved = await updateLinkedCode({ silent: true });
+      showToast(cloudSaved ? '보고서와 저장코드가 업데이트되었습니다' : '브라우저에는 저장했지만 Firebase 저장을 확인하세요', !cloudSaved);
+    } else {
+      setHeaderSaveStatus(`브라우저 저장됨 · ${saveTimeText()}`);
+      openCodeModal('save');
+      showToast('브라우저에 저장했습니다. 저장코드를 만들면 강사 페이지에 제출됩니다');
+    }
+    document.getElementById('save-label').textContent = '수정 저장';
+  } catch(err) {
+    console.error(err);
+    showToast('저장 실패: ' + err.message, true);
+  } finally {
+    setSaving(false);
+  }
+}
+
+function setSaving(on) {
+  const btn = document.getElementById('btn-save');
+  const spin = document.getElementById('save-spinner');
+  const lbl = document.getElementById('save-label');
+  btn.disabled = on;
+  spin.className = on ? 'spinner show' : 'spinner';
+  lbl.textContent = on ? '저장 중...' : (_editingId ? '수정 저장' : '보고서 저장');
+}
+
+// ═══════════════════════════════════════════════
+// 보고서 목록 불러오기
+// ═══════════════════════════════════════════════
+async function loadReports() {
+  return lsGet();
+}
+
+async function deleteReport(id, e) {
+  e.stopPropagation();
+  if (!confirm('이 보고서를 삭제할까요?')) return;
+  lsSet(lsGet().filter(r => r.id !== id));
+  renderList();
+  showToast('삭제되었습니다');
+}
+
+// ═══════════════════════════════════════════════
+// 뷰 전환
+// ═══════════════════════════════════════════════
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showList() { _editingId = null; renderList(); showView('view-list'); }
+function showForm() {
+  clearTimeout(_draftSaveTimer);
+  localStorage.removeItem(DRAFT_SK);
+  _editingId = null;
+  _currentDetailId = null;
+  _resumeCodeHash = '';
+  _resumeCodeLabel = '';
+  resetForm();
+  document.getElementById('form-mode-label').textContent = '새 보고서 작성';
+  document.getElementById('save-label').textContent = '보고서 저장';
+  updateResumeCodeIndicator();
+  setHeaderSaveStatus('저장 전');
+  showView('view-form');
+}
+
+// ═══════════════════════════════════════════════
+// 목록 렌더링
+// ═══════════════════════════════════════════════
+async function renderList() {
+  const sub = document.getElementById('list-sub');
+  sub.textContent = '불러오는 중...';
+
+  let reports = [];
+  try { reports = await loadReports(); } catch(e) { sub.textContent = '불러오기 실패: ' + e.message; return; }
+
+  const grid  = document.getElementById('card-grid');
+  const empty = document.getElementById('empty-state');
+  sub.textContent = '이 브라우저에 저장된 보고서 · 저장코드를 설정하면 강사 페이지에 제출됩니다';
+
+  if (!reports.length) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  grid.innerHTML = reports.map(r => `
+    <div class="report-card" onclick="showDetail('${r.id}')">
+      <div class="card-top">
+        <div>
+          <div class="card-title">${r.title}</div>
+          <div class="card-meta">${r.author} · ${r.school || ''} · ${r.date}</div>
+          <span class="card-tag">${r.category}</span>
+        </div>
+        <button class="btn-sm del" onclick="deleteReport('${r.id}',event)">삭제</button>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// 상세 보기
+// ═══════════════════════════════════════════════
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function renderResearchTablesDetail(tables) {
+  if (!Array.isArray(tables) || !tables.length) return '';
+  return tables.map((table, tableIndex) => {
+    const rows = Array.isArray(table?.rows) ? table.rows : [];
+    if (!rows.length) return '';
+    const rowHtml = rows.map((row, rowIndex) => {
+      const cells = Array.isArray(row) ? row : (Array.isArray(row?.cells) ? row.cells : []);
+      const tag = rowIndex === 0 ? 'th' : 'td';
+      return `<tr>${cells.map(cell => `<${tag}>${escapeHtml(cell)}</${tag}>`).join('')}</tr>`;
+    }).join('');
+    const title = table?.title ? escapeHtml(table.title) : `표 ${tableIndex + 1}`;
+    return `<div class="d-table-wrap"><div class="d-table-title">${title}</div><table class="d-table"><tbody>${rowHtml}</tbody></table></div>`;
+  }).join('');
+}
+
+async function showDetail(id) {
+  _currentDetailId = id;
+  let r;
+  if (useFirebase) {
+    const doc = await db.collection(COLLECTION).doc(id).get();
+    r = { id: doc.id, ...doc.data() };
+  } else {
+    r = lsGet().find(x => x.id === id);
+  }
+  if (!r) return;
+
+  document.getElementById('d-title').textContent = r.title;
+  document.getElementById('d-meta').textContent  = `${r.author} · ${r.school || ''} · ${r.date}`;
+  document.getElementById('d-tag').textContent   = r.category;
+
+  const txt = t   => t   ? `<div class="d-content">${escapeHtml(t)}</div>` : '<div class="d-content" style="color:#bbb">내용 없음</div>';
+  const sec2Content = r.sec2Html
+    ? `<div class="d-content rich-output">${richEditorDisplayHTML(r.sec2Html)}</div>`
+    : `${txt(r.sec2)}${renderResearchTablesDetail(r.sec2tables)}`;
+
+  document.getElementById('d-body').innerHTML = `
+    <div class="d-section"><div class="d-sec-title">Ⅰ. 탐구(연구) 동기 및 목적</div>${txt(r.sec1)}</div>
+    <div class="d-section"><div class="d-sec-title">Ⅱ. 탐구(연구) 방법</div>${sec2Content}</div>
+    <div class="d-section"><div class="d-sec-title">Ⅲ. 예상 결과</div>${txt(r.sec3)}</div>
+    <div class="d-section"><div class="d-sec-title">Ⅳ. 기대 효과</div>${txt(r.sec4)}</div>`;
+  showView('view-detail');
+}
+
+// ═══════════════════════════════════════════════
+// 수정 모드 진입 — 폼에 기존 데이터 채우기
+// ═══════════════════════════════════════════════
+async function editReport() {
+  const id = _currentDetailId;
+  if (!id) return;
+  let r;
+  if (useFirebase) {
+    const doc = await db.collection(COLLECTION).doc(id).get();
+    r = { id: doc.id, ...doc.data() };
+  } else {
+    r = lsGet().find(x => x.id === id);
+  }
+  if (!r) return;
+
+  clearTimeout(_draftSaveTimer);
+  _resumeCodeHash = '';
+  _resumeCodeLabel = '';
+  applyReportToForm(r);
+  _editingId = id;
+
+  // 헤더 텍스트 변경
+  document.getElementById('form-mode-label').textContent = '저장된 보고서 수정';
+  document.getElementById('save-label').textContent = '수정 저장';
+  updateResumeCodeIndicator();
+  setHeaderSaveStatus('수정 중');
+
+  showView('view-form');
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════════════
+// 소제목 삽입 / 글자수 카운터 / 폼 리셋
+// ═══════════════════════════════════════════════
+const NUMS = {
+  '1': ['1','2','3','4','5','6','7','8','9','10'],
+  '가': ['가','나','다','라','마','바','사','아','자','차'],
+  '1)': ['1','2','3','4','5'],
+  '가)': ['가','나','다','라','마'],
+  '(1)': ['1','2','3','4','5'],
+  '(가)': ['가','나','다','라','마'],
+};
+
+function insertHeading(id, type) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const sourceText = el.isContentEditable ? el.innerText : el.value;
+  const nums = NUMS[type] || NUMS['1'];
+  let count = 0;
+  sourceText.split('\n').forEach(line => {
+    nums.forEach(n => {
+      const t = type.includes('(') ? `(${n})` : type.endsWith(')') ? `${n})` : `${n}.`;
+      if (line.trim().startsWith(t)) count++;
+    });
+  });
+  const label = nums[Math.min(count, nums.length - 1)];
+  const prefix = type.startsWith('(') ? `\n(${label}) ` : type.endsWith(')') ? `\n${label}) ` : `\n${label}. `;
+
+  if (el.isContentEditable) {
+    insertTextInRichEditor(el, prefix);
+    return;
+  }
+
+  const pos = el.selectionStart;
+  const before = el.value.substring(0, pos);
+  const after  = el.value.substring(pos);
+  el.value = before + prefix + after;
+  el.selectionStart = el.selectionEnd = pos + prefix.length;
+  el.focus();
+  el.dispatchEvent(new Event('input'));
+}
+
+function insertText(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.isContentEditable) {
+    insertTextInRichEditor(el, text);
+    return;
+  }
+  const pos = el.selectionStart;
+  el.value = el.value.substring(0, pos) + text + el.value.substring(pos);
+  el.selectionStart = el.selectionEnd = pos + text.length;
+  el.focus();
+  el.dispatchEvent(new Event('input'));
+}
+
+function updateCounter(fieldId, counterId, barId, minChars) {
+  const el  = document.getElementById(fieldId);
+  const cnt = document.getElementById(counterId);
+  const bar = document.getElementById(barId);
+  if (!el || !cnt) return;
+  const rawText = el.isContentEditable ? el.innerText : el.value;
+  const len = rawText.replace(/\s/g, '').length;
+  cnt.textContent = len + '자';
+  if (minChars > 0) {
+    const pct = Math.min(100, (len / minChars) * 100);
+    bar.style.width = pct + '%';
+    if (len === 0)          { bar.style.background = 'var(--border2)'; cnt.className = 'char-num'; }
+    else if (len < minChars){ bar.style.background = '#e08030';        cnt.className = 'char-num below'; }
+    else                    { bar.style.background = 'var(--ok)';      cnt.className = 'char-num ok'; }
+  }
+}
+
+function resetForm() {
+  ['f-title','f-category','f-author','f-school',
+   'f-sec1','f-sec2','f-sec3','f-sec4'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      if (el.isContentEditable) el.innerHTML = '';
+      else el.value = '';
+    }
+  });
+  document.getElementById('f-category').value = '산업 및 에너지';
+  ['cc-sec1','cc-sec2','cc-sec3','cc-sec4'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = '0자'; el.className = 'char-num'; }
+  });
+  ['cb-sec1','cb-sec2','cb-sec3','cb-sec4'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.width = '0%'; el.style.background = 'var(--border2)'; }
+  });
+  loadResearchTables([]);
+}
+
+const v = id => {
+  const element = document.getElementById(id);
+  if (!element) return '';
+  return String(element.isContentEditable ? element.innerText : element.value).trim();
+};
+
+function showToast(msg, isErr) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  setTimeout(() => t.className = 'toast', 2800);
+}
+
+// ═══════════════════════════════════════════════
+// 한글 HWPX 다운로드
+// 별도 라이브러리 없이 HWPX 표준 ZIP 패키지를 생성합니다.
+// ═══════════════════════════════════════════════
+function hwpxXmlText(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+function hwpxCrc32(bytes) {
+  if (!hwpxCrc32.table) {
+    hwpxCrc32.table = Array.from({ length: 256 }, (_, number) => {
+      let value = number;
+      for (let bit = 0; bit < 8; bit++) value = (value & 1) ? (0xEDB88320 ^ (value >>> 1)) : (value >>> 1);
+      return value >>> 0;
+    });
+  }
+  let crc = 0xFFFFFFFF;
+  for (const byte of bytes) crc = hwpxCrc32.table[(crc ^ byte) & 0xFF] ^ (crc >>> 8);
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+
+function hwpxLe16(value) {
+  return Uint8Array.of(value & 0xFF, (value >>> 8) & 0xFF);
+}
+
+function hwpxLe32(value) {
+  return Uint8Array.of(value & 0xFF, (value >>> 8) & 0xFF, (value >>> 16) & 0xFF, (value >>> 24) & 0xFF);
+}
+
+function hwpxConcat(parts) {
+  const total = parts.reduce((sum, part) => sum + part.length, 0);
+  const output = new Uint8Array(total);
+  let offset = 0;
+  parts.forEach(part => { output.set(part, offset); offset += part.length; });
+  return output;
+}
+
+function hwpxFontFace(language) {
+  return `<hh:fontface lang="${language}" fontCnt="1"><hh:font id="0" face="맑은 고딕" type="TTF" isEmbedded="0"><hh:typeInfo familyType="FCAT_GOTHIC" weight="6" proportion="4" contrast="0" strokeVariation="1" armStyle="1" letterform="1" midline="1" xHeight="1"/></hh:font></hh:fontface>`;
+}
+
+function hwpxCharPr(id, height, bold = false, color = '#172039') {
+  return `<hh:charPr id="${id}" height="${height}" textColor="${color}" shadeColor="none" useFontSpace="0" useKerning="0" symMark="NONE" borderFillIDRef="2"><hh:fontRef hangul="0" latin="0" hanja="0" japanese="0" other="0" symbol="0" user="0"/><hh:ratio hangul="100" latin="100" hanja="100" japanese="100" other="100" symbol="100" user="100"/><hh:spacing hangul="0" latin="0" hanja="0" japanese="0" other="0" symbol="0" user="0"/><hh:relSz hangul="100" latin="100" hanja="100" japanese="100" other="100" symbol="100" user="100"/><hh:offset hangul="0" latin="0" hanja="0" japanese="0" other="0" symbol="0" user="0"/>${bold ? '<hh:bold/>' : ''}<hh:underline type="NONE" shape="SOLID" color="#000000"/><hh:strikeout shape="NONE" color="#000000"/><hh:outline type="NONE"/><hh:shadow type="NONE" color="#C0C0C0" offsetX="10" offsetY="10"/></hh:charPr>`;
+}
+
+function hwpxParaPr(id, align = 'JUSTIFY', before = 0, after = 100, borderFillIDRef = 2) {
+  return `<hh:paraPr id="${id}" tabPrIDRef="0" condense="0" fontLineHeight="0" snapToGrid="1" suppressLineNumbers="0" checked="0" textDir="LTR"><hh:align horizontal="${align}" vertical="BASELINE"/><hh:heading type="NONE" idRef="0" level="0"/><hh:breakSetting breakLatinWord="KEEP_WORD" breakNonLatinWord="BREAK_WORD" widowOrphan="0" keepWithNext="0" keepLines="0" pageBreakBefore="0" lineWrap="BREAK"/><hh:autoSpacing eAsianEng="0" eAsianNum="0"/><hp:switch><hp:case hp:required-namespace="http://www.hancom.co.kr/hwpml/2016/HwpUnitChar"><hh:margin><hc:intent value="0" unit="HWPUNIT"/><hc:left value="0" unit="HWPUNIT"/><hc:right value="0" unit="HWPUNIT"/><hc:prev value="${before}" unit="HWPUNIT"/><hc:next value="${after}" unit="HWPUNIT"/></hh:margin><hh:lineSpacing type="PERCENT" value="165" unit="HWPUNIT"/></hp:case><hp:default><hh:margin><hc:intent value="0" unit="HWPUNIT"/><hc:left value="0" unit="HWPUNIT"/><hc:right value="0" unit="HWPUNIT"/><hc:prev value="${before}" unit="HWPUNIT"/><hc:next value="${after}" unit="HWPUNIT"/></hh:margin><hh:lineSpacing type="PERCENT" value="165" unit="HWPUNIT"/></hp:default></hp:switch><hh:border borderFillIDRef="${borderFillIDRef}" offsetLeft="0" offsetRight="0" offsetTop="0" offsetBottom="0" connect="0" ignoreMargin="0"/></hh:paraPr>`;
+}
+
+function hwpxHeaderXml() {
+  const languages = ['HANGUL','LATIN','HANJA','JAPANESE','OTHER','SYMBOL','USER'];
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<hh:head xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core" xmlns:hh="http://www.hancom.co.kr/hwpml/2011/head" xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" version="1.5" secCnt="1">
+<hh:beginNum page="1" footnote="1" endnote="1" pic="1" tbl="1" equation="1"/><hh:refList>
+<hh:fontfaces itemCnt="7">${languages.map(hwpxFontFace).join('')}</hh:fontfaces>
+<hh:borderFills itemCnt="5">
+<hh:borderFill id="1" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0"><hh:slash type="NONE" Crooked="0" isCounter="0"/><hh:backSlash type="NONE" Crooked="0" isCounter="0"/><hh:leftBorder type="NONE" width="0.1 mm" color="#000000"/><hh:rightBorder type="NONE" width="0.1 mm" color="#000000"/><hh:topBorder type="NONE" width="0.1 mm" color="#000000"/><hh:bottomBorder type="NONE" width="0.1 mm" color="#000000"/><hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/></hh:borderFill>
+<hh:borderFill id="2" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0"><hh:slash type="NONE" Crooked="0" isCounter="0"/><hh:backSlash type="NONE" Crooked="0" isCounter="0"/><hh:leftBorder type="NONE" width="0.1 mm" color="#000000"/><hh:rightBorder type="NONE" width="0.1 mm" color="#000000"/><hh:topBorder type="NONE" width="0.1 mm" color="#000000"/><hh:bottomBorder type="NONE" width="0.1 mm" color="#000000"/><hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/><hc:fillBrush><hc:winBrush faceColor="none" hatchColor="#999999" alpha="0"/></hc:fillBrush></hh:borderFill>
+<hh:borderFill id="3" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0"><hh:slash type="NONE" Crooked="0" isCounter="0"/><hh:backSlash type="NONE" Crooked="0" isCounter="0"/><hh:leftBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:rightBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:topBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:bottomBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/><hc:fillBrush><hc:winBrush faceColor="#FFFFFF" hatchColor="#FFFFFF" alpha="0"/></hc:fillBrush></hh:borderFill>
+<hh:borderFill id="4" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0"><hh:slash type="NONE" Crooked="0" isCounter="0"/><hh:backSlash type="NONE" Crooked="0" isCounter="0"/><hh:leftBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:rightBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:topBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:bottomBorder type="SOLID" width="0.12 mm" color="#B7C0CC"/><hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/><hc:fillBrush><hc:winBrush faceColor="#F1F4F6" hatchColor="#F1F4F6" alpha="0"/></hc:fillBrush></hh:borderFill>
+<hh:borderFill id="5" threeD="0" shadow="0" centerLine="NONE" breakCellSeparateLine="0"><hh:slash type="NONE" Crooked="0" isCounter="0"/><hh:backSlash type="NONE" Crooked="0" isCounter="0"/><hh:leftBorder type="NONE" width="0.1 mm" color="#192238"/><hh:rightBorder type="NONE" width="0.1 mm" color="#192238"/><hh:topBorder type="NONE" width="0.1 mm" color="#192238"/><hh:bottomBorder type="SOLID" width="0.3 mm" color="#192238"/><hh:diagonal type="SOLID" width="0.1 mm" color="#000000"/></hh:borderFill>
+</hh:borderFills>
+<hh:charProperties itemCnt="6">${hwpxCharPr(0,1050)}${hwpxCharPr(1,1050,true,'#1F5962')}${hwpxCharPr(2,1500,true,'#192238')}${hwpxCharPr(3,2600,true,'#192238')}${hwpxCharPr(4,1050,true,'#192238')}${hwpxCharPr(5,950,false,'#4B5568')}</hh:charProperties>
+<hh:tabProperties itemCnt="1"><hh:tabPr id="0" autoTabLeft="0" autoTabRight="0"/></hh:tabProperties>
+<hh:paraProperties itemCnt="5">${hwpxParaPr(0)}${hwpxParaPr(1,'CENTER',0,120)}${hwpxParaPr(2,'LEFT')}${hwpxParaPr(3,'LEFT',0,100,5)}${hwpxParaPr(4,'JUSTIFY',420,100)}</hh:paraProperties>
+<hh:styles itemCnt="1"><hh:style id="0" type="PARA" name="바탕글" engName="Normal" paraPrIDRef="0" charPrIDRef="0" nextStyleIDRef="0" langID="1042" lockForm="0"/></hh:styles>
+</hh:refList><hh:compatibleDocument targetProgram="HWP201X"><hh:layoutCompatibility/></hh:compatibleDocument><hh:docOption><hh:linkinfo path="" pageInherit="0" footnoteInherit="0"/></hh:docOption></hh:head>`;
+}
+
+let hwpxParagraphSequence = 1000000000;
+let hwpxTableSequence = 2000000000;
+
+function hwpxParagraphXml(value, options = {}) {
+  const id = hwpxParagraphSequence++;
+  const text = String(value ?? '') || ' ';
+  return `<hp:p id="${id}" paraPrIDRef="${options.paraPr ?? 0}" styleIDRef="0" pageBreak="${options.pageBreak ? 1 : 0}" columnBreak="0" merged="0"><hp:run charPrIDRef="${options.charPr ?? 0}"><hp:t>${hwpxXmlText(text)}</hp:t></hp:run></hp:p>`;
+}
+
+function hwpxBodyXml(value) {
+  const lines = String(value ?? '').replace(/\r\n/g, '\n').split('\n');
+  if (!lines.some(line => line.trim())) return hwpxParagraphXml(' ');
+  return lines.map(line => hwpxParagraphXml(line.trim() || ' ')).join('');
+}
+
+function hwpxCellXml(text, options = {}) {
+  const paragraphId = hwpxParagraphSequence++;
+  return `<hp:tc name="" header="0" hasMargin="1" protect="0" editable="0" dirty="1" borderFillIDRef="${options.borderFillIDRef ?? 3}"><hp:subList id="" textDirection="HORIZONTAL" lineWrap="BREAK" vertAlign="CENTER" linkListIDRef="0" linkListNextIDRef="0" textWidth="0" textHeight="0" hasTextRef="0" hasNumRef="0"><hp:p id="${paragraphId}" paraPrIDRef="${options.paraPr ?? 2}" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0"><hp:run charPrIDRef="${options.charPr ?? 0}"><hp:t>${hwpxXmlText(String(text ?? '') || ' ')}</hp:t></hp:run></hp:p></hp:subList><hp:cellAddr colAddr="${options.colAddr ?? 0}" rowAddr="${options.rowAddr ?? 0}"/><hp:cellSpan colSpan="${options.colSpan ?? 1}" rowSpan="${options.rowSpan ?? 1}"/><hp:cellSz width="${options.width ?? 10000}" height="${options.height ?? 3300}"/><hp:cellMargin left="360" right="360" top="260" bottom="260"/></hp:tc>`;
+}
+
+function hwpxTableXml(rows, columnCount, width = 42000) {
+  if (!rows.length || !columnCount) return '';
+  const rowHeight = 3500;
+  const cellsWidth = Math.floor(width / columnCount);
+  const tableId = hwpxTableSequence++;
+  const rowsXml = rows.map((row, rowIndex) => {
+    const cellsXml = row.cells.map((cell, cellIndex) => hwpxCellXml(cell.text, {
+      colAddr: cell.colAddr ?? cellIndex,
+      rowAddr: rowIndex,
+      colSpan: cell.colSpan ?? 1,
+      width: cell.width ?? (cellsWidth * (cell.colSpan ?? 1)),
+      height: rowHeight,
+      borderFillIDRef: cell.borderFillIDRef ?? (rowIndex === 0 ? 4 : 3),
+      charPr: cell.charPr ?? (rowIndex === 0 ? 4 : 0),
+      paraPr: cell.paraPr ?? 1,
+    })).join('');
+    return `<hp:tr>${cellsXml}</hp:tr>`;
+  }).join('');
+  const table = `<hp:tbl id="${tableId}" zOrder="0" numberingType="TABLE" textWrap="TOP_AND_BOTTOM" textFlow="BOTH_SIDES" lock="0" dropcapstyle="None" pageBreak="CELL" repeatHeader="0" rowCnt="${rows.length}" colCnt="${columnCount}" cellSpacing="0" borderFillIDRef="3" noAdjust="0"><hp:sz width="${width}" widthRelTo="ABSOLUTE" height="${rows.length * rowHeight}" heightRelTo="ABSOLUTE" protect="0"/><hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1" allowOverlap="0" holdAnchorAndSO="0" vertRelTo="PARA" horzRelTo="COLUMN" vertAlign="TOP" horzAlign="CENTER" vertOffset="0" horzOffset="0"/><hp:outMargin left="0" right="0" top="0" bottom="0"/><hp:inMargin left="0" right="0" top="0" bottom="0"/>${rowsXml}</hp:tbl>`;
+  return `<hp:p id="${hwpxParagraphSequence++}" paraPrIDRef="1" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0"><hp:run charPrIDRef="0">${table}</hp:run></hp:p>`;
+}
+
+function hwpxBasicInfoTableXml(report) {
+  const rows = [
+    { cells: [
+      { text: '보고서 제목', colAddr: 0, width: 7000, borderFillIDRef: 4, charPr: 4 },
+      { text: report.title, colAddr: 1, colSpan: 3, width: 35000, borderFillIDRef: 3, charPr: 4, paraPr: 2 },
+    ]},
+    { cells: [
+      { text: '작성자', colAddr: 0, width: 7000, borderFillIDRef: 4, charPr: 4 },
+      { text: report.author, colAddr: 1, width: 14000, borderFillIDRef: 3 },
+      { text: '학교 / 학년', colAddr: 2, width: 7000, borderFillIDRef: 4, charPr: 4 },
+      { text: report.school, colAddr: 3, width: 14000, borderFillIDRef: 3 },
+    ]},
+    { cells: [
+      { text: '출품 부문', colAddr: 0, width: 7000, borderFillIDRef: 4, charPr: 4 },
+      { text: report.category, colAddr: 1, colSpan: 3, width: 35000, borderFillIDRef: 3 },
+    ]},
+  ];
+  return hwpxTableXml(rows, 4);
+}
+
+function hwpxEditorTokens(editor) {
+  const tokens = [];
+  let textBuffer = '';
+  const flushText = () => {
+    if (textBuffer.replace(/\s/g, '')) tokens.push({ type: 'text', text: textBuffer.replace(/\n{3,}/g, '\n\n') });
+    textBuffer = '';
+  };
+  const tableToken = element => {
+    const table = element.matches('table') ? element : element.querySelector('table');
+    if (!table) return;
+    const rows = [...table.querySelectorAll('tr')].map(row => [...row.querySelectorAll('th,td')].map(cell => cell.textContent.trim()));
+    if (!rows.length) return;
+    tokens.push({
+      type: 'table',
+      title: element.querySelector?.('.inline-table-caption')?.textContent.trim() || '',
+      rows,
+    });
+  };
+  const walk = node => {
+    if (node.nodeType === Node.TEXT_NODE) { textBuffer += node.nodeValue || ''; return; }
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    const element = node;
+    if (element.classList.contains('inline-table-block') || element.tagName === 'TABLE') {
+      flushText();
+      tableToken(element);
+      return;
+    }
+    if (element.tagName === 'BR') { textBuffer += '\n'; return; }
+    const blockTag = ['DIV','P','LI','UL','OL'].includes(element.tagName);
+    [...element.childNodes].forEach(walk);
+    if (blockTag) textBuffer += '\n';
+  };
+  [...editor.childNodes].forEach(walk);
+  flushText();
+  return tokens;
+}
+
+function hwpxRichSectionXml(editor) {
+  const tokens = hwpxEditorTokens(editor);
+  if (!tokens.length) return hwpxParagraphXml(' ');
+  let content = '';
+  tokens.forEach(token => {
+    if (token.type === 'text') {
+      content += hwpxBodyXml(token.text);
+      return;
+    }
+    if (token.title) content += hwpxParagraphXml(token.title, { charPr: 1, paraPr: 1 });
+    const columnCount = Math.max(1, ...token.rows.map(row => row.length));
+    const rows = token.rows.map(row => ({ cells: Array.from({ length: columnCount }, (_, index) => ({ text: row[index] || '' })) }));
+    content += hwpxTableXml(rows, columnCount);
+    content += hwpxParagraphXml(' ');
+  });
+  return content;
+}
+
+function hwpxSectionXml(content) {
+  const sectionProperties = `<hp:p id="1" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0"><hp:run charPrIDRef="0"><hp:secPr id="" textDirection="HORIZONTAL" spaceColumns="1134" tabStop="8000" tabStopVal="4000" tabStopUnit="HWPUNIT" outlineShapeIDRef="0" memoShapeIDRef="0" textVerticalWidthHead="0" masterPageCnt="0"><hp:grid lineGrid="0" charGrid="0" wonggojiFormat="0"/><hp:startNum pageStartsOn="BOTH" page="1" pic="1" tbl="1" equation="1"/><hp:visibility hideFirstHeader="0" hideFirstFooter="0" hideFirstMasterPage="0" border="SHOW_ALL" fill="SHOW_ALL" hideFirstPageNum="0" hideFirstEmptyLine="0" showLineNumber="0"/><hp:pagePr landscape="WIDELY" width="59528" height="84188" gutterType="LEFT_ONLY"><hp:margin header="4252" footer="4252" gutter="0" left="8504" right="8504" top="5668" bottom="4252"/></hp:pagePr></hp:secPr><hp:ctrl><hp:colPr id="" type="NEWSPAPER" layout="LEFT" colCount="1" sameSz="1" sameGap="0"/></hp:ctrl></hp:run></hp:p>`;
+  return `<?xml version="1.0" encoding="UTF-8"?><hs:sec xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section" xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core">${sectionProperties}${content}</hs:sec>`;
+}
+
+function hwpxPackageFiles(title, sectionXml, previewText) {
+  const safeTitle = hwpxXmlText(title);
+  return {
+    mimetype: 'application/hwp+zip',
+    'version.xml': `<?xml version="1.0" encoding="UTF-8"?><hv:HCFVersion xmlns:hv="http://www.hancom.co.kr/hwpml/2011/version" tagetApplication="WORDPROCESSOR" major="5" minor="1" micro="1" buildNumber="0" os="1" xmlVersion="1.5" application="Hancom Office Hangul" appVersion="13, 0, 0, 1408 WIN32LEWindows_10"/>`,
+    'META-INF/container.xml': `<?xml version="1.0" encoding="UTF-8"?><ocf:container xmlns:ocf="urn:oasis:names:tc:opendocument:xmlns:container" xmlns:hpf="http://www.hancom.co.kr/schema/2011/hpf"><ocf:rootfiles><ocf:rootfile full-path="Contents/content.hpf" media-type="application/hwpml-package+xml"/></ocf:rootfiles></ocf:container>`,
+    'META-INF/manifest.xml': `<?xml version="1.0" encoding="UTF-8"?><odf:manifest xmlns:odf="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0"><odf:file-entry odf:full-path="/" odf:media-type="application/hwp+zip"/><odf:file-entry odf:full-path="version.xml" odf:media-type="text/xml"/><odf:file-entry odf:full-path="Contents/content.hpf" odf:media-type="text/xml"/><odf:file-entry odf:full-path="Contents/header.xml" odf:media-type="text/xml"/><odf:file-entry odf:full-path="Contents/section0.xml" odf:media-type="text/xml"/><odf:file-entry odf:full-path="Preview/PrvText.txt" odf:media-type="text/plain"/></odf:manifest>`,
+    'Contents/content.hpf': `<?xml version="1.0" encoding="UTF-8"?><opf:package xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf/" version="" unique-identifier="" id=""><opf:metadata><opf:title>${safeTitle}</opf:title><opf:language>ko</opf:language><opf:meta name="creator" content="과학전람회 보고서"/><opf:meta name="description" content="${safeTitle}"/></opf:metadata><opf:manifest><opf:item id="header" href="Contents/header.xml" media-type="application/xml"/><opf:item id="section0" href="Contents/section0.xml" media-type="application/xml"/></opf:manifest><opf:spine><opf:itemref idref="header" linear="yes"/><opf:itemref idref="section0" linear="yes"/></opf:spine></opf:package>`,
+    'Contents/header.xml': hwpxHeaderXml(),
+    'Contents/section0.xml': sectionXml,
+    'Preview/PrvText.txt': String(previewText ?? '').slice(0, 4096),
+  };
+}
+
+function hwpxZipBlob(files) {
+  const encoder = new TextEncoder();
+  const localParts = [];
+  const centralParts = [];
+  let localOffset = 0;
+  const now = new Date();
+  const year = Math.max(1980, now.getFullYear());
+  const dosTime = ((now.getHours() & 31) << 11) | ((now.getMinutes() & 63) << 5) | (Math.floor(now.getSeconds() / 2) & 31);
+  const dosDate = (((year - 1980) & 127) << 9) | (((now.getMonth() + 1) & 15) << 5) | (now.getDate() & 31);
+  const entries = Object.entries(files).sort(([first], [second]) => first === 'mimetype' ? -1 : second === 'mimetype' ? 1 : 0);
+
+  entries.forEach(([name, content]) => {
+    const nameBytes = encoder.encode(name);
+    const data = content instanceof Uint8Array ? content : encoder.encode(String(content));
+    const crc = hwpxCrc32(data);
+    const localHeader = hwpxConcat([hwpxLe32(0x04034B50),hwpxLe16(20),hwpxLe16(0x0800),hwpxLe16(0),hwpxLe16(dosTime),hwpxLe16(dosDate),hwpxLe32(crc),hwpxLe32(data.length),hwpxLe32(data.length),hwpxLe16(nameBytes.length),hwpxLe16(0),nameBytes]);
+    localParts.push(localHeader, data);
+    centralParts.push(hwpxConcat([hwpxLe32(0x02014B50),hwpxLe16(20),hwpxLe16(20),hwpxLe16(0x0800),hwpxLe16(0),hwpxLe16(dosTime),hwpxLe16(dosDate),hwpxLe32(crc),hwpxLe32(data.length),hwpxLe32(data.length),hwpxLe16(nameBytes.length),hwpxLe16(0),hwpxLe16(0),hwpxLe16(0),hwpxLe16(0),hwpxLe32(0),hwpxLe32(localOffset),nameBytes]));
+    localOffset += localHeader.length + data.length;
+  });
+
+  const local = hwpxConcat(localParts);
+  const central = hwpxConcat(centralParts);
+  const count = entries.length;
+  const end = hwpxConcat([hwpxLe32(0x06054B50),hwpxLe16(0),hwpxLe16(0),hwpxLe16(count),hwpxLe16(count),hwpxLe32(central.length),hwpxLe32(local.length),hwpxLe16(0)]);
+  return new Blob([local, central, end], { type: 'application/hwp+zip' });
+}
+
+function safeDownloadName(value) {
+  return String(value ?? '').trim().replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, '_').slice(0, 70) || '과학전람회_보고서';
+}
+
+function downloadReportHwpx() {
+  const report = collectCurrentReport();
+  if (!report.title) return showToast('보고서 제목을 먼저 입력하세요', true);
+  if (!report.author) return showToast('작성자 이름을 먼저 입력하세요', true);
+
+  hwpxParagraphSequence = 1000000000;
+  hwpxTableSequence = 2000000000;
+  let content = '';
+  content += hwpxParagraphXml('과학전람회 보고서', { charPr: 3, paraPr: 1 });
+  content += hwpxParagraphXml(' ');
+  content += hwpxBasicInfoTableXml(report);
+  content += hwpxParagraphXml(' ');
+
+  const addSection = (title, body, richEditor = null) => {
+    content += hwpxParagraphXml(' ');
+    content += hwpxParagraphXml(title, { charPr: 2, paraPr: 3 });
+    content += hwpxParagraphXml(' ');
+    content += richEditor ? hwpxRichSectionXml(richEditor) : hwpxBodyXml(body);
+  };
+  addSection('Ⅰ. 탐구(연구) 동기 및 목적', report.sec1);
+  addSection('Ⅱ. 탐구(연구) 방법', report.sec2, document.getElementById('f-sec2'));
+  addSection('Ⅲ. 예상 결과', report.sec3);
+  addSection('Ⅳ. 기대 효과', report.sec4);
+
+  const date = new Date().toISOString().slice(0,10).replaceAll('-', '');
+  const fileName = `${safeDownloadName(report.author)}_${safeDownloadName(report.title)}_${date}.hwpx`;
+  const sectionXml = hwpxSectionXml(content);
+  const blob = hwpxZipBlob(hwpxPackageFiles(report.title, sectionXml, [report.title, report.author, report.school, report.category].filter(Boolean).join('\n')));
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  saveLocalDraft({ silent: true });
+  showToast('본문의 글과 표를 포함한 HWPX 파일을 다운로드했습니다');
+}
+
+// ═══════════════════════════════════════════════
+// 초기 로드
+// ═══════════════════════════════════════════════
+document.addEventListener('input', event => {
+  if (event.target.closest?.('#view-form')) scheduleDraftSave();
+});
+
+document.addEventListener('selectionchange', () => {
+  const editor = document.getElementById('f-sec2');
+  const selection = window.getSelection();
+  if (!editor || !selection?.rangeCount) return;
+  const range = selection.getRangeAt(0);
+  if (selectionInsideEditor(editor, range)) _sec2SelectionRange = range.cloneRange();
+});
+
+document.getElementById('f-sec2')?.addEventListener('paste', event => {
+  event.preventDefault();
+  const text = event.clipboardData?.getData('text/plain') || '';
+  insertTextInRichEditor(event.currentTarget, text);
+});
+
+document.addEventListener('click', event => {
+  const button = event.target.closest?.('[data-remove-inline-table]');
+  if (!button) return;
+  const block = button.closest('.inline-table-block');
+  const editor = document.getElementById('f-sec2');
+  if (!block || !editor?.contains(block)) return;
+  block.remove();
+  refreshTableInsertButtons();
+  editor.dispatchEvent(new Event('input', { bubbles: true }));
+  showToast('본문에서 표를 삭제했습니다. 아래 편집용 표는 유지됩니다');
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && document.getElementById('resume-code-modal')) closeCodeModal();
+});
+
+window.addEventListener('pagehide', () => {
+  if (document.getElementById('view-form')?.classList.contains('active') && reportHasContent()) {
+    saveLocalDraft({ silent: true });
+  }
+});
+
+async function initializePage() {
+  const params = new URLSearchParams(window.location.search);
+  const urlCode = params.get('studentId') || params.get('code') || params.get('id');
+  if (urlCode) {
+    await firebaseReadyPromise;
+    const opened = await loadByResumeCode(urlCode, { skipReplaceConfirm: true });
+    if (opened) return;
+    renderList();
+    return;
+  }
+  if (!restoreLocalDraft()) renderList();
+}
+
+initializePage();
+</script>
+</body>
+</html>
